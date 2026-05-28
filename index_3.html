@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Health Diary">
+<meta name="theme-color" content="#ffffff">
+<link rel="manifest" href="manifest.json">
+<title>Health Diary</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --teal: #1D9E75; --teal-bg: #E1F5EE; --teal-border: #9FE1CB;
+    --amber: #BA7517; --amber-bg: #FAEEDA; --amber-border: #FAC775;
+    --coral: #993C1D; --coral-bg: #FAECE7; --coral-border: #F0997B;
+    --purple: #534AB7; --purple-bg: #EEEDFE; --purple-border: #AFA9EC;
+    --red: #D85A30;
+    --text: #1a1a1a; --text-sec: #666; --text-ter: #999;
+    --bg: #ffffff; --bg-sec: #f5f5f3; --border: #e5e5e0;
+    --radius: 12px; --radius-sm: 8px; --radius-pill: 20px;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #f0efeb; min-height: 100vh; padding: 0; }
+  .app { max-width: 480px; margin: 0 auto; background: #f0efeb; min-height: 100vh; padding-bottom: 80px; }
+  .header { background: white; padding: 16px; border-bottom: 0.5px solid var(--border); position: sticky; top: 0; z-index: 100; }
+  .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .header-title { font-size: 18px; font-weight: 600; color: var(--text); }
+  .header-sub { font-size: 12px; color: var(--text-ter); }
+  .tabs { display: flex; gap: 6px; }
+  .tab { flex: 1; padding: 8px 4px; font-size: 13px; font-weight: 500; border-radius: var(--radius-sm); border: 0.5px solid var(--border); background: transparent; color: var(--text-sec); cursor: pointer; text-align: center; }
+  .tab.active { background: var(--text); color: white; border-color: var(--text); }
+  .view { display: none; padding: 16px; }
+  .view.active { display: block; }
+  .section-head { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-ter); border-bottom: 0.5px solid var(--border); padding-bottom: 6px; margin: 20px 0 12px; }
+  .card { background: white; border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 8px; }
+  .card.trigger-card { border-left: 3px solid var(--red); }
+  .score-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 20px; }
+  .score-item label { font-size: 12px; color: var(--text-sec); display: block; margin-bottom: 4px; }
+  .slider-wrap { display: flex; align-items: center; gap: 8px; }
+  .slider-wrap input[type=range] { flex: 1; height: 4px; -webkit-appearance: none; appearance: none; background: var(--border); border-radius: 2px; outline: none; }
+  .slider-wrap input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--text); cursor: pointer; }
+  .score-val { min-width: 24px; text-align: center; font-size: 15px; font-weight: 600; }
+  .score-val.good { color: var(--teal); }
+  .score-val.mid { color: var(--amber); }
+  .score-val.low { color: var(--red); }
+  .sleep-input { width: 70px; font-size: 16px; padding: 6px 10px; border: 0.5px solid var(--border); border-radius: var(--radius-sm); }
+  .flags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .flag { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-sec); cursor: pointer; padding: 6px 12px; border-radius: var(--radius-pill); border: 0.5px solid var(--border); background: var(--bg-sec); user-select: none; }
+  .flag.active { background: var(--teal-bg); color: var(--teal); border-color: var(--teal-border); font-weight: 500; }
+  .flag.active.coral { background: var(--coral-bg); color: var(--coral); border-color: var(--coral-border); }
+  .flag.active.purple { background: var(--purple-bg); color: var(--purple); border-color: var(--purple-border); }
+  .pill { display: inline-block; font-size: 12px; padding: 5px 11px; border-radius: var(--radius-pill); border: 0.5px solid var(--border); background: var(--bg-sec); color: var(--text-sec); cursor: pointer; margin: 3px 3px 3px 0; user-select: none; }
+  .pill.active.teal { background: var(--teal-bg); color: var(--teal); border-color: var(--teal-border); }
+  .pill.active.purple { background: var(--purple-bg); color: var(--purple); border-color: var(--purple-border); }
+  .pill.active.coral { background: var(--coral-bg); color: var(--coral); border-color: var(--coral-border); }
+  .pill.active.amber { background: var(--amber-bg); color: var(--amber); border-color: var(--amber-border); }
+  input[type=text], input[type=date], textarea { width: 100%; padding: 10px 12px; font-size: 14px; border: 0.5px solid var(--border); border-radius: var(--radius-sm); background: white; color: var(--text); font-family: inherit; outline: none; }
+  input[type=text]:focus, textarea:focus { border-color: #999; }
+  textarea { min-height: 80px; resize: vertical; line-height: 1.6; }
+  .btn { width: 100%; padding: 14px; font-size: 15px; font-weight: 600; border-radius: var(--radius); border: none; cursor: pointer; transition: all 0.2s; margin-top: 8px; }
+  .btn-save { background: var(--text); color: white; }
+  .btn-save.saved { background: var(--teal); }
+  .btn-copy { background: var(--bg-sec); color: var(--text); border: 0.5px solid var(--border); }
+  .btn-copy.copied { background: var(--teal-bg); color: var(--teal); border-color: var(--teal-border); }
+  .btn-add { background: var(--bg-sec); color: var(--text-sec); border: 0.5px solid var(--border); padding: 10px; font-size: 13px; }
+  .btn-log-trigger { background: var(--coral-bg); color: var(--coral); border: 0.5px solid var(--coral-border); }
+  .btn-cancel { background: var(--bg-sec); color: var(--text-sec); border: 0.5px solid var(--border); flex: 0 0 auto; width: auto; padding: 10px 16px; }
+  .trigger-actions { display: flex; gap: 8px; }
+  .trigger-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .compliance-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 4px; overflow: hidden; }
+  .compliance-fill { height: 100%; border-radius: 2px; transition: width 0.3s; }
+  .history-item { background: white; border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 8px; cursor: pointer; }
+  .history-item.has-trigger { border-left: 3px solid var(--red); }
+  .history-item.has-inhaler { border-left: 3px solid var(--amber); }
+  .history-date { font-size: 14px; font-weight: 600; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+  .badges { display: flex; gap: 5px; flex-wrap: wrap; }
+  .badge { font-size: 11px; padding: 2px 8px; border-radius: 10px; }
+  .badge.trigger { background: var(--coral-bg); color: var(--coral); }
+  .badge.inhaler { background: var(--amber-bg); color: var(--amber); }
+  .badge.juiced { background: var(--teal-bg); color: var(--teal); }
+  .badge.gym { background: #E6F1FB; color: #185FA5; }
+  .score-mini { display: flex; gap: 14px; }
+  .score-mini-item { text-align: center; }
+  .score-mini-item .label { font-size: 10px; color: var(--text-ter); }
+  .score-mini-item .val { font-size: 17px; font-weight: 600; }
+  .history-note { font-size: 12px; color: var(--text-sec); margin-top: 8px; padding-top: 8px; border-top: 0.5px solid var(--border); }
+  .avg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .avg-item { text-align: center; padding: 10px 4px; }
+  .avg-item .avg-label { font-size: 11px; color: var(--text-ter); margin-bottom: 4px; }
+  .avg-item .avg-val { font-size: 24px; font-weight: 700; }
+  .avg-item .avg-bar { height: 3px; background: var(--border); border-radius: 2px; margin-top: 6px; }
+  .avg-item .avg-fill { height: 3px; border-radius: 2px; }
+  .compliance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .compliance-item .c-label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+  .summary-pre { font-size: 11px; color: var(--text-sec); white-space: pre-wrap; word-break: break-word; font-family: monospace; line-height: 1.7; }
+  .date-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .date-row input[type=date] { width: auto; flex: 1; }
+  .date-label { font-size: 12px; color: var(--text-ter); white-space: nowrap; }
+  .trigger-remove { background: none; border: none; color: var(--text-ter); font-size: 20px; cursor: pointer; padding: 0 0 0 8px; line-height: 1; }
+  .trigger-header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .trigger-what { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+  .trigger-time { font-size: 11px; color: var(--text-ter); margin-right: 8px; }
+  .trigger-detail { font-size: 12px; color: var(--text-sec); margin-top: 4px; }
+  .supp-compliance { font-size: 12px; color: var(--text-ter); margin-bottom: 8px; }
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--text-ter); font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="header-title">Health Diary</div>
+        <div class="header-sub" id="entry-count">0 entries logged</div>
+      </div>
+    </div>
+    <div class="tabs">
+      <button class="tab active" onclick="showView('log')">Today</button>
+      <button class="tab" onclick="showView('history')">History</button>
+      <button class="tab" onclick="showView('summary')">Weekly</button>
+    </div>
+  </div>
+
+  <!-- LOG VIEW -->
+  <div class="view active" id="view-log">
+    <div class="date-row">
+      <input type="date" id="entry-date" onchange="loadEntryForDate(this.value)">
+      <span class="date-label" id="date-label">Today</span>
+    </div>
+
+    <div class="section-head">System scores — 1 poor · 10 excellent</div>
+    <div class="card">
+      <div class="score-row" id="score-rows"></div>
+    </div>
+
+    <div class="section-head">Daily flags</div>
+    <div class="card">
+      <div class="flags" id="flags-container"></div>
+    </div>
+
+    <div class="section-head">Trigger events</div>
+    <div id="triggers-list"></div>
+    <div id="trigger-form-wrap"></div>
+    <button class="btn btn-add" onclick="openTriggerForm()" id="add-trigger-btn">+ Log a trigger event</button>
+
+    <div class="section-head">Supplements taken</div>
+    <div class="card">
+      <div class="supp-compliance" id="supp-compliance">0/20 taken · 0%</div>
+      <div class="compliance-bar"><div class="compliance-fill" id="supp-bar" style="width:0%;background:var(--red)"></div></div>
+      <div style="margin-top:10px" id="supps-container"></div>
+    </div>
+
+    <div class="section-head">Food & protocol</div>
+    <div class="card" id="foods-container"></div>
+
+    <div class="section-head">Notes</div>
+    <div class="card">
+      <textarea id="notes-input" placeholder="Anything else — how you feel, new observations, anything different..."></textarea>
+    </div>
+
+    <button class="btn btn-save" id="save-btn" onclick="saveEntry()">Save today's entry</button>
+  </div>
+
+  <!-- HISTORY VIEW -->
+  <div class="view" id="view-history">
+    <div id="history-list"></div>
+  </div>
+
+  <!-- SUMMARY VIEW -->
+  <div class="view" id="view-summary">
+    <div id="weekly-averages"></div>
+    <div class="section-head">Weekly summary for Claude</div>
+    <p style="font-size:12px;color:var(--text-sec);margin-bottom:10px">Copy and paste to Claude for pattern analysis.</p>
+    <div class="card"><div class="summary-pre" id="summary-text"></div></div>
+    <button class="btn btn-copy" id="copy-btn" onclick="copySummary()">Copy to clipboard ↗</button>
+  </div>
+</div>
+
+<script>
+const SYSTEMS = [
+  {key:"sleep",label:"Sleep",type:"number"},
+  {key:"breathing",label:"Breathing",type:"score"},
+  {key:"gut",label:"Gut",type:"score"},
+  {key:"energy",label:"Energy",type:"score"},
+  {key:"mood",label:"Mood / Clarity",type:"score"},
+  {key:"shoulder",label:"Shoulder / Tendon",type:"score"},
+  {key:"eyes",label:"Eyes",type:"score"},
+  {key:"skin",label:"Skin",type:"score"},
+  {key:"tinnitus",label:"Tinnitus",type:"score"},
+  {key:"bladder",label:"Bladder",type:"score"},
+];
+
+const SUPPLEMENTS = [
+  "Sublingual B12","Methylfolate 800mcg","D3 4000 IU + K2",
+  "Quercetin (morning)","Vit C (morning)","Creatine 5g",
+  "L-Glutamine 5g","DGL","Zinc carnosine",
+  "Canxida Restore","Quercetin (lunch)","NAC 600mg",
+  "Curcumin + Boswellia","Mag citrate","Vit C (evening)",
+  "Progesterone 200mg","Mag glycinate","Psyllium husk",
+  "Evorel patch","Vagirux + Estriol"
+];
+
+const FOODS = [
+  "Morning juice","Chia pudding","Eggs","Salmon",
+  "Beetroot","Rocket salad","Olive oil","Berries",
+  "Ginger tea","Chamomile tea","Dandelion tea","Lemon balm tea"
+];
+
+const TRIGGER_SYSTEMS = ["Gut","Breathing","Skin","Bladder","Tinnitus","Eyes","Energy","Mood","Shoulder","Other"];
+
+const FLAGS = [
+  {key:"juicing",label:"Juiced today",color:""},
+  {key:"gym",label:"Gym / exercise",color:""},
+  {key:"inhaler",label:"Inhaler used",color:"coral"},
+  {key:"patch",label:"Patch changed",color:"purple"},
+  {key:"vagirux",label:"Vagirux + Estriol",color:"purple"},
+];
+
+let history = [];
+let entry = emptyEntry();
+let triggerFormOpen = false;
+let newTrigger = {what:"",systems:[],recovery:"",treatment:""};
+
+function todayStr() { return new Date().toISOString().slice(0,10); }
+function fmtDate(d) { return new Date(d+"T12:00:00").toLocaleDateString("en-IE",{weekday:"short",day:"numeric",month:"short"}); }
+function emptyEntry(date) {
+  return {
+    date: date||todayStr(),
+    scores: Object.fromEntries(SYSTEMS.map(s=>[s.key,7])),
+    supplements:[],foods:[],juicing:false,gym:false,
+    inhaler:false,patch:false,vagirux:false,
+    triggers:[],notes:""
+  };
+}
+
+function scoreColor(v) {
+  if(v>=8) return "var(--teal)";
+  if(v>=5) return "var(--amber)";
+  return "var(--red)";
+}
+
+function scoreClass(v) {
+  if(v>=8) return "good";
+  if(v>=5) return "mid";
+  return "low";
+}
+
+function load() {
+  try {
+    const h = localStorage.getItem("shiera-health-v3");
+    if(h) history = JSON.parse(h);
+  } catch {}
+  const d = document.getElementById("entry-date");
+  d.value = todayStr();
+  const ex = history.find(e=>e.date===todayStr());
+  entry = ex ? JSON.parse(JSON.stringify(ex)) : emptyEntry();
+  render();
+}
+
+function save_storage() {
+  try { localStorage.setItem("shiera-health-v3", JSON.stringify(history)); } catch {}
+}
+
+function saveEntry() {
+  entry.notes = document.getElementById("notes-input").value;
+  history = [entry, ...history.filter(e=>e.date!==entry.date)].sort((a,b)=>b.date.localeCompare(a.date));
+  save_storage();
+  const btn = document.getElementById("save-btn");
+  btn.textContent = "✓ Saved";
+  btn.classList.add("saved");
+  setTimeout(()=>{ btn.textContent = "Save today's entry"; btn.classList.remove("saved"); }, 2000);
+  renderHistory();
+  renderSummary();
+  renderEntryCount();
+}
+
+function loadEntryForDate(date) {
+  entry.notes = document.getElementById("notes-input").value;
+  const ex = history.find(e=>e.date===date);
+  entry = ex ? JSON.parse(JSON.stringify(ex)) : emptyEntry(date);
+  const lbl = document.getElementById("date-label");
+  lbl.textContent = date===todayStr() ? "Today" : fmtDate(date);
+  renderLog();
+}
+
+function showView(id) {
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  document.getElementById("view-"+id).classList.add("active");
+  event.target.classList.add("active");
+  if(id==="history") renderHistory();
+  if(id==="summary") renderSummary();
+}
+
+function render() { renderLog(); renderHistory(); renderSummary(); renderEntryCount(); }
+
+function renderEntryCount() {
+  document.getElementById("entry-count").textContent = history.length + " " + (history.length===1?"entry":"entries") + " logged";
+}
+
+function renderLog() {
+  renderScores();
+  renderFlags();
+  renderTriggersList();
+  renderSupplements();
+  renderFoods();
+  document.getElementById("notes-input").value = entry.notes||"";
+}
+
+function renderScores() {
+  const c = document.getElementById("score-rows");
+  c.innerHTML = SYSTEMS.map(s => {
+    const v = entry.scores[s.key]||7;
+    if(s.type==="number") return `
+      <div class="score-item">
+        <label>${s.label} <span style="color:var(--text-ter)">hrs</span></label>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input type="number" min="0" max="12" step="0.5" value="${v}"
+            style="width:70px;font-size:16px;padding:6px 10px;border:0.5px solid var(--border);border-radius:8px"
+            onchange="entry.scores['${s.key}']=Number(this.value)">
+          <span style="font-size:14px;font-weight:600;color:${v>=7?'var(--teal)':'var(--amber)'}">${v}h</span>
+        </div>
+      </div>`;
+    return `
+      <div class="score-item">
+        <label>${s.label}</label>
+        <div class="slider-wrap">
+          <input type="range" min="1" max="10" step="1" value="${v}"
+            oninput="entry.scores['${s.key}']=Number(this.value);this.nextElementSibling.textContent=this.value;this.nextElementSibling.className='score-val ${scoreClass(Number(this.value))}'">
+          <span class="score-val ${scoreClass(v)}">${v}</span>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+function renderFlags() {
+  const c = document.getElementById("flags-container");
+  c.innerHTML = FLAGS.map(f => {
+    const active = entry[f.key];
+    let cls = "flag" + (active?" active":"") + (active&&f.color?" "+f.color:"");
+    return `<div class="${cls}" onclick="toggleFlag('${f.key}',this,'${f.color}')">${f.label}</div>`;
+  }).join("");
+}
+
+function toggleFlag(key, el, color) {
+  entry[key] = !entry[key];
+  el.classList.toggle("active");
+  if(color) el.classList.toggle(color, entry[key]);
+}
+
+function renderTriggersList() {
+  const c = document.getElementById("triggers-list");
+  const triggers = entry.triggers||[];
+  c.innerHTML = triggers.map((t,i) => `
+    <div class="card trigger-card">
+      <div class="trigger-header">
+        <div style="flex:1">
+          <div class="trigger-what">
+            ${t.time?`<span class="trigger-time">${t.time}</span>`:""}${t.what}
+          </div>
+          ${t.systems?.length?`<div style="margin-bottom:4px">${t.systems.map(s=>`<span class="pill active coral">${s}</span>`).join("")}</div>`:""}
+          <div class="trigger-detail">
+            ${t.recovery?`<span style="margin-right:12px">Recovery: ${t.recovery}</span>`:""}
+            ${t.treatment?`<span>Treatment: ${t.treatment}</span>`:""}
+          </div>
+        </div>
+        <button class="trigger-remove" onclick="removeTrigger(${i})">×</button>
+      </div>
+    </div>`).join("");
+}
+
+function removeTrigger(i) {
+  entry.triggers.splice(i,1);
+  renderTriggersList();
+}
+
+function openTriggerForm() {
+  triggerFormOpen = true;
+  newTrigger = {what:"",systems:[],recovery:"",treatment:""};
+  document.getElementById("add-trigger-btn").style.display="none";
+  renderTriggerForm();
+}
+
+function renderTriggerForm() {
+  const w = document.getElementById("trigger-form-wrap");
+  w.innerHTML = `
+    <div class="card trigger-card" style="margin-bottom:8px">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <input type="text" id="trig-what" placeholder="What triggered it?" value="${newTrigger.what}">
+        <div>
+          <div style="font-size:11px;color:var(--text-ter);margin-bottom:6px">Systems affected</div>
+          <div id="trig-systems">${TRIGGER_SYSTEMS.map(s=>`<span class="pill${newTrigger.systems.includes(s)?" active coral":""}" onclick="toggleTrigSys('${s}',this)">${s}</span>`).join("")}</div>
+        </div>
+        <div class="trigger-meta">
+          <input type="text" id="trig-recovery" placeholder="Recovery time" value="${newTrigger.recovery}">
+          <input type="text" id="trig-treatment" placeholder="Treatment given" value="${newTrigger.treatment}">
+        </div>
+        <div class="trigger-actions">
+          <button class="btn btn-log-trigger" onclick="addTrigger()">Log trigger</button>
+          <button class="btn btn-cancel" onclick="cancelTrigger()">Cancel</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function toggleTrigSys(s, el) {
+  if(newTrigger.systems.includes(s)) {
+    newTrigger.systems = newTrigger.systems.filter(x=>x!==s);
+    el.classList.remove("active","coral");
+  } else {
+    newTrigger.systems.push(s);
+    el.classList.add("active","coral");
+  }
+}
+
+function addTrigger() {
+  const what = document.getElementById("trig-what").value.trim();
+  if(!what) return;
+  const t = {
+    what,
+    systems:[...newTrigger.systems],
+    recovery: document.getElementById("trig-recovery").value,
+    treatment: document.getElementById("trig-treatment").value,
+    time: new Date().toLocaleTimeString("en-IE",{hour:"2-digit",minute:"2-digit"})
+  };
+  if(!entry.triggers) entry.triggers=[];
+  entry.triggers.push(t);
+  cancelTrigger();
+  renderTriggersList();
+}
+
+function cancelTrigger() {
+  triggerFormOpen=false;
+  document.getElementById("trigger-form-wrap").innerHTML="";
+  document.getElementById("add-trigger-btn").style.display="block";
+}
+
+function renderSupplements() {
+  const taken = entry.supplements.length;
+  const total = SUPPLEMENTS.length;
+  const pct = Math.round(taken/total*100);
+  document.getElementById("supp-compliance").textContent = `${taken}/${total} taken · ${pct}%`;
+  const bar = document.getElementById("supp-bar");
+  bar.style.width = pct+"%";
+  bar.style.background = pct>=80?"var(--teal)":pct>=50?"var(--amber)":"var(--red)";
+  const c = document.getElementById("supps-container");
+  c.innerHTML = SUPPLEMENTS.map(s => {
+    const active = entry.supplements.includes(s);
+    return `<span class="pill${active?" active purple":""}" onclick="toggleSupp('${s}',this)">${s}</span>`;
+  }).join("");
+}
+
+function toggleSupp(s, el) {
+  if(entry.supplements.includes(s)) {
+    entry.supplements = entry.supplements.filter(x=>x!==s);
+    el.classList.remove("active","purple");
+  } else {
+    entry.supplements.push(s);
+    el.classList.add("active","purple");
+  }
+  const taken = entry.supplements.length;
+  const total = SUPPLEMENTS.length;
+  const pct = Math.round(taken/total*100);
+  document.getElementById("supp-compliance").textContent = `${taken}/${total} taken · ${pct}%`;
+  const bar = document.getElementById("supp-bar");
+  bar.style.width = pct+"%";
+  bar.style.background = pct>=80?"var(--teal)":pct>=50?"var(--amber)":"var(--red)";
+}
+
+function renderFoods() {
+  const c = document.getElementById("foods-container");
+  c.innerHTML = FOODS.map(f => {
+    const active = entry.foods.includes(f);
+    return `<span class="pill${active?" active teal":""}" onclick="toggleFood('${f}',this)">${f}</span>`;
+  }).join("");
+}
+
+function toggleFood(f, el) {
+  if(entry.foods.includes(f)) {
+    entry.foods = entry.foods.filter(x=>x!==f);
+    el.classList.remove("active","teal");
+  } else {
+    entry.foods.push(f);
+    el.classList.add("active","teal");
+  }
+}
+
+function renderHistory() {
+  const c = document.getElementById("history-list");
+  if(!history.length) { c.innerHTML='<div class="empty-state">No entries yet.<br>Log your first day.</div>'; return; }
+  c.innerHTML = history.map(e => {
+    let cls = "history-item";
+    if(e.triggers?.length) cls+=" has-trigger";
+    else if(e.inhaler) cls+=" has-inhaler";
+    const badges = [
+      e.triggers?.length ? `<span class="badge trigger">${e.triggers.length} trigger${e.triggers.length>1?"s":""}</span>` : "",
+      e.inhaler ? '<span class="badge inhaler">inhaler</span>' : "",
+      e.juicing ? '<span class="badge juiced">juiced</span>' : "",
+      e.gym ? '<span class="badge gym">gym</span>' : "",
+    ].filter(Boolean).join("");
+    const scores = ["energy","gut","breathing","mood","sleep"].map(k => {
+      const v = e.scores?.[k]||0;
+      return `<div class="score-mini-item"><div class="label">${SYSTEMS.find(s=>s.key===k)?.label}</div><div class="val" style="color:${scoreColor(v)}">${v}</div></div>`;
+    }).join("");
+    return `<div class="${cls}" onclick="editEntry('${e.date}')">
+      <div class="history-date">${fmtDate(e.date)}<div class="badges">${badges}</div></div>
+      <div class="score-mini">${scores}</div>
+      ${e.notes?`<div class="history-note">${e.notes.slice(0,120)}${e.notes.length>120?"…":""}</div>`:""}
+    </div>`;
+  }).join("");
+}
+
+function editEntry(date) {
+  const ex = history.find(e=>e.date===date);
+  if(ex) { entry = JSON.parse(JSON.stringify(ex)); }
+  document.getElementById("entry-date").value = date;
+  document.getElementById("date-label").textContent = date===todayStr()?"Today":fmtDate(date);
+  showViewById("log");
+  renderLog();
+}
+
+function showViewById(id) {
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  document.getElementById("view-"+id).classList.add("active");
+  document.querySelectorAll(".tab")[id==="log"?0:id==="history"?1:2].classList.add("active");
+}
+
+function weeklyAvg(key) {
+  const vals = history.slice(0,7).map(e=>e.scores?.[key]).filter(v=>v!=null);
+  return vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1) : "—";
+}
+
+function renderSummary() {
+  const week = history.slice(0,7);
+  const avgs = document.getElementById("weekly-averages");
+  if(week.length>=3) {
+    const keys = ["energy","gut","breathing","mood","tinnitus","sleep"];
+    avgs.innerHTML = `<div class="section-head">7-day averages</div><div class="card"><div class="avg-grid">` +
+      keys.map(k => {
+        const avg = weeklyAvg(k);
+        const num = Number(avg);
+        const col = avg==="—"?"var(--text-ter)":scoreColor(num);
+        const w = avg==="—"?0:(num*10);
+        return `<div class="avg-item">
+          <div class="avg-label">${SYSTEMS.find(s=>s.key===k)?.label}</div>
+          <div class="avg-val" style="color:${col}">${avg}</div>
+          <div class="avg-bar"><div class="avg-fill" style="width:${w}%;background:${col}"></div></div>
+        </div>`;
+      }).join("") +
+      `</div></div>
+      <div class="section-head">Compliance</div>
+      <div class="card"><div class="compliance-grid">` +
+      [
+        {label:"Juicing",key:"juicing",col:"var(--teal)"},
+        {label:"Gym",key:"gym",col:"#185FA5"},
+        {label:"Inhaler days",key:"inhaler",col:"var(--red)"},
+      ].map(f => {
+        const count = week.filter(e=>e[f.key]).length;
+        const pct = Math.round(count/week.length*100);
+        return `<div class="compliance-item">
+          <div class="c-label"><span>${f.label}</span><span style="font-weight:600">${count}/${week.length}</span></div>
+          <div class="compliance-bar"><div class="compliance-fill" style="width:${pct}%;background:${f.col}"></div></div>
+        </div>`;
+      }).join("") +
+      `</div></div>`;
+  } else { avgs.innerHTML = ""; }
+
+  document.getElementById("summary-text").textContent = generateSummary();
+}
+
+function generateSummary() {
+  const week = history.slice(0,7);
+  if(!week.length) return "No data logged yet.";
+  const juicedays = week.filter(e=>e.juicing).length;
+  const gymdays = week.filter(e=>e.gym).length;
+  const inhalerdays = week.filter(e=>e.inhaler).length;
+  const allTriggers = week.flatMap(e=>(e.triggers||[]).map(t=>({date:e.date,...t})));
+  const avgSupp = Math.round(week.reduce((a,e)=>a+(e.supplements?.length||0),0)/week.length);
+  return [
+    "═══ WEEKLY HEALTH SUMMARY ═══",
+    `${fmtDate(week[week.length-1]?.date)} → ${fmtDate(week[0]?.date)}`,
+    `${week.length} days logged`,
+    "",
+    "── AVERAGE SCORES ──",
+    ...SYSTEMS.map(s=>{
+      const avg = weeklyAvg(s.key);
+      const bar = avg!=="—"?"█".repeat(Math.round(Number(avg)))+"░".repeat(10-Math.round(Number(avg))):"";
+      return `  ${s.label.padEnd(18)} ${avg}/10  ${bar}`;
+    }),
+    "",
+    "── COMPLIANCE ──",
+    `  Juicing:      ${juicedays}/${week.length} days`,
+    `  Gym:          ${gymdays}/${week.length} days`,
+    `  Inhaler used: ${inhalerdays} days`,
+    `  Avg supps:    ${avgSupp}/${SUPPLEMENTS.length} taken/day`,
+    "",
+    `── TRIGGERS (${allTriggers.length}) ──`,
+    ...(allTriggers.length?allTriggers.map(t=>`  ${fmtDate(t.date)}: ${t.what}${t.systems?.length?" → "+t.systems.join(", "):""}${t.recovery?" | recovery: "+t.recovery:""}${t.treatment?" | tx: "+t.treatment:""}`) : ["  None logged"]),
+    "",
+    "── NOTES ──",
+    ...week.filter(e=>e.notes).map(e=>`  ${fmtDate(e.date)}: ${e.notes}`),
+    ...(week.every(e=>!e.notes)?["  None"]:[]),
+    "",
+    "── paste above to Claude for pattern analysis ──"
+  ].join("\n");
+}
+
+function copySummary() {
+  navigator.clipboard.writeText(document.getElementById("summary-text").textContent);
+  const btn = document.getElementById("copy-btn");
+  btn.textContent = "✓ Copied";
+  btn.classList.add("copied");
+  setTimeout(()=>{ btn.textContent="Copy to clipboard ↗"; btn.classList.remove("copied"); },2000);
+}
+
+load();
+</script>
+</body>
+</html>
