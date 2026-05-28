@@ -152,7 +152,176 @@
     </div>
 
     <div class="section-head">Food & protocol</div>
-    <div class="card" id="foods-container"></div>
+    <div class="card" id="foods-container"></div><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Health Diary">
+<meta name="theme-color" content="#ffffff">
+<link rel="manifest" href="manifest.json">
+<title>Health Diary</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --teal: #1D9E75; --teal-bg: #E1F5EE; --teal-border: #9FE1CB;
+  --amber: #BA7517; --amber-bg: #FAEEDA; --amber-border: #FAC775;
+  --coral: #993C1D; --coral-bg: #FAECE7; --coral-border: #F0997B;
+  --purple: #534AB7; --purple-bg: #EEEDFE; --purple-border: #AFA9EC;
+  --blue: #185FA5; --blue-bg: #E6F1FB; --blue-border: #85B7EB;
+  --red: #D85A30;
+  --text: #1a1a1a; --text-sec: #666; --text-ter: #999;
+  --bg: #ffffff; --bg-sec: #f5f5f3; --border: #e5e5e0;
+  --radius: 12px; --radius-sm: 8px; --radius-pill: 20px;
+}
+body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #f0efeb; min-height: 100vh; }
+.app { max-width: 480px; margin: 0 auto; background: #f0efeb; min-height: 100vh; padding-bottom: 100px; }
+.nav { background: white; border-bottom: 0.5px solid var(--border); position: sticky; top: 0; z-index: 100; padding: 12px 16px 0; }
+.nav-title { font-size: 17px; font-weight: 600; margin-bottom: 10px; }
+.nav-sub { font-size: 11px; color: var(--text-ter); margin-top: -8px; margin-bottom: 10px; }
+.nav-tabs { display: flex; gap: 0; border-bottom: 0.5px solid var(--border); margin: 0 -16px; padding: 0 16px; }
+.nav-tab { flex: 1; padding: 8px 4px; font-size: 13px; font-weight: 500; border: none; background: none; color: var(--text-sec); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -0.5px; }
+.nav-tab.active { color: var(--text); border-bottom-color: var(--text); }
+.page { display: none; padding: 16px; }
+.page.active { display: block; }
+.tabs { display: flex; gap: 6px; margin-bottom: 16px; }
+.tab { flex: 1; padding: 7px 4px; font-size: 12px; font-weight: 500; border-radius: var(--radius-sm); border: 0.5px solid var(--border); background: transparent; color: var(--text-sec); cursor: pointer; text-align: center; }
+.tab.active { background: var(--text); color: white; border-color: var(--text); }
+.section-head { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-ter); border-bottom: 0.5px solid var(--border); padding-bottom: 6px; margin: 20px 0 12px; }
+.card { background: white; border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 8px; }
+.card.trigger-card { border-left: 3px solid var(--red); }
+.date-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.date-row input[type=date] { width: auto; flex: 1; font-size: 13px; padding: 8px 10px; border: 0.5px solid var(--border); border-radius: var(--radius-sm); background: white; }
+.date-label { font-size: 12px; color: var(--text-ter); white-space: nowrap; }
+.btn { width: 100%; padding: 14px; font-size: 15px; font-weight: 600; border-radius: var(--radius); border: none; cursor: pointer; transition: all 0.2s; margin-top: 8px; }
+.btn-save { background: var(--text); color: white; }
+.btn-save.saved { background: var(--teal); }
+.btn-copy { background: var(--bg-sec); color: var(--text); border: 0.5px solid var(--border); }
+.btn-copy.copied { background: var(--teal-bg); color: var(--teal); border-color: var(--teal-border); }
+.btn-add { background: var(--bg-sec); color: var(--text-sec); border: 0.5px solid var(--border); padding: 10px; font-size: 13px; }
+.btn-log-trigger { background: var(--coral-bg); color: var(--coral); border: 0.5px solid var(--coral-border); }
+.btn-cancel { background: var(--bg-sec); color: var(--text-sec); border: 0.5px solid var(--border); flex: 0 0 auto; width: auto; padding: 10px 16px; }
+.trigger-actions { display: flex; gap: 8px; }
+.trigger-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+input[type=text], input[type=date], textarea { width: 100%; padding: 10px 12px; font-size: 14px; border: 0.5px solid var(--border); border-radius: var(--radius-sm); background: white; color: var(--text); font-family: inherit; outline: none; }
+input[type=text]:focus, textarea:focus { border-color: #999; }
+textarea { min-height: 80px; resize: vertical; line-height: 1.6; }
+.score-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 20px; }
+.score-item label { font-size: 12px; color: var(--text-sec); display: block; margin-bottom: 4px; }
+.slider-wrap { display: flex; align-items: center; gap: 8px; }
+.slider-wrap input[type=range] { flex: 1; height: 4px; -webkit-appearance: none; appearance: none; background: var(--border); border-radius: 2px; outline: none; }
+.slider-wrap input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--text); cursor: pointer; }
+.score-val { min-width: 24px; text-align: center; font-size: 15px; font-weight: 600; }
+.score-val.good { color: var(--teal); }
+.score-val.mid { color: var(--amber); }
+.score-val.low { color: var(--red); }
+.flags { display: flex; flex-wrap: wrap; gap: 8px; }
+.flag { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-sec); cursor: pointer; padding: 6px 12px; border-radius: var(--radius-pill); border: 0.5px solid var(--border); background: var(--bg-sec); user-select: none; }
+.flag.active { background: var(--teal-bg); color: var(--teal); border-color: var(--teal-border); font-weight: 500; }
+.flag.active.coral { background: var(--coral-bg); color: var(--coral); border-color: var(--coral-border); }
+.flag.active.purple { background: var(--purple-bg); color: var(--purple); border-color: var(--purple-border); }
+.pill { display: inline-block; font-size: 12px; padding: 5px 11px; border-radius: var(--radius-pill); border: 0.5px solid var(--border); background: var(--bg-sec); color: var(--text-sec); cursor: pointer; margin: 3px 3px 3px 0; user-select: none; }
+.pill.active.teal { background: var(--teal-bg); color: var(--teal); border-color: var(--teal-border); }
+.pill.active.purple { background: var(--purple-bg); color: var(--purple); border-color: var(--purple-border); }
+.pill.active.coral { background: var(--coral-bg); color: var(--coral); border-color: var(--coral-border); }
+.compliance-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 4px; overflow: hidden; }
+.compliance-fill { height: 100%; border-radius: 2px; transition: width 0.3s; }
+.supp-compliance { font-size: 12px; color: var(--text-ter); margin-bottom: 8px; }
+.history-item { background: white; border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 8px; cursor: pointer; }
+.history-item.has-trigger { border-left: 3px solid var(--red); }
+.history-item.has-inhaler { border-left: 3px solid var(--amber); }
+.history-date { font-size: 14px; font-weight: 600; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+.badges { display: flex; gap: 5px; flex-wrap: wrap; }
+.badge { font-size: 11px; padding: 2px 8px; border-radius: 10px; }
+.badge.trigger { background: var(--coral-bg); color: var(--coral); }
+.badge.inhaler { background: var(--amber-bg); color: var(--amber); }
+.badge.juiced { background: var(--teal-bg); color: var(--teal); }
+.score-mini { display: flex; gap: 14px; }
+.score-mini-item { text-align: center; }
+.score-mini-item .label { font-size: 10px; color: var(--text-ter); }
+.score-mini-item .val { font-size: 17px; font-weight: 600; }
+.history-note { font-size: 12px; color: var(--text-sec); margin-top: 8px; padding-top: 8px; border-top: 0.5px solid var(--border); }
+.activity-grid { display: flex; flex-direction: column; gap: 10px; }
+.activity-row { background: white; border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px; }
+.activity-row.done { border-left: 3px solid var(--teal); }
+.activity-header { display: flex; justify-content: space-between; align-items: center; }
+.activity-name { font-size: 14px; font-weight: 500; color: var(--text); }
+.activity-toggle { width: 44px; height: 24px; border-radius: 12px; border: none; cursor: pointer; position: relative; transition: background 0.2s; background: var(--border); flex-shrink: 0; }
+.activity-toggle.on { background: var(--teal); }
+.activity-toggle::after { content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%; background: white; top: 3px; left: 3px; transition: left 0.2s; }
+.activity-toggle.on::after { left: 23px; }
+.activity-details { margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.activity-detail-label { font-size: 11px; color: var(--text-ter); margin-bottom: 4px; }
+.duration-input { width: 100%; padding: 7px 10px; font-size: 14px; border: 0.5px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-sec); }
+.feel-wrap { display: flex; align-items: center; gap: 8px; }
+.feel-wrap input[type=range] { flex: 1; height: 4px; -webkit-appearance: none; appearance: none; background: var(--border); border-radius: 2px; outline: none; }
+.feel-wrap input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--text); cursor: pointer; }
+.act-history-item { background: white; border: 0.5px solid var(--border); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 8px; }
+.act-history-date { font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+.act-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.act-chip { font-size: 11px; padding: 3px 8px; border-radius: 10px; background: var(--blue-bg); color: var(--blue); }
+.avg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.avg-item { text-align: center; padding: 10px 4px; }
+.avg-item .avg-label { font-size: 11px; color: var(--text-ter); margin-bottom: 4px; }
+.avg-item .avg-val { font-size: 24px; font-weight: 700; }
+.avg-item .avg-bar { height: 3px; background: var(--border); border-radius: 2px; margin-top: 6px; }
+.avg-item .avg-fill { height: 3px; border-radius: 2px; }
+.compliance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.compliance-item .c-label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+.summary-pre { font-size: 11px; color: var(--text-sec); white-space: pre-wrap; word-break: break-word; font-family: monospace; line-height: 1.7; }
+.trigger-remove { background: none; border: none; color: var(--text-ter); font-size: 20px; cursor: pointer; padding: 0 0 0 8px; line-height: 1; }
+.trigger-header { display: flex; justify-content: space-between; align-items: flex-start; }
+.trigger-what { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+.trigger-time { font-size: 11px; color: var(--text-ter); margin-right: 8px; }
+.trigger-detail { font-size: 12px; color: var(--text-sec); margin-top: 4px; }
+.empty-state { text-align: center; padding: 60px 20px; color: var(--text-ter); font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="nav">
+    <div class="nav-title">Health Diary</div>
+    <div class="nav-sub" id="entry-count">0 entries logged</div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showPage('health',this)">Health</button>
+      <button class="nav-tab" onclick="showPage('activity',this)">Activity</button>
+      <button class="nav-tab" onclick="showPage('summary',this)">Weekly</button>
+    </div>
+  </div>
+
+  <div class="page active" id="page-health">
+    <div class="tabs" style="margin-top:12px">
+      <button class="tab active" onclick="showHealthTab('log',this)">Today</button>
+      <button class="tab" onclick="showHealthTab('history',this)">History</button>
+    </div>
+    <div id="health-log">
+      <div class="date-row">
+        <input type="date" id="entry-date" onchange="loadEntryForDate(this.value)">
+        <span class="date-label" id="date-label">Today</span>
+      </div>
+      <div class="section-head">System scores — 1 poor · 10 excellent</div>
+      <div class="card"><div class="score-row" id="score-rows"></div></div>
+      <div class="section-head">Daily protocol</div>
+      <div class="card"><div class="flags" id="flags-container"></div></div>
+      <div class="section-head">Trigger events</div>
+      <div id="triggers-list"></div>
+      <div id="trigger-form-wrap"></div>
+      <button class="btn btn-add" onclick="openTriggerForm()" id="add-trigger-btn">+ Log a trigger event</button>
+      <div class="section-head">Supplements taken</div>
+      <div class="card">
+        <div class="supp-compliance" id="supp-compliance">0/20 taken · 0%</div>
+        <div class="compliance-bar"><div class="compliance-fill" id="supp-bar" style="width:0%;background:var(--red)"></div></div>
+        <div style="margin-top:10px" id="supps-container"></div>
+      </div>
+      <div class="section-head">Food & protocol</div>
+      <div class="card" id="foods-container"></div>
+      <div class="section-head">Notes</div>
+      <div class="card">
+        <textarea id="notes-input" placeholder="Anything else — how you feel, new observations..."></textarea>
+      </div>
+      <button class="btn btn-save" id="save-btn" onclick="saveEntry()">Save today's entry</b
 
     <div class="section-head">Notes</div>
     <div class="card">
