@@ -4,11 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Health Diary">
+<meta name="apple-mobile-web-app-title" content="Shiera's Health Tracker">
 <meta name="theme-color" content="#ffffff">
 <link rel="manifest" href="manifest.json">
-<title>Health Diary</title>
+<title>Shiera's Health Tracker</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -17,232 +16,1324 @@
   --coral: #993C1D; --coral-bg: #FAECE7; --coral-border: #F0997B;
   --purple: #534AB7; --purple-bg: #EEEDFE; --purple-border: #AFA9EC;
   --blue: #185FA5; --blue-bg: #E6F1FB; --blue-border: #85B7EB;
-  --red: #D85A30;
+  --red: #D85A30; --violet: #7C3AED;
   --text: #1a1a1a; --text-sec: #666; --text-ter: #999;
-  --bg: #ffffff; --bg-sec: #f5f5f3; --border: #e5e5e0;
+  --bg: #fff; --bg-sec: #f5f5f3; --border: #e5e5e0;
   --radius: 12px; --radius-sm: 8px; --radius-pill: 20px;
 }
 body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #f0efeb; min-height: 100vh; }
 .app { max-width: 480px; margin: 0 auto; background: #f0efeb; min-height: 100vh; padding-bottom: 100px; }
-.nav { background: white; border-bottom: 0.5px solid var(--border); position: sticky; top: 0; z-index: 100; padding: 12px 16px 0; }
-.nav-title { font-size: 17px; font-weight: 600; margin-bottom: 10px; }
-.nav-sub { font-size: 11px; color: var(--text-ter); margin-top: -8px; margin-bottom: 10px; }
-.nav-tabs { display: flex; gap: 0; border-bottom: 0.5px solid var(--border); margin: 0 -16px; padding: 0 16px; }
-.nav-tab { flex: 1; padding: 8px 4px; font-size: 13px; font-weight: 500; border: none; background: none; color: var(--text-sec); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -0.5px; }
+.nav { background: white; border-bottom: 0.5px solid var(--border); position: sticky; top: 0; z-index: 100; padding: 10px 16px 0; }
+.nav-title { font-size: 16px; font-weight: 700; }
+.nav-sub { font-size: 11px; color: var(--text-ter); margin: 2px 0 8px; }
+.nav-tabs { display: flex; border-bottom: 0.5px solid var(--border); margin: 0 -16px; padding: 0 4px; }
+.nav-tab { flex: 1; padding: 7px 2px; font-size: 10.5px; font-weight: 500; border: none; background: none; color: var(--text-sec); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -0.5px; }
 .nav-tab.active { color: var(--text); border-bottom-color: var(--text); }
-.page { display: none; padding: 16px; }
+.page { display: none; padding: 14px; }
 .page.active { display: block; }
-.tabs { display: flex; gap: 6px; margin-bottom: 16px; }
-.tab { flex: 1; padding: 7px 4px; font-size: 12px; font-weight: 500; border-radius: var(--radius-sm); border: 0.5px solid var(--border); background: transparent; color: var(--text-sec); cursor: pointer; text-align: center; }
-.tab.active { background: var(--text); color: white; border-color: var(--text); }
-.section-head { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-ter); border-bottom: 0.5px solid var(--border); padding-bottom: 6px; margin: 20px 0 12px; }
-.card { background: white; border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 8px; }
-.card.trigger-card { border-left: 3px solid var(--red); }
-.date-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-.date-row input[type=date] { width: auto; flex: 1; font-size: 13px; padding: 8px 10px; border: 0.5px solid var(--border); border-radius: var(--radius-sm); background: white; }
-.date-label { font-size: 12px; color: var(--text-ter); white-space: nowrap; }
-.btn { width: 100%; padding: 14px; font-size: 15px; font-weight: 600; border-radius: var(--radius); border: none; cursor: pointer; transition: all 0.2s; margin-top: 8px; }
-.btn-save { background: var(--text); color: white; }
-.btn-save.saved { background: var(--teal); }
-.btn-copy { background: var(--bg-sec); color: var(--text); border: 0.5px solid var(--border); }
-.btn-copy.copied { background: var(--teal-bg); color: var(--teal); border-color: var(--teal-border); }
-.btn-add { background: var(--bg-sec); color: var(--text-sec); border: 0.5px solid var(--border); padding: 10px; font-size: 13px; }
-.btn-log-trigger { background: var(--coral-bg); color: var(--coral); border: 0.5px solid var(--coral-border); }
-.btn-cancel { background: var(--bg-sec); color: var(--text-sec); border: 0.5px solid var(--border); flex: 0 0 auto; width: auto; padding: 10px 16px; }
-.trigger-actions { display: flex; gap: 8px; }
-.trigger-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-input[type=text], input[type=date], textarea { width: 100%; padding: 10px 12px; font-size: 14px; border: 0.5px solid var(--border); border-radius: var(--radius-sm); background: white; color: var(--text); font-family: inherit; outline: none; }
-input[type=text]:focus, textarea:focus { border-color: #999; }
-textarea { min-height: 80px; resize: vertical; line-height: 1.6; }
-.score-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 20px; }
-.score-item label { font-size: 12px; color: var(--text-sec); display: block; margin-bottom: 4px; }
-.slider-wrap { display: flex; align-items: center; gap: 8px; }
-.slider-wrap input[type=range] { flex: 1; height: 4px; -webkit-appearance: none; appearance: none; background: var(--border); border-radius: 2px; outline: none; }
-.slider-wrap input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--text); cursor: pointer; }
-.score-val { min-width: 24px; text-align: center; font-size: 15px; font-weight: 600; }
-.score-val.good { color: var(--teal); }
-.score-val.mid { color: var(--amber); }
-.score-val.low { color: var(--red); }
-.flags { display: flex; flex-wrap: wrap; gap: 8px; }
-.flag { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-sec); cursor: pointer; padding: 6px 12px; border-radius: var(--radius-pill); border: 0.5px solid var(--border); background: var(--bg-sec); user-select: none; }
-.flag.active { background: var(--teal-bg); color: var(--teal); border-color: var(--teal-border); font-weight: 500; }
-.flag.active.coral { background: var(--coral-bg); color: var(--coral); border-color: var(--coral-border); }
-.flag.active.purple { background: var(--purple-bg); color: var(--purple); border-color: var(--purple-border); }
-.pill { display: inline-block; font-size: 12px; padding: 5px 11px; border-radius: var(--radius-pill); border: 0.5px solid var(--border); background: var(--bg-sec); color: var(--text-sec); cursor: pointer; margin: 3px 3px 3px 0; user-select: none; }
-.pill.active.teal { background: var(--teal-bg); color: var(--teal); border-color: var(--teal-border); }
-.pill.active.purple { background: var(--purple-bg); color: var(--purple); border-color: var(--purple-border); }
-.pill.active.coral { background: var(--coral-bg); color: var(--coral); border-color: var(--coral-border); }
-.compliance-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 4px; overflow: hidden; }
-.compliance-fill { height: 100%; border-radius: 2px; transition: width 0.3s; }
-.supp-compliance { font-size: 12px; color: var(--text-ter); margin-bottom: 8px; }
-.history-item { background: white; border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 8px; cursor: pointer; }
-.history-item.has-trigger { border-left: 3px solid var(--red); }
-.history-item.has-inhaler { border-left: 3px solid var(--amber); }
-.history-date { font-size: 14px; font-weight: 600; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-.badges { display: flex; gap: 5px; flex-wrap: wrap; }
-.badge { font-size: 11px; padding: 2px 8px; border-radius: 10px; }
-.badge.trigger { background: var(--coral-bg); color: var(--coral); }
-.badge.inhaler { background: var(--amber-bg); color: var(--amber); }
-.badge.juiced { background: var(--teal-bg); color: var(--teal); }
-.score-mini { display: flex; gap: 14px; }
-.score-mini-item { text-align: center; }
-.score-mini-item .label { font-size: 10px; color: var(--text-ter); }
-.score-mini-item .val { font-size: 17px; font-weight: 600; }
-.history-note { font-size: 12px; color: var(--text-sec); margin-top: 8px; padding-top: 8px; border-top: 0.5px solid var(--border); }
-.activity-grid { display: flex; flex-direction: column; gap: 10px; }
-.activity-row { background: white; border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px; }
-.activity-row.done { border-left: 3px solid var(--teal); }
-.activity-header { display: flex; justify-content: space-between; align-items: center; }
-.activity-name { font-size: 14px; font-weight: 500; color: var(--text); }
-.activity-toggle { width: 44px; height: 24px; border-radius: 12px; border: none; cursor: pointer; position: relative; transition: background 0.2s; background: var(--border); flex-shrink: 0; }
-.activity-toggle.on { background: var(--teal); }
-.activity-toggle::after { content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%; background: white; top: 3px; left: 3px; transition: left 0.2s; }
-.activity-toggle.on::after { left: 23px; }
-.activity-details { margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.activity-detail-label { font-size: 11px; color: var(--text-ter); margin-bottom: 4px; }
-.duration-input { width: 100%; padding: 7px 10px; font-size: 14px; border: 0.5px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-sec); }
-.feel-wrap { display: flex; align-items: center; gap: 8px; }
-.feel-wrap input[type=range] { flex: 1; height: 4px; -webkit-appearance: none; appearance: none; background: var(--border); border-radius: 2px; outline: none; }
-.feel-wrap input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--text); cursor: pointer; }
-.act-history-item { background: white; border: 0.5px solid var(--border); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 8px; }
-.act-history-date { font-size: 13px; font-weight: 600; margin-bottom: 8px; }
-.act-chips { display: flex; flex-wrap: wrap; gap: 5px; }
-.act-chip { font-size: 11px; padding: 3px 8px; border-radius: 10px; background: var(--blue-bg); color: var(--blue); }
-.avg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.avg-item { text-align: center; padding: 10px 4px; }
-.avg-item .avg-label { font-size: 11px; color: var(--text-ter); margin-bottom: 4px; }
-.avg-item .avg-val { font-size: 24px; font-weight: 700; }
-.avg-item .avg-bar { height: 3px; background: var(--border); border-radius: 2px; margin-top: 6px; }
-.avg-item .avg-fill { height: 3px; border-radius: 2px; }
-.summary-pre { font-size: 11px; color: var(--text-sec); white-space: pre-wrap; word-break: break-word; font-family: monospace; line-height: 1.7; }
-.trigger-remove { background: none; border: none; color: var(--text-ter); font-size: 20px; cursor: pointer; padding: 0 0 0 8px; line-height: 1; }
-.trigger-header { display: flex; justify-content: space-between; align-items: flex-start; }
-.trigger-what { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
-.trigger-time { font-size: 11px; color: var(--text-ter); margin-right: 8px; }
-.trigger-detail { font-size: 12px; color: var(--text-sec); margin-top: 4px; }
-.empty-state { text-align: center; padding: 60px 20px; color: var(--text-ter); font-size: 14px; }
+.inner-tabs { display: flex; gap: 5px; margin: 10px 0 14px; }
+.inner-tab { flex: 1; padding: 6px 3px; font-size: 11px; font-weight: 500; border-radius: var(--radius-sm); border: 0.5px solid var(--border); background: transparent; color: var(--text-sec); cursor: pointer; text-align: center; }
+.inner-tab.active { background: var(--text); color: white; border-color: var(--text); }
+.sh { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-ter); border-bottom: 0.5px solid var(--border); padding-bottom: 5px; margin: 16px 0 10px; }
+.card { background: white; border: 0.5px solid var(--border); border-radius: var(--radius); padding: 13px; margin-bottom: 8px; }
+.card.morning { border-left: 3px solid var(--violet); }
+.card.breathing-card { border-left: 3px solid var(--blue); }
+.date-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.date-row input[type=date] { flex: 1; font-size: 13px; padding: 7px 10px; border: 0.5px solid var(--border); border-radius: var(--radius-sm); background: white; }
+.date-lbl { font-size: 12px; color: var(--text-ter); white-space: nowrap; }
+.btn { width: 100%; padding: 12px; font-size: 14px; font-weight: 600; border-radius: var(--radius); border: none; cursor: pointer; transition: all 0.2s; margin-top: 8px; }
+.btn-dark { background: var(--text); color: white; }
+.btn-dark.saved { background: var(--teal); }
+.btn-outline { background: var(--bg-sec); color: var(--text); border: 0.5px solid var(--border); }
+.btn-outline.copied { background: var(--teal-bg); color: var(--teal); border-color: var(--teal-border); }
+.score-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; }
+.score-item label { font-size: 12px; color: var(--text-sec); display: block; margin-bottom: 3px; }
+.slider-row { display: flex; align-items: center; gap: 8px; }
+.slider-row input[type=range] { flex: 1; height: 4px; -webkit-appearance: none; appearance: none; background: var(--border); border-radius: 2px; outline: none; }
+.slider-row input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--text); cursor: pointer; }
+.sv { min-width: 22px; text-align: center; font-size: 14px; font-weight: 600; }
+.sv.good { color: var(--teal); } .sv.mid { color: var(--amber); } .sv.low { color: var(--red); }
+input[type=text], input[type=number], input[type=time], textarea {
+  width: 100%; padding: 9px 11px; font-size: 14px; border: 0.5px solid var(--border);
+  border-radius: var(--radius-sm); background: white; color: var(--text); font-family: inherit; outline: none;
+}
+input:focus, textarea:focus { border-color: #999; }
+textarea { min-height: 70px; resize: vertical; line-height: 1.6; }
+.pill { display: inline-block; font-size: 12px; padding: 4px 10px; border-radius: var(--radius-pill); border: 0.5px solid var(--border); background: var(--bg-sec); color: var(--text-sec); cursor: pointer; margin: 3px 3px 3px 0; user-select: none; }
+.pill.on-teal { background: var(--teal-bg); color: var(--teal); border-color: var(--teal-border); }
+.pill.on-purple { background: var(--purple-bg); color: var(--purple); border-color: var(--purple-border); }
+.pill.on-coral { background: var(--coral-bg); color: var(--coral); border-color: var(--coral-border); }
+.pill.on-amber { background: var(--amber-bg); color: var(--amber); border-color: var(--amber-border); }
+.pill.on-violet { background: #EDE9FE; color: var(--violet); border-color: #C4B5FD; }
+.flag-row { display: flex; flex-wrap: wrap; gap: 7px; }
+.flag { font-size: 13px; color: var(--text-sec); cursor: pointer; padding: 6px 12px; border-radius: var(--radius-pill); border: 0.5px solid var(--border); background: var(--bg-sec); user-select: none; }
+.flag.on { background: var(--teal-bg); color: var(--teal); border-color: var(--teal-border); font-weight: 500; }
+/* START OF DAY */
+.sod-label { font-size: 12px; color: var(--text-sec); margin-bottom: 8px; font-weight: 500; }
+.sod-sub { font-size: 10px; color: var(--text-ter); font-weight: 400; margin-left: 4px; }
+.sod-buttons { display: flex; gap: 3px; margin-bottom: 14px; }
+.sod-btn { flex: 1; padding: 10px 0; font-size: 14px; font-weight: 600; border: 0.5px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-sec); color: var(--text-sec); cursor: pointer; transition: all 0.15s; }
+.sod-btn.active { color: white; border-color: transparent; }
+/* MORNING */
+.morning-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; margin-bottom: 12px; }
+.bf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.bf-label { font-size: 11px; color: var(--text-ter); margin-bottom: 4px; }
+.pf-input { font-size: 18px; font-weight: 600; text-align: center; border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 8px; background: var(--bg-sec); width: 100%; }
+/* INHALERS */
+.inhaler-section { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.inhaler-block { background: var(--bg-sec); border-radius: var(--radius-sm); padding: 8px 10px; border: 0.5px solid var(--border); }
+.inhaler-name { font-size: 11px; color: var(--text-ter); margin-bottom: 6px; font-weight: 500; }
+.stepper { display: flex; align-items: center; border: 0.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; width: fit-content; background: white; }
+.stepper-btn { width: 32px; height: 32px; border: none; background: var(--bg-sec); font-size: 18px; cursor: pointer; color: var(--text); }
+.stepper-val { min-width: 36px; text-align: center; font-size: 16px; font-weight: 600; }
+.comp-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 4px; overflow: hidden; }
+.comp-fill { height: 100%; border-radius: 2px; transition: width 0.3s; }
+.comp-label { font-size: 12px; color: var(--text-ter); margin-bottom: 5px; }
+/* HISTORY */
+.hist-item { background: white; border: 0.5px solid var(--border); border-radius: var(--radius); padding: 12px; margin-bottom: 7px; cursor: pointer; }
+.hist-item.has-inhaler { border-left: 3px solid var(--amber); }
+.hist-date { font-size: 13px; font-weight: 600; margin-bottom: 7px; display: flex; justify-content: space-between; align-items: center; }
+.badges { display: flex; gap: 4px; flex-wrap: wrap; }
+.badge { font-size: 10px; padding: 2px 7px; border-radius: 10px; }
+.badge.amber { background: var(--amber-bg); color: var(--amber); }
+.badge.teal { background: var(--teal-bg); color: var(--teal); }
+.badge.blue { background: var(--blue-bg); color: var(--blue); }
+.badge.violet { background: #EDE9FE; color: var(--violet); }
+.scores-mini { display: flex; gap: 10px; flex-wrap: wrap; }
+.sm-item { text-align: center; }
+.sm-item .lbl { font-size: 10px; color: var(--text-ter); }
+.sm-item .val { font-size: 15px; font-weight: 600; }
+.hist-note { font-size: 11px; color: var(--text-sec); margin-top: 7px; padding-top: 7px; border-top: 0.5px solid var(--border); }
+/* TRIGGERS */
+.trig-form { display: flex; flex-direction: column; gap: 10px; }
+.trig-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.trig-delay { font-size: 13px; color: var(--teal); font-weight: 500; }
+.trig-item { background: white; border: 0.5px solid var(--border); border-left: 3px solid var(--red); border-radius: var(--radius); padding: 12px; margin-bottom: 7px; }
+.trig-food { font-size: 14px; font-weight: 600; margin-bottom: 5px; }
+.trig-time { font-size: 11px; color: var(--text-ter); margin-right: 10px; }
+.trig-remove { float: right; background: none; border: none; color: var(--text-ter); font-size: 18px; cursor: pointer; }
+.pattern-item { background: white; border: 0.5px solid var(--border); border-radius: var(--radius); padding: 12px; margin-bottom: 7px; }
+.pattern-food { font-size: 14px; font-weight: 600; }
+.pattern-stats { font-size: 12px; color: var(--text-sec); margin-top: 4px; }
+/* ACTIVITY */
+.act-row { background: white; border: 0.5px solid var(--border); border-radius: var(--radius); padding: 13px; margin-bottom: 8px; }
+.act-row.done { border-left: 3px solid var(--teal); }
+.act-header { display: flex; justify-content: space-between; align-items: center; }
+.act-name { font-size: 14px; font-weight: 500; }
+.toggle { width: 44px; height: 24px; border-radius: 12px; border: none; cursor: pointer; position: relative; transition: background 0.2s; background: var(--border); flex-shrink: 0; }
+.toggle.on { background: var(--teal); }
+.toggle::after { content:''; position: absolute; width: 18px; height: 18px; border-radius: 50%; background: white; top: 3px; left: 3px; transition: left 0.2s; }
+.toggle.on::after { left: 23px; }
+.act-details { margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.act-dl { font-size: 11px; color: var(--text-ter); margin-bottom: 3px; }
+.dur-input { width: 100%; padding: 7px 10px; font-size: 13px; border: 0.5px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-sec); }
+.feel-row { display: flex; align-items: center; gap: 8px; }
+.feel-row input[type=range] { flex: 1; height: 4px; -webkit-appearance: none; appearance: none; background: var(--border); border-radius: 2px; outline: none; }
+.feel-row input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--text); cursor: pointer; }
+.act-hist { background: white; border: 0.5px solid var(--border); border-radius: var(--radius); padding: 11px; margin-bottom: 7px; }
+.act-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+.act-chip { font-size: 11px; padding: 2px 8px; border-radius: 10px; background: var(--blue-bg); color: var(--blue); }
+/* MY HEALTH */
+.mh-card { background: white; border: 0.5px solid var(--border); border-radius: var(--radius); padding: 13px; margin-bottom: 8px; }
+.mh-title { font-size: 13px; font-weight: 600; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 0.5px solid var(--border); }
+.mh-row { font-size: 13px; padding: 3px 0; color: var(--text-sec); line-height: 1.6; }
+.mh-row strong { color: var(--text); }
+.cond-list { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 4px; }
+.cond-pill { font-size: 12px; padding: 4px 10px; border-radius: var(--radius-pill); background: var(--bg-sec); border: 0.5px solid var(--border); color: var(--text-sec); }
+.cond-pill.primary { background: var(--teal-bg); color: var(--teal); border-color: var(--teal-border); font-weight: 500; }
+.cond-pill.confirmed { background: var(--purple-bg); color: var(--purple); border-color: var(--purple-border); }
+/* DNA */
+.dna-intro { font-size: 13px; color: var(--text-sec); margin-bottom: 14px; line-height: 1.5; }
+.dna-cat { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-ter); margin: 14px 0 6px; }
+.dna-card { background: white; border: 0.5px solid var(--border); border-radius: var(--radius); padding: 11px 13px; margin-bottom: 6px; }
+.dna-card.major { border-left: 3px solid var(--red); }
+.dna-card.mod { border-left: 3px solid var(--amber); }
+.dna-card.mild { border-left: 3px solid var(--blue); }
+.dna-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+.dna-gene { font-size: 13px; font-weight: 600; }
+.dna-badge { font-size: 10px; padding: 2px 7px; border-radius: 10px; white-space: nowrap; }
+.dna-badge.red { background: var(--coral-bg); color: var(--coral); }
+.dna-badge.amber { background: var(--amber-bg); color: var(--amber); }
+.dna-badge.blue { background: var(--blue-bg); color: var(--blue); }
+.dna-meaning { font-size: 12px; color: var(--text-sec); margin-bottom: 5px; line-height: 1.4; }
+.dna-fix { font-size: 12px; color: var(--teal); font-weight: 500; }
+.dna-fix.pending { color: var(--amber); }
+.dna-mechanism { background: linear-gradient(135deg, #0f172a, #1e1b4b); border-radius: var(--radius); padding: 14px; margin: 10px 0; color: white; }
+.dm-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.dm-sub { font-size: 12px; color: #A5B4FC; margin-bottom: 10px; }
+.dm-step { font-size: 12px; color: #cbd5e1; padding: 2px 0; line-height: 1.5; }
+.dm-step::before { content: "→ "; color: #A5B4FC; }
+.tv-item { background: white; border: 0.5px solid var(--border); border-left: 3px solid var(--amber); border-radius: var(--radius); padding: 10px 13px; margin-bottom: 6px; }
+.tv-food { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+.tv-gene { font-size: 11px; color: var(--coral); font-weight: 500; margin-bottom: 2px; }
+.tv-reason { font-size: 12px; color: var(--text-sec); }
+/* HRT */
+.hrt-legend { background: white; border: 0.5px solid var(--border); border-radius: var(--radius); padding: 12px; margin-bottom: 12px; }
+/* BLOOD MARKERS */
+.bm-card { background: white; border: 0.5px solid var(--border); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 8px; }
+.bm-card.good { border-left: 3px solid var(--teal); }
+.bm-card.warn { border-left: 3px solid var(--amber); }
+.bm-card.bad { border-left: 3px solid var(--red); }
+.bm-card.pending { border-left: 3px solid var(--border); }
+.bm-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+.bm-name { font-size: 13px; font-weight: 600; }
+.bm-latest { text-align: right; }
+.bm-val { font-size: 18px; font-weight: 700; }
+.bm-unit { font-size: 10px; color: var(--text-ter); display: block; margin-top: -2px; }
+.bm-target { font-size: 11px; color: var(--text-ter); margin-bottom: 6px; }
+.bm-target strong { color: var(--teal); }
+.bm-history { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-end; }
+.bm-dot { text-align: center; }
+.bm-dot-val { font-size: 12px; font-weight: 600; padding: 3px 7px; border-radius: var(--radius-sm); }
+.bm-dot-date { font-size: 9px; color: var(--text-ter); margin-top: 2px; }
+.bm-arrow { font-size: 16px; font-weight: 700; align-self: center; padding-bottom: 12px; }
+.bm-no-data { font-size: 12px; color: var(--text-ter); font-style: italic; }
+.hrt-leg-title { font-size: 12px; font-weight: 600; margin-bottom: 8px; }
+.hrt-leg-row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; border-bottom: 0.5px solid var(--bg-sec); color: var(--text-sec); }
+.hrt-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.hrt-nav span { font-size: 12px; font-weight: 500; }
+.hrt-nav-btn { background: var(--bg-sec); border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 5px 10px; font-size: 12px; cursor: pointer; }
+.hrt-week { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; margin-bottom: 14px; }
+.hrt-day { text-align: center; padding: 5px 1px; border-radius: var(--radius-sm); background: var(--bg-sec); border: 0.5px solid var(--border); }
+.hrt-day.hrt-today { border-color: var(--teal); background: var(--teal-bg); }
+.hrt-dname { font-size: 8px; color: var(--text-ter); text-transform: uppercase; margin-bottom: 2px; }
+.hrt-ddate { font-size: 12px; font-weight: 600; margin-bottom: 3px; }
+.hrt-cb { font-size: 8px; padding: 2px 1px; border-radius: 3px; margin-top: 2px; cursor: pointer; background: var(--bg-sec); border: 0.5px solid var(--border); color: var(--text-ter); display: block; text-align: center; }
+.hrt-cb.done { background: var(--teal-bg); color: var(--teal); border-color: var(--teal-border); font-weight: 600; }
+.hrt-cb.spot { background: #FEE2E2; color: #DC2626; border-color: #FCA5A5; font-weight: 600; }
+.spotting-btn { width: 100%; padding: 12px; font-size: 14px; font-weight: 600; border-radius: var(--radius); border: 1px solid #FCA5A5; background: #FEF2F2; color: #DC2626; cursor: pointer; margin-bottom: 12px; }
+.spotting-btn.active { background: #FEE2E2; }
+.spot-log { background: white; border: 0.5px solid var(--border); border-radius: var(--radius); padding: 12px; margin-bottom: 8px; }
+/* CHART */
+.chart-range { display: flex; gap: 6px; margin-bottom: 10px; }
+.range-btn { padding: 5px 14px; font-size: 12px; font-weight: 500; border-radius: var(--radius-pill); border: 0.5px solid var(--border); background: var(--bg-sec); color: var(--text-sec); cursor: pointer; }
+.range-btn.active { background: var(--text); color: white; border-color: var(--text); }
+.chart-wrap { background: var(--bg-sec); border-radius: var(--radius); padding: 0; overflow: hidden; margin-bottom: 10px; }
+.chart-legend { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 12px; background: white; border-radius: var(--radius); margin-bottom: 8px; }
+.cl-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text-sec); }
+.cl-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.cl-line { width: 14px; height: 2px; flex-shrink: 0; }
+.chart-markers { display: flex; gap: 12px; padding: 4px 12px 8px; background: white; border-radius: 0 0 var(--radius) var(--radius); margin-top: -8px; }
+.cm-item { display: flex; align-items: center; gap: 4px; font-size: 10px; color: var(--text-ter); }
+/* WEEKLY TABLE */
+.wk-table { background: white; border-radius: var(--radius); overflow: hidden; margin-bottom: 10px; border: 0.5px solid var(--border); }
+.wk-header { display: grid; gap: 0; background: var(--bg-sec); }
+.wk-row { display: grid; border-bottom: 0.5px solid var(--border); }
+.wk-cell { padding: 8px 6px; font-size: 11px; text-align: center; border-right: 0.5px solid var(--border); }
+.wk-cell:last-child { border-right: none; }
+.wk-label { font-size: 11px; font-weight: 500; color: var(--text-sec); text-align: left; padding: 8px 10px; border-right: 0.5px solid var(--border); background: var(--bg-sec); }
+.wk-val { font-weight: 600; font-size: 13px; }
+/* GP */
+.gp-section { background: white; border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; }
+.gp-section h3 { font-size: 13px; font-weight: 600; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 0.5px solid var(--border); }
+.gp-row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; border-bottom: 0.5px solid var(--bg-sec); }
+.gp-row .lbl { color: var(--text-sec); }
+.gp-row .val { font-weight: 500; }
+.gp-val-good { color: var(--teal) !important; }
+.gp-val-warn { color: var(--amber) !important; }
+.gp-val-bad { color: var(--red) !important; }
+.report-pre { font-size: 11px; color: var(--text-sec); white-space: pre-wrap; word-break: break-word; font-family: monospace; line-height: 1.7; }
+.avg-g { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.avg-i { text-align: center; padding: 8px 2px; }
+.avg-i .al { font-size: 10px; color: var(--text-ter); margin-bottom: 3px; }
+.avg-i .av { font-size: 20px; font-weight: 700; }
+.avg-i .ab { height: 3px; background: var(--border); border-radius: 2px; margin-top: 5px; }
+.avg-i .af { height: 3px; border-radius: 2px; }
+.empty { text-align: center; padding: 50px 20px; color: var(--text-ter); font-size: 13px; }
 </style>
 </head>
 <body>
 <div class="app">
   <div class="nav">
-    <div class="nav-title">Health Diary</div>
-    <div class="nav-sub" id="entry-count">0 entries logged</div>
+    <div class="nav-title">Shiera's Health Tracker</div>
+    <div class="nav-sub">Tracking to 2 July 2026</div>
     <div class="nav-tabs">
-      <button class="nav-tab active" onclick="showPage('health',this)">Health</button>
+      <button class="nav-tab active" onclick="showPage('health',this)">Tracking</button>
+      <button class="nav-tab" onclick="showPage('triggers',this)">Triggers</button>
       <button class="nav-tab" onclick="showPage('activity',this)">Activity</button>
-      <button class="nav-tab" onclick="showPage('summary',this)">Weekly</button>
+      <button class="nav-tab" onclick="showPage('myhealth',this)">My Health</button>
+      <button class="nav-tab" onclick="showPage('report',this)">GP Report</button>
     </div>
   </div>
+
+  <!-- HEALTH -->
   <div class="page active" id="page-health">
-    <div class="tabs" style="margin-top:12px">
-      <button class="tab active" onclick="showHealthTab('log',this)">Today</button>
-      <button class="tab" onclick="showHealthTab('history',this)">History</button>
+    <div class="inner-tabs">
+      <button class="inner-tab active" onclick="showSub('health','log',this)">Today</button>
+      <button class="inner-tab" onclick="showSub('health','hist',this)">History</button>
     </div>
     <div id="health-log">
       <div class="date-row">
-        <input type="date" id="entry-date" onchange="loadEntryForDate(this.value)">
-        <span class="date-label" id="date-label">Today</span>
+        <input type="date" id="h-date" onchange="loadHealth(this.value)">
+        <span class="date-lbl" id="h-date-lbl">Today</span>
       </div>
-      <div class="section-head">System scores — 1 poor · 10 excellent</div>
-      <div class="card"><div class="score-row" id="score-rows"></div></div>
-      <div class="section-head">Daily protocol</div>
-      <div class="card"><div class="flags" id="flags-container"></div></div>
-      <div class="section-head">Trigger events</div>
-      <div id="triggers-list"></div>
-      <div id="trigger-form-wrap"></div>
-      <button class="btn btn-add" onclick="openTriggerForm()" id="add-trigger-btn">+ Log a trigger event</button>
-      <div class="section-head">Supplements taken</div>
+
+      <!-- START OF DAY -->
+      <div class="card morning">
+        <div class="sod-label">Start of day — overall <span class="sod-sub">1 = very unwell · 10 = excellent</span></div>
+        <div class="sod-buttons" id="sod-buttons"></div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;margin-bottom:12px">
+          <div class="score-item">
+            <label>Sleep hours</label>
+            <div style="display:flex;align-items:center;gap:8px">
+              <input type="number" min="0" max="12" step="0.5" id="sleep-hrs" value="7"
+                style="width:65px;font-size:16px;text-align:center"
+                onchange="entry.morning.sleepHours=Number(this.value);updateSleepLbl()">
+              <span id="sleep-hrs-lbl" style="font-size:13px;font-weight:600;color:var(--teal)">7h</span>
+            </div>
+          </div>
+          <div class="score-item">
+            <label>Sleep quality</label>
+            <div class="slider-row">
+              <input type="range" min="1" max="10" step="1" id="sleep-qual" value="7"
+                oninput="entry.morning.sleepQuality=Number(this.value);setSV('sq-v',this.value)">
+              <span class="sv good" id="sq-v">7</span>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+          <div>
+            <div class="bf-label" style="margin-bottom:4px">Woke to bathroom</div>
+            <div id="bathroom-pills"></div>
+          </div>
+          <div>
+            <div class="bf-label" style="margin-bottom:4px">Mouth breathing</div>
+            <div id="mouth-breath-pills"></div>
+          </div>
+        </div>
+        <div class="score-item">
+          <label>Wake-up energy <span style="font-size:10px;color:var(--text-ter)">(1 = very tired/drowsy)</span></label>
+          <div class="slider-row">
+            <input type="range" min="1" max="10" step="1" id="wake-energy" value="5"
+              oninput="entry.morning.wakeEnergy=Number(this.value);setSV('we-v',this.value)">
+            <span class="sv low" id="we-v">5</span>
+          </div>
+        </div>
+        <div style="margin-top:10px">
+          <div class="bf-label" style="margin-bottom:6px">Wake-up breathing</div>
+          <div id="wake-breath-pills"></div>
+        </div>
+        <div style="margin-top:8px">
+          <div class="bf-label" style="margin-bottom:6px">Dry mouth on waking</div>
+          <div id="dry-mouth-pills"></div>
+        </div>
+      </div>
+
+      <div class="sh">Breathing (daytime)</div>
+      <div class="card breathing-card">
+        <div class="bf-grid">
+          <div><div class="bf-label">Peak flow AM (L/min)</div>
+            <input class="pf-input" type="number" id="pf-am" placeholder="—" min="50" max="900"
+              onchange="entry.breathing.pfAM=Number(this.value)||null"></div>
+          <div><div class="bf-label">Peak flow PM (L/min)</div>
+            <input class="pf-input" type="number" id="pf-pm" placeholder="—" min="50" max="900"
+              onchange="entry.breathing.pfPM=Number(this.value)||null"></div>
+        </div>
+        <div class="inhaler-section">
+          <div class="inhaler-block">
+            <div class="inhaler-name">💙 Ventolin (reliever)</div>
+            <div class="stepper">
+              <button class="stepper-btn" onclick="changeInhaler('reliever',-1)">−</button>
+              <span class="stepper-val" id="reliever-count">0</span>
+              <button class="stepper-btn" onclick="changeInhaler('reliever',1)">+</button>
+            </div>
+          </div>
+          <div class="inhaler-block">
+            <div class="inhaler-name">🟤 Pulmicort (steroid)</div>
+            <div class="stepper">
+              <button class="stepper-btn" onclick="changeInhaler('steroid',-1)">−</button>
+              <span class="stepper-val" id="steroid-count">0</span>
+              <button class="stepper-btn" onclick="changeInhaler('steroid',1)">+</button>
+            </div>
+          </div>
+        </div>
+        <div class="bf-label" style="margin-bottom:6px">Daytime breathing symptoms</div>
+        <div id="breath-syms"></div>
+      </div>
+
+      <div class="sh">Daytime scores — 1 poor · 10 excellent</div>
+      <div class="card"><div class="score-grid" id="score-rows"></div></div>
+
+      <div class="sh">Daily Protocol — Supplements</div>
       <div class="card">
-        <div class="supp-compliance" id="supp-compliance">0/20 taken · 0%</div>
-        <div class="compliance-bar"><div class="compliance-fill" id="supp-bar" style="width:0%;background:var(--red)"></div></div>
-        <div style="margin-top:10px" id="supps-container"></div>
+        <div class="comp-label" id="supp-label">0/19 · 0%</div>
+        <div class="comp-bar"><div class="comp-fill" id="supp-bar" style="width:0%;background:var(--red)"></div></div>
+        <div style="margin-top:9px" id="supps"></div>
       </div>
-      <div class="section-head">Food & protocol</div>
-      <div class="card" id="foods-container"></div>
-      <div class="section-head">Notes</div>
-      <div class="card">
-        <textarea id="notes-input" placeholder="Anything else — how you feel, new observations..."></textarea>
-      </div>
-      <button class="btn btn-save" id="save-btn" onclick="saveEntry()">Save today's entry</button>
+
+      <div class="sh">Daily Protocol — Food &amp; Drinks</div>
+      <div class="card" id="foods"></div>
+
+      <div class="sh">Notes</div>
+      <div class="card"><textarea id="notes" placeholder="How you feel overall, anything different..."></textarea></div>
+      <button class="btn btn-dark" id="save-h" onclick="saveHealth()">Save today's entry</button>
     </div>
-    <div id="health-history" style="display:none">
-      <div id="history-list"></div>
+    <div id="health-hist" style="display:none"><div id="hist-list"></div></div>
+  </div>
+
+  <!-- TRIGGERS -->
+  <div class="page" id="page-triggers">
+    <div class="inner-tabs">
+      <button class="inner-tab active" onclick="showSub('triggers','log-now',this)">Log now</button>
+      <button class="inner-tab" onclick="showSub('triggers','today',this)">Today</button>
+      <button class="inner-tab" onclick="showSub('triggers','patterns',this)">Patterns</button>
+    </div>
+    <div id="triggers-log-now">
+      <div class="sh">Food or drink trigger</div>
+      <div class="card">
+        <div class="trig-form">
+          <div><div class="bf-label" style="margin-bottom:4px">What did you eat or drink?</div>
+            <input type="text" id="t-food" placeholder="e.g. wine, bread, chicken soup..."></div>
+          <div class="trig-meta">
+            <div><div class="bf-label" style="margin-bottom:4px">Time eaten</div><input type="time" id="t-eaten"></div>
+            <div><div class="bf-label" style="margin-bottom:4px">Symptoms started</div><input type="time" id="t-syms" oninput="calcDelay()"></div>
+          </div>
+          <div class="trig-delay" id="t-delay"></div>
+          <div><div class="bf-label" style="margin-bottom:6px">Symptoms appeared</div><div id="trig-sym-pills"></div></div>
+          <div><div class="bf-label" style="margin-bottom:4px">Severity <span id="t-sev-val" style="color:var(--red);font-weight:600">5</span>/10</div>
+            <div class="slider-row"><input type="range" min="1" max="10" step="1" value="5" id="t-sev"
+              oninput="document.getElementById('t-sev-val').textContent=this.value;document.getElementById('t-sev-val').style.color=scoreColor(Number(this.value))"></div></div>
+          <div><div class="bf-label" style="margin-bottom:4px">Notes</div>
+            <input type="text" id="t-notes" placeholder="Context, combinations, anything relevant..."></div>
+          <button class="btn btn-dark" onclick="logTrigger()">Log trigger</button>
+        </div>
+      </div>
+    </div>
+    <div id="triggers-today" style="display:none">
+      <div class="sh">Today's trigger log</div>
+      <div id="today-triggers"></div>
+      <div id="today-trig-empty" class="empty" style="display:none">No triggers logged today.</div>
+    </div>
+    <div id="triggers-patterns" style="display:none">
+      <div class="sh">2-week pattern analysis</div>
+      <div id="pattern-list"></div>
+      <div id="pattern-empty" class="empty" style="display:none">Log some triggers to see patterns.</div>
     </div>
   </div>
+
+  <!-- ACTIVITY -->
   <div class="page" id="page-activity">
-    <div class="tabs" style="margin-top:12px">
-      <button class="tab active" onclick="showActivityTab('log',this)">Today</button>
-      <button class="tab" onclick="showActivityTab('history',this)">History</button>
+    <div class="inner-tabs">
+      <button class="inner-tab active" onclick="showSub('activity','log',this)">Today</button>
+      <button class="inner-tab" onclick="showSub('activity','hist',this)">History</button>
     </div>
     <div id="activity-log">
       <div class="date-row">
-        <input type="date" id="act-date" onchange="loadActivityForDate(this.value)">
-        <span class="date-label" id="act-date-label">Today</span>
+        <input type="date" id="a-date" onchange="loadActivity(this.value)">
+        <span class="date-lbl" id="a-date-lbl">Today</span>
       </div>
-      <div class="activity-grid" id="activity-grid"></div>
-      <button class="btn btn-save" id="act-save-btn" onclick="saveActivity()">Save activity log</button>
+      <div id="act-grid"></div>
+      <button class="btn btn-dark" id="save-a" onclick="saveActivity()">Save activity log</button>
     </div>
-    <div id="activity-history" style="display:none">
-      <div id="act-history-list"></div>
+    <div id="activity-hist" style="display:none"><div id="act-hist-list"></div></div>
+  </div>
+
+  <!-- MY HEALTH -->
+  <div class="page" id="page-myhealth">
+    <div class="inner-tabs">
+      <button class="inner-tab active" onclick="showSub('myhealth','overview',this)">Overview</button>
+      <button class="inner-tab" onclick="showSub('myhealth','dna',this)">My DNA</button>
+      <button class="inner-tab" onclick="showSub('myhealth','hrt',this)">HRT</button>
+      <button class="inner-tab" onclick="showSub('myhealth','bloods',this)">Bloods</button>
+    </div>
+
+    <div id="myhealth-overview">
+      <div class="mh-card">
+        <div class="mh-title">Confirmed Conditions</div>
+        <div class="cond-list">
+          <span class="cond-pill primary">MCAS — suspected (95%+ probability)</span>
+          <span class="cond-pill confirmed">MTHFR C677T TT</span>
+          <span class="cond-pill confirmed">HLA-DQ8</span>
+          <span class="cond-pill">Asthma</span>
+          <span class="cond-pill">Gastritis</span>
+          <span class="cond-pill">Cystitis</span>
+          <span class="cond-pill">Eczema</span>
+          <span class="cond-pill">Psoriasis</span>
+          <span class="cond-pill">Sensorineural deafness (R ear)</span>
+          <span class="cond-pill">Tinnitus</span>
+          <span class="cond-pill">Three-tendon tendinopathy (MRI confirmed)</span>
+        </div>
+      </div>
+      <div class="mh-card" style="border-left:3px solid var(--amber)">
+        <div class="mh-title">⚠️ Medication Awareness — For Any Healthcare Provider</div>
+        <div class="mh-row" style="margin-bottom:10px">Mast cell activation is unpredictable — reactions vary by individual and can change over time. The following are worth flagging before prescribing.</div>
+        <div class="mh-row" style="margin-bottom:6px"><strong>NSAIDs (ibuprofen, aspirin):</strong> Well-documented mast cell triggers. Paracetamol preferred.</div>
+        <div class="mh-row" style="margin-bottom:6px"><strong>Morphine / codeine:</strong> Known mast cell degranulators. Worth discussing alternatives if opioid needed.</div>
+        <div class="mh-row" style="margin-bottom:6px"><strong>Antibiotics:</strong> Some courses in the past have triggered reactions — not certain which class. Please verify with patient before prescribing.</div>
+        <div style="font-size:12px;background:var(--amber-bg);color:var(--amber);padding:8px 10px;border-radius:var(--radius-sm);border:0.5px solid var(--amber-border);margin-top:10px">
+          🏥 <strong>Surgery / anaesthesia:</strong> Please inform the anaesthetist of mast cell activation before any procedure. Some anaesthetic agents can trigger reactions.
+        </div>
+      </div>
+      <div class="mh-card">
+        <div class="mh-title">Multiple Symptoms</div>
+        <div class="mh-row">Asthma · Psoriasis · Eczema · Cystitis · Gastritis · Dry eyes · Tinnitus · Joint pain · Fatigue · Brain fog · Bladder irritation · Skin flares · Frozen shoulder</div>
+      </div>
+      <div class="mh-card">
+        <div class="mh-title">Medical History</div>
+        <div class="mh-row">80+ antibiotic courses from age 18 — included fluoroquinolones (ciprofloxacin class) which carry EU/FDA black box warnings for tendon damage. Direct contribution to shoulder tendinopathy.</div>
+        <div class="mh-row" style="margin-top:4px"><strong>MRI (Affidea Santry, March 2026):</strong> three-tendon tendinopathy — supraspinatus, infraspinatus, subscapularis. Thickening on all three. No tears. Three tendons simultaneously affected is unusual and consistent with a systemic contributing factor.</div>
+        <div class="mh-row" style="margin-top:4px">Menopause October 2018 (age 52) removed progesterone — the natural mast cell stabiliser — unmasking full MCAS picture simultaneously across all systems.</div>
+        <div class="mh-row" style="margin-top:4px">Identified via AI analysis and DNA methylation report (Stride, 2026). Protocol started February 2026. Multi-system response within 72 hours confirmed hypothesis.</div>
+        <div class="mh-row" style="margin-top:6px">Methylfolate 800mcg · Quercetin 1000mg · NAC 600mg · D3 4000 IU + K2</div>
+        <div class="mh-row">Zinc carnosine · L-Glutamine 5g · Creatine 5g · Magnesium glycinate</div>
+        <div class="mh-row">HRT: Evorel 50 + Progesterone 200mg + V+E cream &amp; tablet</div>
+        <div class="mh-row">Asthma: Ventolin (reliever PRN) · Pulmicort (steroid preventer)</div>
+      </div>
+      <div class="mh-card">
+        <div class="mh-title">Confirmed Triggers</div>
+        <div class="mh-row">🚫 Yeast extract (all aliases) · Rapeseed/seed oils · Alcohol/sulphites</div>
+        <div class="mh-row">🚫 Pre-prepared fish · Gluten (DQ8) · Spinach · Lentils/chickpeas</div>
+        <div class="mh-row">🚫 Spice (excess) · Tomatoes (excess) · Chocolate (excess) · Vinegar</div>
+        <div class="mh-row">🚫 Fermented foods — yoghurt, kefir etc. · Salted snacks / crisps</div>
+        <div class="mh-row">⚠️ Coffee — 1-2 cups OK; instant coffee is worst trigger; excess problematic</div>
+      </div>
+    </div>
+
+    <div id="myhealth-dna" style="display:none">
+      <p class="dna-intro">My 12 confirmed genetic variants and the supplements that address each one.</p>
+      <div class="dna-mechanism">
+        <div class="dm-title">🧬 DNA Methylation — The Mechanism</div>
+        <div class="dm-sub">MTHFR TT + MAOB AG = Making histamine I can't clear</div>
+        <div class="dm-step">Excess histamine produced across multiple systems (suspected MCAS)</div>
+        <div class="dm-step">MTHFR TT — can't methylate it away (HNMT pathway broken)</div>
+        <div class="dm-step">MAOB AG — can't break it down oxidatively either</div>
+        <div class="dm-step">Result: histamine accumulates → multiple systems react</div>
+        <div class="dm-step">Fix: Methylfolate bypasses MTHFR · Quercetin stops degranulation at source</div>
+      </div>
+      <div class="dna-cat">Folate</div>
+      <div class="dna-card major">
+        <div class="dna-head"><span class="dna-gene">MTHFR C677T</span><span class="dna-badge red">TT Homozygous — Major</span></div>
+        <div class="dna-meaning">Can't convert folate to active 5-MTHF (60-70% enzyme reduction). The root cause.</div>
+        <div class="dna-fix">💊 Methylfolate 800mcg — bypasses this entirely ✓</div>
+      </div>
+      <div class="dna-card mod">
+        <div class="dna-head"><span class="dna-gene">MTHFD1</span><span class="dna-badge amber">TT — Compounds it</span></div>
+        <div class="dna-meaning">Reduces folate processing upstream, limiting supply to methionine cycle.</div>
+        <div class="dna-fix">💊 Methylfolate + B2 (Canxida has 20mg) ✓</div>
+      </div>
+      <div class="dna-cat">B12 — Triple impairment</div>
+      <div class="dna-card mod">
+        <div class="dna-head"><span class="dna-gene">MTRR</span><span class="dna-badge amber">AG — Recycling reduced</span></div>
+        <div class="dna-meaning">B12 recycling impaired, compounds the methionine cycle issue.</div>
+        <div class="dna-fix">💊 Sublingual methylcobalamin bypasses recycling need ✓</div>
+      </div>
+      <div class="dna-card mod">
+        <div class="dna-head"><span class="dna-gene">TCN2</span><span class="dna-badge amber">GG — Transport impaired</span></div>
+        <div class="dna-meaning">B12 carrier protein reduced — blood B12 may not reach cells.</div>
+        <div class="dna-fix">💊 Sublingual bypasses cellular transport entirely ✓</div>
+      </div>
+      <div class="dna-card mild">
+        <div class="dna-head"><span class="dna-gene">FUT2</span><span class="dna-badge blue">AG — Absorption affected</span></div>
+        <div class="dna-meaning">Elevated B12 deficiency risk. Increased H. pylori susceptibility (relevant to gastritis).</div>
+        <div class="dna-fix">💊 Sublingual bypasses gut absorption ✓</div>
+      </div>
+      <div class="dna-cat">Histamine clearance</div>
+      <div class="dna-card major">
+        <div class="dna-head"><span class="dna-gene">MAOB</span><span class="dna-badge red">AG — Can't clear histamine 🔥</span></div>
+        <div class="dna-meaning">Slower histamine breakdown. Second half of the methylation trap.</div>
+        <div class="dna-fix">💊 Quercetin 1000mg/day + NAC 600mg ✓</div>
+      </div>
+      <div class="dna-card mod">
+        <div class="dna-head"><span class="dna-gene">MAOA</span><span class="dna-badge amber">GT — Slow neurotransmitter breakdown</span></div>
+        <div class="dna-meaning">Slower serotonin/noradrenaline breakdown. Interacts with COMT.</div>
+        <div class="dna-fix">💊 Quercetin + Progesterone (natural mast cell stabiliser) ✓</div>
+      </div>
+      <div class="dna-cat">Other methylation</div>
+      <div class="dna-card mod">
+        <div class="dna-head"><span class="dna-gene">BHMT</span><span class="dna-badge amber">AG — Backup pathway reduced</span></div>
+        <div class="dna-meaning">Betaine backup for homocysteine recycling impaired — the pathway compensating for MTHFR.</div>
+        <div class="dna-fix pending">💊 Betaine/TMG 500-1000mg ⚠️ Add this</div>
+      </div>
+      <div class="dna-card mild">
+        <div class="dna-head"><span class="dna-gene">COMT</span><span class="dna-badge blue">CT — Dopamine clearance reduced</span></div>
+        <div class="dna-meaning">Dopamine breaks down more slowly. Partially protective. Monitor with HRT.</div>
+        <div class="dna-fix">💊 Magnesium glycinate (COMT cofactor) ✓</div>
+      </div>
+      <div class="dna-card mod">
+        <div class="dna-head"><span class="dna-gene">PEMT</span><span class="dna-badge amber">CT — Choline synthesis reduced</span></div>
+        <div class="dna-meaning">Can't make adequate choline. Worse postmenopause. Affects liver and brain.</div>
+        <div class="dna-fix">💊 Eggs daily (choline — a clinical food) ✓</div>
+      </div>
+      <div class="dna-cat">Detox & vitamins</div>
+      <div class="dna-card mod">
+        <div class="dna-head"><span class="dna-gene">GSS</span><span class="dna-badge amber">CT — Glutathione reduced</span></div>
+        <div class="dna-meaning">Glutathione production at reduced capacity. Higher oxidative stress vulnerability.</div>
+        <div class="dna-fix">💊 NAC 600mg + Vit C 1000mg + Curcumin ✓</div>
+      </div>
+      <div class="dna-card mod">
+        <div class="dna-head"><span class="dna-gene">VDR</span><span class="dna-badge amber">CC — Vitamin D metabolism impaired</span></div>
+        <div class="dna-meaning">Impaired D transport and storage. Structural deficiency despite diet.</div>
+        <div class="dna-fix">💊 D3 4000 IU — high dose appropriate for this genotype ✓</div>
+      </div>
+      <div class="sh">Why triggers hit hard</div>
+      <div class="tv-item"><div class="tv-food">🚫 Yeast extract / high histamine foods</div><div class="tv-gene">MAOB AG + MTHFR TT</div><div class="tv-reason">Direct histamine bomb — MAOB can't break it down, MTHFR can't methylate it away.</div></div>
+      <div class="tv-item"><div class="tv-food">🚫 Alcohol & sulphites</div><div class="tv-gene">GSS CT + MAOB AG</div><div class="tv-reason">Blocks DAO + requires glutathione detox that GSS can't fully run.</div></div>
+      <div class="tv-item"><div class="tv-food">☕ Coffee — excess or instant</div><div class="tv-gene">MAOB AG + MTHFR TT</div><div class="tv-reason">1-2 cups of quality coffee OK. Instant worst trigger. Excess causes mast cell degranulation regardless of caffeine level.</div></div>
+      <div class="tv-item"><div class="tv-food">🚫 Gluten</div><div class="tv-gene">HLA-DQ8 (autoimmune)</div><div class="tv-reason">Not MCAS — autoimmune activation. Permanent genetic protection required.</div></div>
+    </div>
+
+    <div id="myhealth-hrt" style="display:none">
+      <div class="hrt-legend">
+        <div class="hrt-leg-title">HRT — tap on any day you apply</div>
+        <div class="hrt-leg-row"><strong>Progesterone 200mg</strong><span>Daily at bedtime (in supplements)</span></div>
+        <div class="hrt-leg-row"><strong>Evorel 50 patch</strong><span>Every ~3.5 days — tap P when changed</span></div>
+        <div class="hrt-leg-row"><strong>V+E (cream &amp; tablet)</strong><span>Every ~3.5 days — tap V+E when applied</span></div>
+        <div class="hrt-leg-row"><strong>Spotting</strong><span style="color:#DC2626">Tap 💧 only if spotting occurs</span></div>
+      </div>
+      <div class="hrt-nav">
+        <button class="hrt-nav-btn" onclick="changeHRTWeek(-1)">← Prev</button>
+        <span id="hrt-week-label"></span>
+        <button class="hrt-nav-btn" onclick="changeHRTWeek(1)">Next →</button>
+      </div>
+      <div class="hrt-week" id="hrt-week-view"></div>
+      <div class="sh">Spotting log</div>
+      <div id="spotting-log"></div>
+      <div class="sh">Recent HRT</div>
+      <div id="hrt-history-list"></div>
+    </div>
+
+    <div id="myhealth-bloods" style="display:none">
+      <div class="sh">Blood Test History</div>
+      <p style="font-size:12px;color:var(--text-sec);margin-bottom:14px">Last 3 years · Tap any marker to add a new result. May 2026 targets shown in green.</p>
+      <div id="blood-markers-list"></div>
+      <div class="sh">Add a result</div>
+      <div class="card">
+        <div class="bf-label" style="margin-bottom:4px">Marker</div>
+        <select id="blood-marker-select" style="width:100%;padding:9px 11px;font-size:14px;border:0.5px solid var(--border);border-radius:var(--radius-sm);background:white;color:var(--text);margin-bottom:10px;outline:none"></select>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+          <div><div class="bf-label" style="margin-bottom:4px">Date</div>
+            <input type="month" id="blood-date" style="width:100%;padding:9px 11px;font-size:13px;border:0.5px solid var(--border);border-radius:var(--radius-sm);background:white;outline:none"></div>
+          <div><div class="bf-label" style="margin-bottom:4px">Value</div>
+            <input type="number" id="blood-value" step="0.01" placeholder="e.g. 12.4"></div>
+        </div>
+        <div><div class="bf-label" style="margin-bottom:4px">Note (optional)</div>
+          <input type="text" id="blood-note" placeholder="e.g. fasting, post-supplement..."></div>
+        <button class="btn btn-dark" onclick="addBloodResult()" style="margin-top:10px">Add result</button>
+      </div>
+      <div class="sh">Upcoming — request at GP appointment</div>
+      <div class="card">
+        <div style="font-size:12px;color:var(--text-sec);line-height:2">
+          Homocysteine · Vitamin D (25-OH) · B12 (serum) · RBC Folate · Ferritin · MTHFR formal test<br>
+          Repeat: Serum Folate · CRP · LDL · Phosphorus
+        </div>
+      </div>
     </div>
   </div>
-  <div class="page" id="page-summary">
-    <div id="weekly-averages"></div>
-    <div class="section-head">Weekly summary for Claude</div>
-    <p style="font-size:12px;color:var(--text-sec);margin-bottom:10px">Copy and paste to Claude for pattern analysis.</p>
-    <div class="card"><div class="summary-pre" id="summary-text"></div></div>
-    <button class="btn btn-copy" id="copy-btn" onclick="copySummary()">Copy to clipboard ↗</button>
+  <div class="page" id="page-report">
+    <div class="inner-tabs">
+      <button class="inner-tab active" onclick="showSub('report','summary',this)">Summary</button>
+      <button class="inner-tab" onclick="showSub('report','trends',this)">Trends</button>
+      <button class="inner-tab" onclick="showSub('report','weekly',this)">Weekly</button>
+      <button class="inner-tab" onclick="showSub('report','export',this)">Export</button>
+    </div>
+    <div id="report-summary"><div id="gp-summary-content"></div></div>
+    <div id="report-trends" style="display:none">
+      <div class="chart-range">
+        <button class="range-btn active" onclick="setRange(7,this)">7 days</button>
+        <button class="range-btn" onclick="setRange(14,this)">14 days</button>
+        <button class="range-btn" onclick="setRange(0,this)">All</button>
+      </div>
+      <div class="chart-wrap"><canvas id="trends-canvas" style="width:100%;display:block"></canvas></div>
+      <div class="chart-legend" id="chart-legend"></div>
+    </div>
+    <div id="report-weekly" style="display:none"><div id="gp-weekly-content"></div></div>
+    <div id="report-export" style="display:none">
+      <div class="sh">GP clinical summary</div>
+      <p style="font-size:12px;color:var(--text-sec);margin-bottom:10px">Copy and share with your GP.</p>
+      <div class="card"><div class="report-pre" id="report-text"></div></div>
+      <button class="btn btn-outline" id="copy-btn" onclick="copyReport()">Copy to clipboard ↗</button>
+    </div>
   </div>
 </div>
+
 <script>
-const SYSTEMS=[{key:"sleep",label:"Sleep",type:"number"},{key:"breathing",label:"Breathing",type:"score"},{key:"gut",label:"Gut",type:"score"},{key:"energy",label:"Energy",type:"score"},{key:"mood",label:"Mood / Clarity",type:"score"},{key:"shoulder",label:"Shoulder / Tendon",type:"score"},{key:"skin",label:"Skin",type:"score"},{key:"bladder",label:"Bladder",type:"score"}];
-const SUPPLEMENTS=["Sublingual B12","Methylfolate 800mcg","D3 4000 IU + K2","Quercetin (morning)","Vit C (morning)","Creatine 5g","L-Glutamine 5g","DGL","Zinc carnosine","Canxida Restore","Quercetin (lunch)","NAC 600mg","Curcumin + Boswellia","Mag citrate","Vit C (evening)","Progesterone 200mg","Mag glycinate","Psyllium husk","Evorel patch","Vagirux + Estriol"];
+const DAYTIME_SYSTEMS=[
+  {key:"breathingday",label:"Breathing"},
+  {key:"gut",label:"Gut"},
+  {key:"energyday",label:"Daytime energy"},
+  {key:"mood",label:"Mood"},
+  {key:"brainfog",label:"Brain fog"},
+  {key:"shoulder",label:"Shoulder"},
+  {key:"skin",label:"Skin"},
+  {key:"bladder",label:"Bladder"},
+];
+const BREATH_SYMS=["Wheeze","Chest tight","Mucus","Cough","Breathless","Normal"];
+const WAKE_BREATH=["Clear","Wheeze","Tight","Mucus","Normal"];
+const SUPPLEMENTS=[
+  "Sublingual B12","Methylfolate 800mcg","D3 4000 IU + K2",
+  "Quercetin (morning)","Vit C (morning)","Creatine 5g",
+  "L-Glutamine 5g","DGL","Zinc carnosine","Canxida Restore",
+  "Quercetin (lunch)","NAC 600mg","Curcumin + Boswellia",
+  "Mag citrate","Vit C (evening)","Progesterone 200mg",
+  "Mag glycinate","Psyllium husk","Slippery Elm"
+];
 const FOODS=["Morning juice","Chia pudding","Eggs","Salmon","Beetroot","Rocket salad","Olive oil","Berries","Ginger tea","Chamomile tea","Dandelion tea","Lemon balm tea"];
-const FLAGS=[{key:"juicing",label:"Juiced today",color:""},{key:"inhaler",label:"Inhaler used",color:"coral"},{key:"patch",label:"Patch changed",color:"purple"},{key:"vagirux",label:"Vagirux + Estriol",color:"purple"}];
-const TRIGGER_SYSTEMS=["Gut","Breathing","Skin","Bladder","Tinnitus","Energy","Mood","Shoulder","Other"];
-const ACTIVITIES=[{key:"physio",label:"Physio exercises",icon:"🦾"},{key:"meditation",label:"Meditation",icon:"🧘"},{key:"gym",label:"Gym",icon:"🏋️"},{key:"sauna",label:"Sauna",icon:"🔥"},{key:"pool",label:"Pool",icon:"🏊"},{key:"sea",label:"Sea swim",icon:"🌊"},{key:"rebound",label:"Rebound",icon:"⚡"}];
-let history=[],entry=emptyEntry(),actHistory=[],actEntry=emptyActivity(),newTrigger={what:"",systems:[],recovery:"",treatment:""},triggerOpen=false;
+const TRIG_SYMS=["Gut","Breathing","Skin","Bladder","Energy","Mood","Brain fog","Shoulder","Throat","Other"];
+const ACTIVITIES=[
+  {key:"physio",label:"Physio exercises",icon:"🦾"},
+  {key:"meditation",label:"Meditation",icon:"🧘"},
+  {key:"gym",label:"Gym",icon:"🏋️"},
+  {key:"sauna",label:"Sauna",icon:"🔥"},
+  {key:"pool",label:"Pool",icon:"🏊"},
+  {key:"sea",label:"Sea swim",icon:"🌊"},
+  {key:"rebound",label:"Rebound",icon:"⚡"},
+];
+const CHART_LINES=[
+  {id:"startOfDay",morning:true,color:"#7C3AED",dash:[],lw:2.5,label:"Start of day"},
+  {id:"wakeEnergy",morning:true,color:"#9333EA",dash:[4,3],lw:1.5,label:"Wake energy"},
+  {id:"energyday",morning:false,color:"#1D9E75",dash:[],lw:2,label:"Daytime energy"},
+  {id:"gut",morning:false,color:"#BA7517",dash:[],lw:1.5,label:"Gut"},
+  {id:"breathingday",morning:false,color:"#185FA5",dash:[],lw:1.5,label:"Breathing"},
+  {id:"brainfog",morning:false,color:"#DC2626",dash:[3,2],lw:1.5,label:"Brain fog"},
+];
+const DAY_NAMES=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+
+let health=[],entry=emptyEntry(),actHistory=[],actEntry=emptyActivity();
+let triggers=[],newTrigSyms=[],hrtLog={},hrtSpotting=[],hrtWeekStart="";
+let currentTrendDays=7;
+
+const BLOOD_CATS=[
+  {id:"fbc",label:"Full Blood Count"},
+  {id:"inflam",label:"Inflammation & Iron"},
+  {id:"lipids",label:"Lipids"},
+  {id:"metabolic",label:"Metabolic & Thyroid"},
+  {id:"nutrition",label:"Nutrition — Key Markers"},
+  {id:"kidney",label:"Kidney"},
+  {id:"liver",label:"Liver"},
+  {id:"pending",label:"Pending — Request May 2026"},
+];
+const BLOOD_MARKERS=[
+  {key:"hb",     cat:"fbc",      name:"Haemoglobin",      unit:"g/dL",   good:"norm",ref:"11.7–16.0",target:"11.7–16.0",note:""},
+  {key:"pcv",    cat:"fbc",      name:"PCV/Haematocrit",  unit:"L/L",    good:"norm",ref:"0.370–0.540",target:"0.370–0.540",note:""},
+  {key:"rbc",    cat:"fbc",      name:"RBC",              unit:"10¹²/L", good:"norm",ref:"4.00–6.50",target:"4.00–6.50",note:""},
+  {key:"mcv",    cat:"fbc",      name:"MCV",              unit:"fL",     good:"norm",ref:"79–96",target:"79–96",note:""},
+  {key:"mch",    cat:"fbc",      name:"MCH",              unit:"pg",     good:"norm",ref:"27–32",target:"27–32",note:""},
+  {key:"rdw",    cat:"fbc",      name:"RDW",              unit:"%",      good:"norm",ref:"11–15",target:"11–15",note:""},
+  {key:"plt",    cat:"fbc",      name:"Platelets",        unit:"10⁹/L",  good:"norm",ref:"140–400",target:"140–400",note:""},
+  {key:"wbc",    cat:"fbc",      name:"WBC",              unit:"10⁹/L",  good:"norm",ref:"4.00–11.00",target:"4.00–11.00",note:""},
+  {key:"neut",   cat:"fbc",      name:"Neutrophils",      unit:"10⁹/L",  good:"norm",ref:"2.00–7.50",target:"2.00–7.50",note:"2023 slightly low"},
+  {key:"lymph",  cat:"fbc",      name:"Lymphocytes",      unit:"10⁹/L",  good:"norm",ref:"1.00–4.00",target:"1.00–4.00",note:""},
+  {key:"mono",   cat:"fbc",      name:"Monocytes",        unit:"10⁹/L",  good:"norm",ref:"0.20–1.00",target:"0.20–1.00",note:""},
+  {key:"eosino", cat:"fbc",      name:"Eosinophils",      unit:"10⁹/L",  good:"low", ref:"0.04–0.40",target:"<0.40",note:"Allergy/MCAS marker — low is good"},
+  {key:"baso",   cat:"fbc",      name:"Basophils",        unit:"10⁹/L",  good:"norm",ref:"0.01–0.10",target:"0.01–0.10",note:""},
+  {key:"crp",    cat:"inflam",   name:"CRP",              unit:"mg/L",   good:"low", ref:"<5.0",target:"<1.0",note:"Rising — watch closely"},
+  {key:"ferritin",cat:"inflam",  name:"Ferritin",         unit:"µg/L",   good:"norm",ref:"30–200",target:"30–200",note:"Iron stores"},
+  {key:"iron",   cat:"inflam",   name:"Iron",             unit:"µmol/L", good:"high",ref:">10",target:">10",note:"Dipped 2024, recovered 2025"},
+  {key:"tfsat",  cat:"inflam",   name:"Transferrin Sat",  unit:"%",      good:"norm",ref:"20–50",target:"20–50",note:""},
+  {key:"tchol",  cat:"lipids",   name:"Total Cholesterol",unit:"mmol/L", good:"low", ref:"<5.0",target:"<5.0",note:"Above target all years"},
+  {key:"ldl",    cat:"lipids",   name:"LDL Cholesterol",  unit:"mmol/L", good:"low", ref:"<3.0",target:"<3.5",note:"Improving — was 4.3 in 2024"},
+  {key:"hdl",    cat:"lipids",   name:"HDL Cholesterol",  unit:"mmol/L", good:"high",ref:">1.0",target:">1.0",note:"Good"},
+  {key:"trig",   cat:"lipids",   name:"Triglycerides",    unit:"mmol/L", good:"low", ref:"<1.7",target:"<1.7",note:""},
+  {key:"hba1c",  cat:"metabolic",name:"HbA1c",            unit:"mmol/mol",good:"norm",ref:"20–42",target:"20–42",note:"Excellent — stable"},
+  {key:"tsh",    cat:"metabolic",name:"TSH",              unit:"mU/L",   good:"norm",ref:"0.27–4.20",target:"0.27–4.20",note:"Thyroid stable"},
+  {key:"ft4",    cat:"metabolic",name:"Free T4",          unit:"pmol/L", good:"norm",ref:"11.9–21.6",target:"11.9–21.6",note:""},
+  {key:"folate", cat:"nutrition",name:"Folate",           unit:"µg/L",   good:"high",ref:"3.9–26.8",target:">16",note:"⚠️ Declining — MTHFR C677T TT root cause"},
+  {key:"b12",    cat:"nutrition",name:"B12 (serum)",      unit:"ng/L",   good:"high",ref:"197–771",target:">300",note:"Triple B12 impairment — sublingual bypasses this"},
+  {key:"phosphorus",cat:"nutrition",name:"Phosphorus",    unit:"mmol/L", good:"norm",ref:"0.81–1.45",target:"0.81–1.45",note:"⚠️ Below range 2024–2025"},
+  {key:"calcium",cat:"nutrition",name:"Calcium",         unit:"mmol/L", good:"norm",ref:"2.15–2.50",target:"2.15–2.50",note:""},
+  {key:"creat",  cat:"kidney",   name:"Creatinine",       unit:"µmol/L", good:"norm",ref:"45–84",target:"45–84",note:""},
+  {key:"egfr",   cat:"kidney",   name:"eGFR",             unit:"mL/min", good:"high",ref:">60",target:">60",note:""},
+  {key:"urea",   cat:"kidney",   name:"Urea",             unit:"mmol/L", good:"norm",ref:"2.8–8.1",target:"2.8–8.1",note:""},
+  {key:"alt",    cat:"liver",    name:"ALT",              unit:"IU/L",   good:"low", ref:"<33",target:"<33",note:""},
+  {key:"ast",    cat:"liver",    name:"AST",              unit:"U/L",    good:"low", ref:"<32",target:"<32",note:""},
+  {key:"alp",    cat:"liver",    name:"ALP",              unit:"IU/L",   good:"norm",ref:"35–104",target:"35–104",note:""},
+  {key:"ggt",    cat:"liver",    name:"GGT",              unit:"IU/L",   good:"low", ref:"<39",target:"<39",note:""},
+  {key:"albumin",cat:"liver",    name:"Albumin",          unit:"g/L",    good:"norm",ref:"35–52",target:"35–52",note:""},
+  {key:"tprot",  cat:"liver",    name:"Total Protein",    unit:"g/L",    good:"norm",ref:"60–80",target:"60–80",note:""},
+  {key:"homocys",cat:"pending",  name:"Homocysteine",     unit:"µmol/L", good:"low", ref:"<15",target:"<10",note:"Methylation status — not yet tested"},
+  {key:"vitd",   cat:"pending",  name:"Vitamin D (25-OH)",unit:"nmol/L", good:"high",ref:"50–250",target:">75",note:"VDR CC genotype — likely deficient"},
+  {key:"rbcfol", cat:"pending",  name:"RBC Folate",       unit:"nmol/L", good:"high",ref:"360–1400",target:">400",note:"Better than serum folate for MTHFR"},
+];
+const DEFAULT_BLOODS={
+  hb:[{date:"2023-06",value:14.3,note:""},{date:"2024-06",value:14.0,note:""},{date:"2025-06",value:14.4,note:""}],
+  pcv:[{date:"2023-06",value:0.413,note:""},{date:"2024-06",value:0.391,note:""}],
+  rbc:[{date:"2023-06",value:4.50,note:""},{date:"2024-06",value:4.36,note:""}],
+  mcv:[{date:"2023-06",value:91.8,note:""},{date:"2024-06",value:89.7,note:""}],
+  mch:[{date:"2023-06",value:31.8,note:""},{date:"2024-06",value:32.1,note:""}],
+  rdw:[{date:"2023-06",value:12.1,note:""},{date:"2024-06",value:12.3,note:""}],
+  plt:[{date:"2023-06",value:227,note:""},{date:"2024-06",value:205,note:""},{date:"2025-06",value:234,note:""}],
+  wbc:[{date:"2023-06",value:4.19,note:""},{date:"2024-06",value:4.24,note:""},{date:"2025-06",value:4.74,note:""}],
+  neut:[{date:"2023-06",value:1.63,note:"Slightly below range"},{date:"2024-06",value:2.02,note:"Back in range"}],
+  lymph:[{date:"2023-06",value:1.95,note:""},{date:"2024-06",value:1.81,note:""}],
+  mono:[{date:"2023-06",value:0.44,note:""},{date:"2024-06",value:0.31,note:""}],
+  eosino:[{date:"2023-06",value:0.13,note:""},{date:"2024-06",value:0.07,note:""},{date:"2025-06",value:0.07,note:"Low-normal — good for MCAS"}],
+  baso:[{date:"2023-06",value:0.04,note:""},{date:"2024-06",value:0.03,note:""}],
+  crp:[{date:"2023-06",value:0.9,note:"<1.0"},{date:"2024-06",value:1.2,note:""},{date:"2025-06",value:1.7,note:"Trending up — watch"}],
+  ferritin:[{date:"2025-06",value:64,note:""}],
+  iron:[{date:"2023-06",value:21.2,note:""},{date:"2024-06",value:14.3,note:"Dipped"},{date:"2025-06",value:21.6,note:"Recovered"}],
+  tfsat:[{date:"2023-06",value:34,note:""},{date:"2024-06",value:25,note:""},{date:"2025-06",value:34,note:""}],
+  tchol:[{date:"2023-06",value:5.5,note:"Above target"},{date:"2024-06",value:6.4,note:"High"},{date:"2025-06",value:6.0,note:"Improving"}],
+  ldl:[{date:"2023-06",value:3.4,note:""},{date:"2024-06",value:4.3,note:"Peak — high"},{date:"2025-06",value:3.6,note:"Improving"}],
+  hdl:[{date:"2023-06",value:1.6,note:""},{date:"2024-06",value:1.68,note:""},{date:"2025-06",value:1.68,note:""}],
+  trig:[{date:"2023-06",value:1.1,note:""},{date:"2024-06",value:1.0,note:""}],
+  hba1c:[{date:"2023-06",value:37,note:""},{date:"2024-06",value:38,note:""},{date:"2025-06",value:36,note:"Excellent"}],
+  tsh:[{date:"2023-06",value:2.87,note:""},{date:"2024-06",value:1.99,note:""},{date:"2025-06",value:2.92,note:""}],
+  ft4:[{date:"2023-06",value:18.3,note:""},{date:"2024-06",value:16.1,note:""},{date:"2025-06",value:16.9,note:""}],
+  folate:[{date:"2023-06",value:16.2,note:""},{date:"2024-06",value:14.4,note:""},{date:"2025-06",value:11.5,note:"⚠️ Declining — MTHFR"}],
+  b12:[{date:"2023-06",value:509,note:""},{date:"2024-06",value:468,note:""},{date:"2025-06",value:547,note:""}],
+  phosphorus:[{date:"2023-06",value:0.81,note:"At lower limit"},{date:"2024-06",value:0.63,note:"⚠️ Below range"},{date:"2025-06",value:0.71,note:"⚠️ Still below range"}],
+  calcium:[{date:"2023-06",value:2.31,note:""},{date:"2024-06",value:2.29,note:""}],
+  creat:[{date:"2023-06",value:73,note:""},{date:"2024-06",value:74,note:""}],
+  egfr:[{date:"2024-06",value:77,note:""},{date:"2025-06",value:79,note:""}],
+  urea:[{date:"2023-06",value:4.8,note:""},{date:"2024-06",value:5.1,note:""},{date:"2025-06",value:5.8,note:""}],
+  alt:[{date:"2023-06",value:25,note:""},{date:"2024-06",value:19,note:""}],
+  ast:[{date:"2023-06",value:25,note:""},{date:"2024-06",value:22,note:""}],
+  alp:[{date:"2023-06",value:85,note:""},{date:"2024-06",value:78,note:""}],
+  ggt:[{date:"2023-06",value:14,note:""},{date:"2024-06",value:14,note:""}],
+  albumin:[{date:"2023-06",value:44,note:""},{date:"2024-06",value:42,note:""}],
+  tprot:[{date:"2023-06",value:66,note:""},{date:"2024-06",value:68,note:""}],
+  homocys:[],vitd:[],rbcfol:[],
+};
+
+let bloodData={};
+
 function todayStr(){return new Date().toISOString().slice(0,10);}
 function fmtDate(d){return new Date(d+"T12:00:00").toLocaleDateString("en-IE",{weekday:"short",day:"numeric",month:"short"});}
-function emptyEntry(date){return{date:date||todayStr(),scores:Object.fromEntries(SYSTEMS.map(s=>[s.key,7])),supplements:[],foods:[],juicing:false,inhaler:false,patch:false,vagirux:false,triggers:[],notes:""};}
-function emptyActivity(date){return{date:date||todayStr(),activities:Object.fromEntries(ACTIVITIES.map(a=>[a.key,{done:false,duration:"",feel:7}]))};}
-function loadAll(){try{const h=localStorage.getItem("shiera-health-v4");if(h)history=JSON.parse(h);}catch{}try{const a=localStorage.getItem("shiera-activity-v1");if(a)actHistory=JSON.parse(a);}catch{}document.getElementById("entry-date").value=todayStr();document.getElementById("act-date").value=todayStr();const ex=history.find(e=>e.date===todayStr());entry=ex?JSON.parse(JSON.stringify(ex)):emptyEntry();const ax=actHistory.find(e=>e.date===todayStr());actEntry=ax?JSON.parse(JSON.stringify(ax)):emptyActivity();renderHealth();renderActivityGrid();renderEntryCount();}
-function saveStorage(){try{localStorage.setItem("shiera-health-v4",JSON.stringify(history));}catch{}}
-function saveActStorage(){try{localStorage.setItem("shiera-activity-v1",JSON.stringify(actHistory));}catch{}}
-function showPage(id,el){document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));document.querySelectorAll(".nav-tab").forEach(t=>t.classList.remove("active"));document.getElementById("page-"+id).classList.add("active");el.classList.add("active");if(id==="summary")renderSummary();if(id==="activity")renderActivityGrid();}
-function showHealthTab(id,el){document.querySelectorAll("#page-health .tab").forEach(t=>t.classList.remove("active"));el.classList.add("active");document.getElementById("health-log").style.display=id==="log"?"block":"none";document.getElementById("health-history").style.display=id==="history"?"block":"none";if(id==="history")renderHistory();}
-function showActivityTab(id,el){document.querySelectorAll("#page-activity .tab").forEach(t=>t.classList.remove("active"));el.classList.add("active");document.getElementById("activity-log").style.display=id==="log"?"block":"none";document.getElementById("activity-history").style.display=id==="history"?"block":"none";if(id==="history")renderActHistory();}
-function renderHealth(){renderScores();renderFlags();renderTriggersList();renderSupplements();renderFoods();document.getElementById("notes-input").value=entry.notes||"";}
-function renderEntryCount(){document.getElementById("entry-count").textContent=history.length+" "+(history.length===1?"entry":"entries")+" logged";}
 function scoreColor(v){return v>=8?"var(--teal)":v>=5?"var(--amber)":"var(--red)";}
+function scoreColorHex(v){return v>=8?"#1D9E75":v>=5?"#BA7517":"#D85A30";}
 function scoreClass(v){return v>=8?"good":v>=5?"mid":"low";}
-function renderScores(){document.getElementById("score-rows").innerHTML=SYSTEMS.map(s=>{const v=entry.scores[s.key]||7;if(s.type==="number")return `<div class="score-item"><label>${s.label} <span style="color:var(--text-ter)">hrs</span></label><div style="display:flex;align-items:center;gap:8px"><input type="number" min="0" max="12" step="0.5" value="${v}" style="width:70px;font-size:16px;padding:6px 10px;border:0.5px solid var(--border);border-radius:8px" onchange="entry.scores['${s.key}']=Number(this.value)"><span style="font-size:14px;font-weight:600;color:${v>=7?'var(--teal)':'var(--amber)'}">${v}h</span></div></div>`;return `<div class="score-item"><label>${s.label}</label><div class="slider-wrap"><input type="range" min="1" max="10" step="1" value="${v}" oninput="entry.scores['${s.key}']=Number(this.value);this.nextElementSibling.textContent=this.value;this.nextElementSibling.className='score-val '+scoreClass(Number(this.value))"><span class="score-val ${scoreClass(v)}">${v}</span></div></div>`;}).join("");}
-function renderFlags(){document.getElementById("flags-container").innerHTML=FLAGS.map(f=>{const a=entry[f.key];return `<div class="flag${a?" active":""}${a&&f.color?" "+f.color:""}" onclick="toggleFlag('${f.key}',this,'${f.color}')">${f.label}</div>`;}).join("");}
-function toggleFlag(key,el,color){entry[key]=!entry[key];el.classList.toggle("active");if(color)el.classList.toggle(color,entry[key]);}
-function renderTriggersList(){document.getElementById("triggers-list").innerHTML=(entry.triggers||[]).map((t,i)=>`<div class="card trigger-card"><div class="trigger-header"><div style="flex:1"><div class="trigger-what">${t.time?`<span class="trigger-time">${t.time}</span>`:""}${t.what}</div>${t.systems?.length?`<div style="margin-bottom:4px">${t.systems.map(s=>`<span class="pill active coral">${s}</span>`).join("")}</div>`:""}<div class="trigger-detail">${t.recovery?`<span style="margin-right:12px">Recovery: ${t.recovery}</span>`:""}${t.treatment?`<span>Treatment: ${t.treatment}</span>`:""}</div></div><button class="trigger-remove" onclick="removeTrigger(${i})">×</button></div></div>`).join("");}
-function removeTrigger(i){entry.triggers.splice(i,1);renderTriggersList();}
-function openTriggerForm(){triggerOpen=true;newTrigger={what:"",systems:[],recovery:"",treatment:""};document.getElementById("add-trigger-btn").style.display="none";document.getElementById("trigger-form-wrap").innerHTML=`<div class="card trigger-card" style="margin-bottom:8px"><div style="display:flex;flex-direction:column;gap:10px"><input type="text" id="trig-what" placeholder="What triggered it?"><div><div style="font-size:11px;color:var(--text-ter);margin-bottom:6px">Systems affected</div><div id="trig-sys">${TRIGGER_SYSTEMS.map(s=>`<span class="pill" onclick="toggleTrigSys('${s}',this)">${s}</span>`).join("")}</div></div><div class="trigger-meta"><input type="text" id="trig-rec" placeholder="Recovery time"><input type="text" id="trig-tx" placeholder="Treatment given"></div><div class="trigger-actions"><button class="btn btn-log-trigger" onclick="addTrigger()">Log trigger</button><button class="btn btn-cancel" onclick="cancelTrigger()">Cancel</button></div></div></div>`;}
-function toggleTrigSys(s,el){if(newTrigger.systems.includes(s)){newTrigger.systems=newTrigger.systems.filter(x=>x!==s);el.classList.remove("active","coral");}else{newTrigger.systems.push(s);el.classList.add("active","coral");}}
-function addTrigger(){const what=document.getElementById("trig-what").value.trim();if(!what)return;if(!entry.triggers)entry.triggers=[];entry.triggers.push({what,systems:[...newTrigger.systems],recovery:document.getElementById("trig-rec").value,treatment:document.getElementById("trig-tx").value,time:new Date().toLocaleTimeString("en-IE",{hour:"2-digit",minute:"2-digit"})});cancelTrigger();renderTriggersList();}
-function cancelTrigger(){triggerOpen=false;document.getElementById("trigger-form-wrap").innerHTML="";document.getElementById("add-trigger-btn").style.display="block";}
-function renderSupplements(){const taken=entry.supplements.length,total=SUPPLEMENTS.length,pct=Math.round(taken/total*100);document.getElementById("supp-compliance").textContent=`${taken}/${total} taken · ${pct}%`;const bar=document.getElementById("supp-bar");bar.style.width=pct+"%";bar.style.background=pct>=80?"var(--teal)":pct>=50?"var(--amber)":"var(--red)";document.getElementById("supps-container").innerHTML=SUPPLEMENTS.map(s=>`<span class="pill${entry.supplements.includes(s)?" active purple":""}" onclick="toggleSupp('${s}',this)">${s}</span>`).join("");}
-function toggleSupp(s,el){if(entry.supplements.includes(s)){entry.supplements=entry.supplements.filter(x=>x!==s);el.classList.remove("active","purple");}else{entry.supplements.push(s);el.classList.add("active","purple");}const taken=entry.supplements.length,total=SUPPLEMENTS.length,pct=Math.round(taken/total*100);document.getElementById("supp-compliance").textContent=`${taken}/${total} taken · ${pct}%`;const bar=document.getElementById("supp-bar");bar.style.width=pct+"%";bar.style.background=pct>=80?"var(--teal)":pct>=50?"var(--amber)":"var(--red)";}
-function renderFoods(){document.getElementById("foods-container").innerHTML=FOODS.map(f=>`<span class="pill${entry.foods.includes(f)?" active teal":""}" onclick="toggleFood('${f}',this)">${f}</span>`).join("");}
-function toggleFood(f,el){if(entry.foods.includes(f)){entry.foods=entry.foods.filter(x=>x!==f);el.classList.remove("active","teal");}else{entry.foods.push(f);el.classList.add("active","teal");}}
-function saveEntry(){entry.notes=document.getElementById("notes-input").value;history=[entry,...history.filter(e=>e.date!==entry.date)].sort((a,b)=>b.date.localeCompare(a.date));saveStorage();renderEntryCount();const btn=document.getElementById("save-btn");btn.textContent="✓ Saved";btn.classList.add("saved");setTimeout(()=>{btn.textContent="Save today's entry";btn.classList.remove("saved");},2000);}
-function loadEntryForDate(date){entry.notes=document.getElementById("notes-input").value;const ex=history.find(e=>e.date===date);entry=ex?JSON.parse(JSON.stringify(ex)):emptyEntry(date);document.getElementById("date-label").textContent=date===todayStr()?"Today":fmtDate(date);renderHealth();}
-function renderHistory(){const c=document.getElementById("history-list");if(!history.length){c.innerHTML='<div class="empty-state">No entries yet.</div>';return;}c.innerHTML=history.map(e=>{let cls="history-item";if(e.triggers?.length)cls+=" has-trigger";else if(e.inhaler)cls+=" has-inhaler";const badges=[e.triggers?.length?`<span class="badge trigger">${e.triggers.length} trigger${e.triggers.length>1?"s":""}</span>`:"",e.inhaler?'<span class="badge inhaler">inhaler</span>':"",e.juicing?'<span class="badge juiced">juiced</span>':""].filter(Boolean).join("");const scores=["energy","gut","breathing","mood","sleep"].map(k=>`<div class="score-mini-item"><div class="label">${SYSTEMS.find(s=>s.key===k)?.label}</div><div class="val" style="color:${scoreColor(e.scores?.[k]||0)}">${e.scores?.[k]||0}</div></div>`).join("");return `<div class="${cls}" onclick="editEntry('${e.date}')"><div class="history-date">${fmtDate(e.date)}<div class="badges">${badges}</div></div><div class="score-mini">${scores}</div>${e.notes?`<div class="history-note">${e.notes.slice(0,120)}${e.notes.length>120?"…":""}</div>`:""}</div>`;}).join("");}
-function editEntry(date){const ex=history.find(e=>e.date===date);if(ex)entry=JSON.parse(JSON.stringify(ex));document.getElementById("entry-date").value=date;document.getElementById("date-label").textContent=date===todayStr()?"Today":fmtDate(date);showHealthTab("log",document.querySelectorAll("#page-health .tab")[0]);renderHealth();}
-function renderActivityGrid(){const grid=document.getElementById("activity-grid");grid.innerHTML=ACTIVITIES.map(a=>{const act=actEntry.activities[a.key]||{done:false,duration:"",feel:7};const feelCol=scoreColor(act.feel);return `<div class="activity-row${act.done?" done":""}" id="act-row-${a.key}"><div class="activity-header"><span class="activity-name">${a.icon} ${a.label}</span><button class="activity-toggle${act.done?" on":""}" onclick="toggleActivity('${a.key}',this)"></button></div>${act.done?`<div class="activity-details"><div><div class="activity-detail-label">Duration</div><input class="duration-input" type="text" placeholder="e.g. 30 mins" value="${act.duration}" onchange="actEntry.activities['${a.key}'].duration=this.value"></div><div><div class="activity-detail-label">How it felt: <span id="feel-val-${a.key}" style="color:${feelCol};font-weight:600">${act.feel}</span></div><div class="feel-wrap"><input type="range" min="1" max="10" step="1" value="${act.feel}" oninput="actEntry.activities['${a.key}'].feel=Number(this.value);document.getElementById('feel-val-${a.key}').textContent=this.value;document.getElementById('feel-val-${a.key}').style.color=scoreColor(Number(this.value))"></div></div></div>`:""}</div>`;}).join("");}
-function toggleActivity(key,btn){const act=actEntry.activities[key];act.done=!act.done;btn.classList.toggle("on",act.done);renderActivityGrid();}
-function saveActivity(){actHistory=[actEntry,...actHistory.filter(e=>e.date!==actEntry.date)].sort((a,b)=>b.date.localeCompare(a.date));saveActStorage();const btn=document.getElementById("act-save-btn");btn.textContent="✓ Saved";btn.classList.add("saved");setTimeout(()=>{btn.textContent="Save activity log";btn.classList.remove("saved");},2000);}
-function loadActivityForDate(date){const ax=actHistory.find(e=>e.date===date);actEntry=ax?JSON.parse(JSON.stringify(ax)):emptyActivity(date);document.getElementById("act-date-label").textContent=date===todayStr()?"Today":fmtDate(date);renderActivityGrid();}
-function renderActHistory(){const c=document.getElementById("act-history-list");if(!actHistory.length){c.innerHTML='<div class="empty-state">No activity logged yet.</div>';return;}c.innerHTML=actHistory.map(e=>{const done=ACTIVITIES.filter(a=>e.activities[a.key]?.done);if(!done.length)return"";const chips=done.map(a=>{const act=e.activities[a.key];return `<span class="act-chip">${a.icon} ${a.label}${act.duration?" · "+act.duration:""} · felt ${act.feel}/10</span>`;}).join("");return `<div class="act-history-item"><div class="act-history-date">${fmtDate(e.date)}</div><div class="act-chips">${chips}</div></div>`;}).filter(Boolean).join("");}
-function weeklyAvg(key){const vals=history.slice(0,7).map(e=>e.scores?.[key]).filter(v=>v!=null);return vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1):"—";}
-function renderSummary(){const week=history.slice(0,7);const avgs=document.getElementById("weekly-averages");if(week.length>=3){avgs.innerHTML=`<div class="section-head">7-day averages</div><div class="card"><div class="avg-grid">`+["energy","gut","breathing","mood","sleep"].map(k=>{const avg=weeklyAvg(k),num=Number(avg),col=avg==="—"?"var(--text-ter)":scoreColor(num);return `<div class="avg-item"><div class="avg-label">${SYSTEMS.find(s=>s.key===k)?.label}</div><div class="avg-val" style="color:${col}">${avg}</div><div class="avg-bar"><div class="avg-fill" style="width:${avg==="—"?0:num*10}%;background:${col}"></div></div></div>`;}).join("")+`</div></div>`;}else{avgs.innerHTML="";}document.getElementById("summary-text").textContent=generateSummary();}
-function generateSummary(){const week=history.slice(0,7),actWeek=actHistory.slice(0,7);if(!week.length)return"No data logged yet.";const allTriggers=week.flatMap(e=>(e.triggers||[]).map(t=>({date:e.date,...t})));const avgSupp=Math.round(week.reduce((a,e)=>a+(e.supplements?.length||0),0)/week.length);const actCounts=Object.fromEntries(ACTIVITIES.map(a=>[a.key,actWeek.filter(e=>e.activities[a.key]?.done).length]));return["═══ WEEKLY HEALTH SUMMARY ═══",`${fmtDate(week[week.length-1]?.date)} → ${fmtDate(week[0]?.date)}`,`${week.length} days logged`,"","── AVERAGE SCORES ──",...SYSTEMS.map(s=>{const avg=weeklyAvg(s.key);return `  ${s.label.padEnd(18)} ${avg}/10  ${"█".repeat(Math.round(Number(avg)||0))+"░".repeat(10-Math.round(Number(avg)||0))}`;}),""," ── COMPLIANCE ──",`  Juicing:      ${week.filter(e=>e.juicing).length}/${week.length} days`,`  Inhaler used: ${week.filter(e=>e.inhaler).length} days`,`  Avg supps:    ${avgSupp}/${SUPPLEMENTS.length} taken/day`,"","── ACTIVITY ──",...ACTIVITIES.map(a=>`  ${a.label.padEnd(18)} ${actCounts[a.key]}/${actWeek.length||7} days`),"",...[`── TRIGGERS (${allTriggers.length}) ──`,...(allTriggers.length?allTriggers.map(t=>`  ${fmtDate(t.date)}: ${t.what}${t.systems?.length?" → "+t.systems.join(", "):""}${t.recovery?" | recovery: "+t.recovery:""}${t.treatment?" | tx: "+t.treatment:""}`) : ["  None logged"])],"","── NOTES ──",...week.filter(e=>e.notes).map(e=>`  ${fmtDate(e.date)}: ${e.notes}`),...(week.every(e=>!e.notes)?["  None"]:[]),"","── paste above to Claude for pattern analysis ──"].join("\n");}
-function copySummary(){navigator.clipboard.writeText(document.getElementById("summary-text").textContent);const btn=document.getElementById("copy-btn");btn.textContent="✓ Copied";btn.classList.add("copied");setTimeout(()=>{btn.textContent="Copy to clipboard ↗";btn.classList.remove("copied");},2000);}
+function setSV(id,v){const el=document.getElementById(id);if(el){el.textContent=v;el.className="sv "+scoreClass(Number(v));}}
+
+function emptyEntry(date){
+  return{date:date||todayStr(),
+    morning:{startOfDay:5,sleepHours:7,sleepQuality:7,wakeEnergy:5,wokeToBathroom:false,wakeBreathing:[],dryMouth:false,mouthBreathing:false},
+    breathing:{pfAM:null,pfPM:null,relieveCount:0,steroidCount:0,symptoms:[]},
+    scores:Object.fromEntries(DAYTIME_SYSTEMS.map(s=>[s.key,7])),
+    supplements:[],foods:[],juicing:false,notes:""};
+}
+function emptyActivity(date){return{date:date||todayStr(),activities:Object.fromEntries(ACTIVITIES.map(a=>[a.key,{done:false,duration:"",feel:7}]))};}
+function getMondayOfWeek(d){const dt=new Date(d+"T12:00:00");const day=dt.getDay();const diff=day===0?-6:1-day;dt.setDate(dt.getDate()+diff);return dt.toISOString().slice(0,10);}
+
+function loadAll(){
+  try{const h=localStorage.getItem("shiera-v8");if(h)health=JSON.parse(h);}catch{}
+  try{const a=localStorage.getItem("shiera-act");if(a)actHistory=JSON.parse(a);}catch{}
+  try{const t=localStorage.getItem("shiera-trig");if(t)triggers=JSON.parse(t);}catch{}
+  try{const r=localStorage.getItem("shiera-hrt");if(r)hrtLog=JSON.parse(r);}catch{}
+  try{const s=localStorage.getItem("shiera-spotting");if(s)hrtSpotting=JSON.parse(s);}catch{}
+  try{const b=localStorage.getItem("shiera-bloods");if(b)bloodData=JSON.parse(b);else bloodData=JSON.parse(JSON.stringify(DEFAULT_BLOODS));}catch{bloodData=JSON.parse(JSON.stringify(DEFAULT_BLOODS));}
+  hrtWeekStart=getMondayOfWeek(todayStr());
+  document.getElementById("h-date").value=todayStr();
+  document.getElementById("a-date").value=todayStr();
+  const ex=health.find(e=>e.date===todayStr());entry=ex?JSON.parse(JSON.stringify(ex)):emptyEntry();
+  const ax=actHistory.find(e=>e.date===todayStr());actEntry=ax?JSON.parse(JSON.stringify(ax)):emptyActivity();
+  setNow();renderHealth();renderActGrid();renderTrigSymPills();updateSubPanels();
+}
+function setNow(){const t=new Date().toTimeString().slice(0,5);const te=document.getElementById("t-eaten");const ts=document.getElementById("t-syms");if(te&&!te.value)te.value=t;if(ts&&!ts.value)ts.value=t;}
+function sv(key,data){try{localStorage.setItem(key,JSON.stringify(data));}catch{}}
+
+const subPanelMap={health:["log","hist"],triggers:["log-now","today","patterns"],activity:["log","hist"],myhealth:["overview","dna","hrt","bloods"],report:["summary","trends","weekly","export"]};
+const subState={health:"log",triggers:"log-now",activity:"log",myhealth:"overview",report:"summary"};
+
+function showPage(id,el){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".nav-tab").forEach(t=>t.classList.remove("active"));
+  document.getElementById("page-"+id).classList.add("active");el.classList.add("active");
+  if(id==="report"){if(subState.report==="summary")renderReport();else if(subState.report==="trends")setTimeout(()=>drawTrends(currentTrendDays),50);else if(subState.report==="weekly")renderWeekly();}
+  if(id==="triggers")renderTodayTriggers();
+  if(id==="myhealth"&&subState.myhealth==="hrt")renderHRTWeek();
+}
+function showSub(page,sub,el){
+  subState[page]=sub;
+  document.querySelectorAll("#page-"+page+" .inner-tab").forEach(t=>t.classList.remove("active"));el.classList.add("active");
+  (subPanelMap[page]||[]).forEach(s=>{
+    ["",page+"-","health-","activity-","triggers-","report-","myhealth-"].forEach(pfx=>{const e2=document.getElementById(pfx+s);if(e2)e2.style.display=s===sub?"block":"none";});
+  });
+  if(page==="triggers"&&sub==="today")renderTodayTriggers();
+  if(page==="triggers"&&sub==="patterns")renderPatterns();
+  if(page==="activity"&&sub==="hist")renderActHist();
+  if(page==="health"&&sub==="hist")renderHist();
+  if(page==="report"&&sub==="summary")renderReport();
+  if(page==="report"&&sub==="trends"){renderChartLegend();setTimeout(()=>drawTrends(currentTrendDays),50);}
+  if(page==="report"&&sub==="weekly")renderWeekly();
+  if(page==="report"&&sub==="export")renderExport();
+  if(page==="myhealth"&&sub==="hrt")renderHRTWeek();
+  if(page==="myhealth"&&sub==="bloods")renderBloods();
+}
+function updateSubPanels(){
+  Object.entries(subPanelMap).forEach(([page,subs])=>{
+    subs.forEach(s=>{["",page+"-","health-","activity-","triggers-","report-","myhealth-"].forEach(pfx=>{const e=document.getElementById(pfx+s);if(e)e.style.display="none";});});
+    const active=subState[page]||subs[0];
+    ["",active,page+"-"+active,"health-"+active,"activity-"+active,"triggers-"+active,"report-"+active,"myhealth-"+active].forEach(id2=>{const e=document.getElementById(id2);if(e&&id2)e.style.display="block";});
+  });
+}
+
+// ── HEALTH ──
+function renderHealth(){renderSOD();renderMorning();renderBreathing();renderScores();renderSupps();renderFoods();document.getElementById("notes").value=entry.notes||"";}
+
+function renderSOD(){
+  const cur=entry.morning.startOfDay||5;
+  document.getElementById("sod-buttons").innerHTML=[1,2,3,4,5,6,7,8,9,10].map(n=>{
+    const active=cur===n;const col=scoreColorHex(n);
+    return `<button class="sod-btn${active?" active":""}" onclick="setSOD(${n})" style="${active?`background:${col};border-color:${col}`:""}">${n}</button>`;
+  }).join("");
+}
+function setSOD(n){entry.morning.startOfDay=n;renderSOD();}
+function updateSleepLbl(){const v=entry.morning.sleepHours||7;const l=document.getElementById("sleep-hrs-lbl");l.textContent=v+"h";l.style.color=v>=7?"var(--teal)":"var(--amber)";}
+
+function renderMorning(){
+  const m=entry.morning;
+  document.getElementById("sleep-hrs").value=m.sleepHours||7;
+  updateSleepLbl();
+  const sq=document.getElementById("sleep-qual");sq.value=m.sleepQuality||7;setSV("sq-v",sq.value);
+  const we=document.getElementById("wake-energy");we.value=m.wakeEnergy||5;setSV("we-v",we.value);
+  renderSOD();
+  document.getElementById("bathroom-pills").innerHTML=["Yes","No"].map(v=>{
+    const on=(v==="Yes")===m.wokeToBathroom;const col=v==="Yes"?"on-amber":"on-teal";
+    return `<span class="pill${on?" "+col:""}" onclick="setBoolPill('wokeToBathroom',${v==="Yes"},this,'${col}')">${v}</span>`;
+  }).join("");
+  document.getElementById("mouth-breath-pills").innerHTML=["Yes","No"].map(v=>{
+    const on=(v==="Yes")===m.mouthBreathing;const col=v==="Yes"?"on-coral":"on-teal";
+    return `<span class="pill${on?" "+col:""}" onclick="setBoolPill('mouthBreathing',${v==="Yes"},this,'${col}')">${v}</span>`;
+  }).join("");
+  document.getElementById("wake-breath-pills").innerHTML=WAKE_BREATH.map(s=>{
+    const on=(m.wakeBreathing||[]).includes(s);const col=s==="Clear"||s==="Normal"?"on-teal":"on-coral";
+    return `<span class="pill${on?" "+col:""}" onclick="toggleWakeBreath('${s}',this,'${col}')">${s}</span>`;
+  }).join("");
+  document.getElementById("dry-mouth-pills").innerHTML=["Yes","No"].map(v=>{
+    const on=(v==="Yes")===m.dryMouth;const col=v==="Yes"?"on-coral":"on-teal";
+    return `<span class="pill${on?" "+col:""}" onclick="setBoolPill('dryMouth',${v==="Yes"},this,'${col}')">${v}</span>`;
+  }).join("");
+}
+function setBoolPill(key,val,el,col){
+  entry.morning[key]=val;
+  const parent=el.parentElement;parent.querySelectorAll(".pill").forEach(p=>p.className="pill");el.className="pill "+col;
+}
+function toggleWakeBreath(s,el,col){
+  const wb=entry.morning.wakeBreathing;
+  if(wb.includes(s)){entry.morning.wakeBreathing=wb.filter(x=>x!==s);el.className="pill";}
+  else{entry.morning.wakeBreathing.push(s);el.className="pill "+col;}
+}
+document.addEventListener("input",function(e){
+  if(e.target.id==="sleep-hrs"){entry.morning.sleepHours=Number(e.target.value);updateSleepLbl();}
+  if(e.target.id==="sleep-qual")entry.morning.sleepQuality=Number(e.target.value);
+  if(e.target.id==="wake-energy")entry.morning.wakeEnergy=Number(e.target.value);
+});
+
+function renderBreathing(){
+  const b=entry.breathing;
+  document.getElementById("pf-am").value=b.pfAM||"";document.getElementById("pf-pm").value=b.pfPM||"";
+  document.getElementById("reliever-count").textContent=b.relieveCount||0;document.getElementById("steroid-count").textContent=b.steroidCount||0;
+  document.getElementById("breath-syms").innerHTML=BREATH_SYMS.map(s=>{
+    const on=(b.symptoms||[]).includes(s);const col=s==="Normal"?"on-teal":"on-coral";
+    return `<span class="pill${on?" "+col:""}" onclick="toggleBreathSym('${s}',this,'${col}')">${s}</span>`;
+  }).join("");
+}
+function toggleBreathSym(s,el,col){const syms=entry.breathing.symptoms;if(syms.includes(s)){entry.breathing.symptoms=syms.filter(x=>x!==s);el.className="pill";}else{entry.breathing.symptoms.push(s);el.className="pill "+col;}}
+function changeInhaler(type,d){const k=type==="reliever"?"relieveCount":"steroidCount";entry.breathing[k]=Math.max(0,(entry.breathing[k]||0)+d);document.getElementById(type+"-count").textContent=entry.breathing[k];}
+
+function renderScores(){
+  document.getElementById("score-rows").innerHTML=DAYTIME_SYSTEMS.map(s=>{
+    const v=entry.scores[s.key]||7;
+    const lbl=s.key==="brainfog"?s.label+' <span style="font-size:10px;color:var(--text-ter)">(1=fog·10=clear)</span>':s.label;
+    return `<div class="score-item"><label>${lbl}</label><div class="slider-row"><input type="range" min="1" max="10" step="1" value="${v}" oninput="entry.scores['${s.key}']=Number(this.value);this.nextElementSibling.textContent=this.value;this.nextElementSibling.className='sv '+scoreClass(Number(this.value))"><span class="sv ${scoreClass(v)}">${v}</span></div></div>`;
+  }).join("");
+}
+function renderFlags(){document.getElementById("flags").innerHTML=`<div class="flag${entry.juicing?" on":""}" onclick="entry.juicing=!entry.juicing;this.classList.toggle('on')">Juiced today</div>`;}
+function renderSupps(){
+  const taken=entry.supplements.length,total=SUPPLEMENTS.length,pct=Math.round(taken/total*100);
+  document.getElementById("supp-label").textContent=`${taken}/${total} taken · ${pct}%`;
+  const bar=document.getElementById("supp-bar");bar.style.width=pct+"%";bar.style.background=pct>=80?"var(--teal)":pct>=50?"var(--amber)":"var(--red)";
+  document.getElementById("supps").innerHTML=SUPPLEMENTS.map(s=>`<span class="pill${entry.supplements.includes(s)?" on-purple":""}" onclick="toggleSupp('${s}',this)">${s}</span>`).join("");
+}
+function toggleSupp(s,el){
+  if(entry.supplements.includes(s)){entry.supplements=entry.supplements.filter(x=>x!==s);el.className="pill";}else{entry.supplements.push(s);el.className="pill on-purple";}
+  const taken=entry.supplements.length,total=SUPPLEMENTS.length,pct=Math.round(taken/total*100);
+  document.getElementById("supp-label").textContent=`${taken}/${total} taken · ${pct}%`;
+  const bar=document.getElementById("supp-bar");bar.style.width=pct+"%";bar.style.background=pct>=80?"var(--teal)":pct>=50?"var(--amber)":"var(--red)";
+}
+function renderFoods(){document.getElementById("foods").innerHTML=FOODS.map(f=>`<span class="pill${entry.foods.includes(f)?" on-teal":""}" onclick="toggleFood('${f}',this)">${f}</span>`).join("");}
+function toggleFood(f,el){if(entry.foods.includes(f)){entry.foods=entry.foods.filter(x=>x!==f);el.className="pill";}else{entry.foods.push(f);el.className="pill on-teal";}}
+function saveHealth(){entry.notes=document.getElementById("notes").value;health=[entry,...health.filter(e=>e.date!==entry.date)].sort((a,b)=>b.date.localeCompare(a.date));sv("shiera-v8",health);flashBtn("save-h","✓ Saved","Save today's entry");}
+function loadHealth(date){entry.notes=document.getElementById("notes").value;const ex=health.find(e=>e.date===date);entry=ex?JSON.parse(JSON.stringify(ex)):emptyEntry(date);document.getElementById("h-date-lbl").textContent=date===todayStr()?"Today":fmtDate(date);renderHealth();}
+function flashBtn(id,on,off){const btn=document.getElementById(id);btn.textContent=on;btn.classList.add("saved");setTimeout(()=>{btn.textContent=off;btn.classList.remove("saved");},2000);}
+function renderHist(){
+  const c=document.getElementById("hist-list");if(!health.length){c.innerHTML='<div class="empty">No entries yet.</div>';return;}
+  c.innerHTML=health.map(e=>{
+    const b=e.breathing||{};const m=e.morning||{};const ri=(b.relieveCount||0)>0,si=(b.steroidCount||0)>0;
+    const badges=[ri?`<span class="badge amber">Ventolin×${b.relieveCount}</span>`:"",si?`<span class="badge blue">Pulmicort×${b.steroidCount}</span>`:"",e.juicing?'<span class="badge teal">juiced</span>':"",(b.pfAM)?`<span class="badge blue">PF${b.pfAM}</span>`:""].filter(Boolean).join("");
+    const sod=m.startOfDay;
+    const scores=[["sod","Start",sod],["wakeEnergy","Wake",m.wakeEnergy],["energyday","Energy",e.scores?.energyday],["gut","Gut",e.scores?.gut],["breathingday","Breath",e.scores?.breathingday]].map(([k,l,v])=>`<div class="sm-item"><div class="lbl">${l}</div><div class="val" style="color:${scoreColor(v||0)}">${v||"—"}</div></div>`).join("");
+    return `<div class="hist-item${(ri||si)?" has-inhaler":""}" onclick="loadHealthAndSwitch('${e.date}')"><div class="hist-date">${fmtDate(e.date)}<div class="badges">${badges}</div></div><div class="scores-mini">${scores}</div>${e.notes?`<div class="hist-note">${e.notes.slice(0,100)}${e.notes.length>100?"…":""}</div>`:""}</div>`;
+  }).join("");
+}
+function loadHealthAndSwitch(date){loadHealth(date);showSub("health","log",document.querySelectorAll("#page-health .inner-tab")[0]);}
+
+// ── TRIGGERS ──
+function renderTrigSymPills(){document.getElementById("trig-sym-pills").innerHTML=TRIG_SYMS.map(s=>`<span class="pill${newTrigSyms.includes(s)?" on-coral":""}" onclick="toggleTrigSym('${s}',this)">${s}</span>`).join("");}
+function toggleTrigSym(s,el){if(newTrigSyms.includes(s)){newTrigSyms=newTrigSyms.filter(x=>x!==s);el.className="pill";}else{newTrigSyms.push(s);el.className="pill on-coral";}}
+function calcDelay(){const eaten=document.getElementById("t-eaten").value,syms=document.getElementById("t-syms").value;if(!eaten||!syms){document.getElementById("t-delay").textContent="";return;}const[eh,em]=eaten.split(":").map(Number),[sh,sm]=syms.split(":").map(Number);let mins=(sh*60+sm)-(eh*60+em);if(mins<0)mins+=1440;const h=Math.floor(mins/60),m2=mins%60;document.getElementById("t-delay").textContent=`⏱ ${h>0?h+"h "+m2+"min":m2+" min"} delay`;}
+function logTrigger(){
+  const food=document.getElementById("t-food").value.trim();if(!food){alert("Please enter a food or drink.");return;}
+  const eaten=document.getElementById("t-eaten").value,symsTime=document.getElementById("t-syms").value;
+  let delayMins=null;if(eaten&&symsTime){const[eh,em]=eaten.split(":").map(Number),[sh,sm]=symsTime.split(":").map(Number);delayMins=(sh*60+sm)-(eh*60+em);if(delayMins<0)delayMins+=1440;}
+  triggers.unshift({id:Date.now(),date:todayStr(),food,timeEaten:eaten,timeSymptoms:symsTime,delayMinutes:delayMins,symptoms:[...newTrigSyms],severity:Number(document.getElementById("t-sev").value),notes:document.getElementById("t-notes").value});
+  sv("shiera-trig",triggers);document.getElementById("t-food").value="";document.getElementById("t-notes").value="";document.getElementById("t-sev").value=5;document.getElementById("t-sev-val").textContent="5";document.getElementById("t-sev-val").style.color="var(--red)";document.getElementById("t-delay").textContent="";newTrigSyms=[];renderTrigSymPills();setNow();alert("✓ Logged: "+food);
+}
+function renderTodayTriggers(){
+  const today=triggers.filter(t=>t.date===todayStr());const c=document.getElementById("today-triggers"),e2=document.getElementById("today-trig-empty");
+  if(!today.length){c.innerHTML="";e2.style.display="block";return;}e2.style.display="none";
+  c.innerHTML=today.map(t=>`<div class="trig-item"><button class="trig-remove" onclick="removeTrigger(${t.id})">×</button><div class="trig-food">${t.food} <span style="font-size:12px;font-weight:400;color:var(--${t.severity>=8?'red':t.severity>=5?'amber':'teal'})">sev ${t.severity}/10</span></div><div><span class="trig-time">Eaten: ${t.timeEaten||"—"}</span><span class="trig-time">Symptoms: ${t.timeSymptoms||"—"}</span>${t.delayMinutes!==null?`<span style="color:var(--teal);font-size:12px">⏱ ${t.delayMinutes>=60?Math.floor(t.delayMinutes/60)+"h "+t.delayMinutes%60+"m":t.delayMinutes+"min"} delay</span>`:""}</div>${t.symptoms?.length?`<div style="margin-top:5px">${t.symptoms.map(s=>`<span class="pill on-coral" style="font-size:11px">${s}</span>`).join("")}</div>`:""}</div>`).join("");
+}
+function removeTrigger(id){triggers=triggers.filter(t=>t.id!==id);sv("shiera-trig",triggers);renderTodayTriggers();}
+function renderPatterns(){
+  const cutoff=new Date();cutoff.setDate(cutoff.getDate()-14);const recent=triggers.filter(t=>new Date(t.date)>=cutoff);const c=document.getElementById("pattern-list"),e2=document.getElementById("pattern-empty");
+  if(!recent.length){c.innerHTML="";e2.style.display="block";return;}e2.style.display="none";
+  const fm={};recent.forEach(t=>{const k=t.food.toLowerCase().trim();if(!fm[k])fm[k]={food:t.food,count:0,delays:[],symptoms:{},severities:[]};fm[k].count++;if(t.delayMinutes!==null)fm[k].delays.push(t.delayMinutes);fm[k].severities.push(t.severity);(t.symptoms||[]).forEach(s=>{fm[k].symptoms[s]=(fm[k].symptoms[s]||0)+1;});});
+  c.innerHTML=Object.values(fm).sort((a,b)=>b.count-a.count).map(f=>{const ad=f.delays.length?Math.round(f.delays.reduce((a,b)=>a+b,0)/f.delays.length):null;const as=Math.round(f.severities.reduce((a,b)=>a+b,0)/f.severities.length);const ts=Object.entries(f.symptoms).sort((a,b)=>b[1]-a[1]).slice(0,4);const ds=ad!==null?(ad>=60?`${Math.floor(ad/60)}h ${ad%60}m avg delay`:`${ad}min avg delay`):"no delay recorded";return `<div class="pattern-item"><div class="pattern-food">${f.food} <span style="font-size:12px;font-weight:400;color:var(--text-ter)">${f.count} reaction${f.count>1?"s":""}</span></div><div class="pattern-stats">⏱ ${ds} · Avg severity ${as}/10</div>${ts.length?`<div style="margin-top:6px">${ts.map(([s])=>`<span class="pill on-coral" style="font-size:11px">${s}</span>`).join("")}</div>`:""}</div>`;}).join("");
+}
+
+// ── ACTIVITY ──
+function renderActGrid(){document.getElementById("act-grid").innerHTML=ACTIVITIES.map(a=>{const act=actEntry.activities[a.key]||{done:false,duration:"",feel:7};const fc=scoreColorHex(act.feel);return `<div class="act-row${act.done?" done":""}" id="arow-${a.key}"><div class="act-header"><span class="act-name">${a.icon} ${a.label}</span><button class="toggle${act.done?" on":""}" onclick="toggleAct('${a.key}',this)"></button></div>${act.done?`<div class="act-details"><div><div class="act-dl">Duration</div><input class="dur-input" type="text" placeholder="e.g. 30 mins" value="${act.duration}" onchange="actEntry.activities['${a.key}'].duration=this.value"></div><div><div class="act-dl">How it felt: <span id="fv-${a.key}" style="color:${fc};font-weight:600">${act.feel}</span></div><div class="feel-row"><input type="range" min="1" max="10" step="1" value="${act.feel}" oninput="actEntry.activities['${a.key}'].feel=Number(this.value);document.getElementById('fv-${a.key}').textContent=this.value;document.getElementById('fv-${a.key}').style.color=scoreColorHex(Number(this.value))"></div></div></div>`:""}</div>`;}).join("");}
+function toggleAct(key,btn){actEntry.activities[key].done=!actEntry.activities[key].done;btn.classList.toggle("on",actEntry.activities[key].done);renderActGrid();}
+function saveActivity(){actHistory=[actEntry,...actHistory.filter(e=>e.date!==actEntry.date)].sort((a,b)=>b.date.localeCompare(a.date));sv("shiera-act",actHistory);flashBtn("save-a","✓ Saved","Save activity log");}
+function loadActivity(date){const ax=actHistory.find(e=>e.date===date);actEntry=ax?JSON.parse(JSON.stringify(ax)):emptyActivity(date);document.getElementById("a-date-lbl").textContent=date===todayStr()?"Today":fmtDate(date);renderActGrid();}
+function renderActHist(){const c=document.getElementById("act-hist-list");if(!actHistory.length){c.innerHTML='<div class="empty">No activity logged yet.</div>';return;}c.innerHTML=actHistory.map(e=>{const done=ACTIVITIES.filter(a=>e.activities[a.key]?.done);if(!done.length)return"";return `<div class="act-hist"><div style="font-size:13px;font-weight:600">${fmtDate(e.date)}</div><div class="act-chips">${done.map(a=>{const act=e.activities[a.key];return `<span class="act-chip">${a.icon} ${a.label}${act.duration?" · "+act.duration:""} · felt ${act.feel}/10</span>`;}).join("")}</div></div>`;}).filter(Boolean).join("");}
+
+// ── HRT ──
+function renderHRTWeek(){
+  const monday=hrtWeekStart;const dates=[];
+  for(let i=0;i<7;i++){const d=new Date(monday+"T12:00:00");d.setDate(d.getDate()+i);dates.push(d.toISOString().slice(0,10));}
+  document.getElementById("hrt-week-label").textContent=fmtDate(dates[0])+" – "+fmtDate(dates[6]);
+  let html="";
+  dates.forEach((date,i)=>{
+    const isToday=date===todayStr();const hrt=hrtLog[date]||{patch:false,vagirux:false};const hasSpot=hrtSpotting.includes(date);
+    const dt=new Date(date+"T12:00:00").getDate();
+    html+=`<div class="hrt-day${isToday?" hrt-today":""}">
+      <div class="hrt-dname">${DAY_NAMES[i]}</div><div class="hrt-ddate">${dt}</div>
+      <div class="hrt-cb${hrt.patch?" done":""}" onclick="toggleHRT('${date}','patch')">Patch</div>
+      <div class="hrt-cb${hrt.vagirux?" done":""}" onclick="toggleHRT('${date}','vagirux')">V+E</div>
+      <div class="hrt-cb${hasSpot?" spot":""}" onclick="toggleSpotting('${date}')">💧</div>
+    </div>`;
+  });
+  document.getElementById("hrt-week-view").innerHTML=html;
+  renderSpottingLog();renderHRTHistory();
+}
+function toggleHRT(date,type){if(!hrtLog[date])hrtLog[date]={patch:false,vagirux:false};hrtLog[date][type]=!hrtLog[date][type];sv("shiera-hrt",hrtLog);renderHRTWeek();}
+function toggleSpotting(date){if(hrtSpotting.includes(date)){hrtSpotting=hrtSpotting.filter(d=>d!==date);}else{hrtSpotting.push(date);}sv("shiera-spotting",hrtSpotting);renderHRTWeek();}
+function changeHRTWeek(dir){const d=new Date(hrtWeekStart+"T12:00:00");d.setDate(d.getDate()+dir*7);hrtWeekStart=d.toISOString().slice(0,10);renderHRTWeek();}
+function renderSpottingLog(){
+  const c=document.getElementById("spotting-log");
+  const sorted=[...hrtSpotting].sort((a,b)=>b.localeCompare(a)).slice(0,10);
+  if(!sorted.length){c.innerHTML='<div style="font-size:13px;color:var(--text-ter);padding:8px 0">No spotting recorded.</div>';return;}
+  c.innerHTML=sorted.map(d=>{
+    const patchNear=[-1,0,1,2,3].some(offset=>{const dd=new Date(d+"T12:00:00");dd.setDate(dd.getDate()+offset);const ds=dd.toISOString().slice(0,10);return hrtLog[ds]?.patch;});
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:0.5px solid var(--border);font-size:13px">
+      <span>💧 ${fmtDate(d)}</span>
+      <span style="font-size:11px;color:${patchNear?"var(--amber)":"var(--text-ter)"}">${patchNear?"near patch day":""}</span>
+    </div>`;
+  }).join("");
+}
+function renderHRTHistory(){
+  const c=document.getElementById("hrt-history-list");
+  const patchDates=Object.keys(hrtLog).filter(d=>hrtLog[d]?.patch||hrtLog[d]?.vagirux).sort((a,b)=>b.localeCompare(a)).slice(0,8);
+  if(!patchDates.length){c.innerHTML='<div style="font-size:13px;color:var(--text-ter);padding:8px 0">No HRT logged yet. Tap Patch/V+E on the calendar above.</div>';return;}
+  c.innerHTML=patchDates.map(d=>{const h=hrtLog[d]||{};const spot=hrtSpotting.includes(d);return `<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:0.5px solid var(--border);font-size:13px"><span>${fmtDate(d)}</span><div style="display:flex;gap:5px">${h.patch?`<span class="pill on-teal" style="font-size:11px">Patch ✓</span>`:""}${h.vagirux?`<span class="pill on-teal" style="font-size:11px">V+E ✓</span>`:""}${spot?`<span class="pill" style="font-size:11px;background:#FEE2E2;color:#DC2626;border-color:#FCA5A5">💧</span>`:""}</div></div>`;}).join("");
+}
+
+// ── TRENDS CHART ──
+function setRange(days,btn){
+  currentTrendDays=days;
+  document.querySelectorAll(".range-btn").forEach(b=>b.classList.remove("active"));btn.classList.add("active");
+  setTimeout(()=>drawTrends(days),30);
+}
+
+function renderChartLegend(){
+  document.getElementById("chart-legend").innerHTML=
+    CHART_LINES.map(l=>`<span class="cl-item"><span class="cl-dot" style="background:${l.color}"></span>${l.label}</span>`).join("")+
+    `<span class="cl-item"><span style="color:#D85A30;font-size:12px">▲</span> Trigger</span>`+
+    `<span class="cl-item"><span class="cl-dot" style="background:#185FA5"></span>Ventolin</span>`+
+    `<span class="cl-item"><span class="cl-dot" style="background:#DC2626"></span>Spotting</span>`;
+}
+
+function drawTrends(dayCount){
+  const canvas=document.getElementById("trends-canvas");if(!canvas)return;
+  const W=canvas.offsetWidth||440;if(W===0){setTimeout(()=>drawTrends(dayCount),100);return;}
+  const H=230;const dpr=Math.min(window.devicePixelRatio||1,2);
+  canvas.width=W*dpr;canvas.height=H*dpr;canvas.style.height=H+"px";
+  const ctx=canvas.getContext("2d");ctx.scale(dpr,dpr);
+  const rawData=dayCount===0?[...health].reverse():[...health].slice(0,dayCount).reverse();
+  if(rawData.length<2){ctx.fillStyle="#999";ctx.font="12px -apple-system,sans-serif";ctx.textAlign="center";ctx.fillText("Log at least 2 days to see trends",W/2,H/2);return;}
+  const ml=28,mr=8,mt=14,mb=48;const cW=W-ml-mr;const cH=H-mt-mb;
+  ctx.fillStyle="#f0efeb";ctx.fillRect(0,0,W,H);
+  ctx.fillStyle="white";ctx.beginPath();ctx.roundRect?ctx.roundRect(ml,mt,cW,cH,4):ctx.rect(ml,mt,cW,cH);ctx.fill();
+  for(let i=0;i<=10;i+=2){
+    const y=mt+cH-(i/10*cH);ctx.beginPath();ctx.strokeStyle=i===7?"#9FE1CB":"#e5e5e0";ctx.lineWidth=i===7?1:0.5;ctx.setLineDash(i===7?[4,3]:[]);ctx.moveTo(ml,y);ctx.lineTo(ml+cW,y);ctx.stroke();ctx.setLineDash([]);
+    if(i>0&&i<10){ctx.fillStyle="#ccc";ctx.font="8px -apple-system,sans-serif";ctx.textAlign="right";ctx.fillText(i,ml-3,y+3);}
+  }
+  const xPos=(i)=>ml+(i/Math.max(rawData.length-1,1))*cW;const yPos=(v)=>mt+cH-(Math.max(0,Math.min(10,v))/10*cH);
+  CHART_LINES.forEach(line=>{
+    const pts=rawData.map((e,i)=>{const v=line.morning?e.morning?.[line.id]:e.scores?.[line.id];return v!=null?{x:xPos(i),y:yPos(v)}:null;});
+    ctx.strokeStyle=line.color;ctx.lineWidth=line.lw;ctx.setLineDash(line.dash);ctx.lineJoin="round";ctx.lineCap="round";
+    let inPath=false;ctx.beginPath();
+    pts.forEach(p=>{if(!p){inPath=false;return;}if(!inPath){ctx.moveTo(p.x,p.y);inPath=true;}else ctx.lineTo(p.x,p.y);});
+    ctx.stroke();ctx.setLineDash([]);
+    pts.forEach(p=>{if(!p)return;ctx.beginPath();ctx.arc(p.x,p.y,2,0,Math.PI*2);ctx.fillStyle=line.color;ctx.fill();});
+  });
+  const maxL=Math.min(rawData.length,8);const step=Math.max(1,Math.floor(rawData.length/maxL));
+  rawData.forEach((e,i)=>{
+    if(i%step!==0&&i!==rawData.length-1)return;
+    const x=xPos(i);const d=new Date(e.date+"T12:00:00");const lbl=d.getDate()+"/"+(d.getMonth()+1);
+    ctx.fillStyle="#aaa";ctx.font="8px -apple-system,sans-serif";ctx.textAlign="center";ctx.fillText(lbl,x,mt+cH+10);
+  });
+  const tDates=new Set(triggers.map(t=>t.date));
+  rawData.forEach((e,i)=>{
+    const x=xPos(i);
+    if(tDates.has(e.date)){ctx.beginPath();ctx.fillStyle="#D85A30";ctx.moveTo(x,mt+cH+14);ctx.lineTo(x-4,mt+cH+23);ctx.lineTo(x+4,mt+cH+23);ctx.closePath();ctx.fill();}
+    if((e.breathing?.relieveCount||0)>0){ctx.beginPath();ctx.arc(x,mt+cH+30,3.5,0,Math.PI*2);ctx.fillStyle="#185FA5";ctx.fill();}
+    if(hrtSpotting.includes(e.date)){ctx.beginPath();ctx.arc(x,mt+cH+40,3,0,Math.PI*2);ctx.fillStyle="#DC2626";ctx.fill();}
+  });
+  ctx.fillStyle="#aaa";ctx.font="8px sans-serif";ctx.textAlign="left";
+  ctx.fillText("▲triggers",ml,mt+cH+27);ctx.fillText("●Ventolin",ml+60,mt+cH+34);ctx.fillText("●spot",ml+120,mt+cH+43);
+}
+
+// ── WEEKLY COMPARISON ──
+function wAvg(key,data){const v=data.map(e=>e.scores?.[key]).filter(v=>v!=null);return v.length?Number((v.reduce((a,b)=>a+b,0)/v.length).toFixed(1)):null;}
+function mAvg(key,data){const v=data.map(e=>e.morning?.[key]).filter(v=>v!=null);return v.length?Number((v.reduce((a,b)=>a+b,0)/v.length).toFixed(1)):null;}
+function getWeeks(){const start=new Date("2026-06-17"),end=new Date("2026-07-02"),weeks=[];let cur=new Date(start);while(cur<=end){const ws=new Date(cur),we=new Date(cur);we.setDate(we.getDate()+6);if(we>end)we.setTime(end.getTime());weeks.push({start:ws.toISOString().slice(0,10),end:we.toISOString().slice(0,10)});cur.setDate(cur.getDate()+7);}return weeks;}
+function getRange(s,e){return health.filter(h=>h.date>=s&&h.date<=e);}
+
+function renderWeekly(){
+  const weeks=getWeeks();const c=document.getElementById("gp-weekly-content");
+  const metrics=[
+    {key:"startOfDay",morning:true,label:"Start of day"},
+    {key:"wakeEnergy",morning:true,label:"Wake energy"},
+    {key:"energyday",morning:false,label:"Daytime energy"},
+    {key:"gut",morning:false,label:"Gut"},
+    {key:"breathingday",morning:false,label:"Breathing"},
+    {key:"brainfog",morning:false,label:"Brain fog"},
+    {key:"mood",morning:false,label:"Mood"},
+  ];
+  const wData=weeks.map(w=>getRange(w.start,w.end));
+  if(wData.every(d=>d.length===0)){c.innerHTML='<div class="empty">No data yet.</div>';return;}
+  const cols=Math.max(1,wData.filter(d=>d.length>0).length);
+  const colsFr="90px "+weeks.map(()=>"1fr").join(" ");
+  let html=`<div class="wk-table">`;
+  html+=`<div class="wk-row" style="display:grid;grid-template-columns:${colsFr};background:var(--bg-sec)">`;
+  html+=`<div class="wk-cell wk-label">Metric</div>`;
+  weeks.forEach((w,i)=>{const shortStart=new Date(w.start+"T12:00:00").getDate()+"/"+(new Date(w.start+"T12:00:00").getMonth()+1);html+=`<div class="wk-cell" style="font-size:10px;font-weight:600;color:var(--text-sec)">W${i+1}<br>${shortStart}</div>`;});
+  html+=`</div>`;
+  metrics.forEach(m=>{
+    html+=`<div class="wk-row" style="display:grid;grid-template-columns:${colsFr}"><div class="wk-cell wk-label">${m.label}</div>`;
+    weeks.forEach((w,i)=>{
+      const d=wData[i];const a=d.length?(m.morning?mAvg(m.key,d):wAvg(m.key,d)):null;
+      const prev=i>0&&wData[i-1].length?(m.morning?mAvg(m.key,wData[i-1]):wAvg(m.key,wData[i-1])):null;
+      const arrow=a&&prev?(a>prev+0.3?"↑":a<prev-0.3?"↓":"→"):"";
+      const arrowCol=arrow==="↑"?"color:var(--teal)":arrow==="↓"?"color:var(--red)":"color:var(--text-ter)";
+      const col=a?(scoreColorHex(a)):"#ccc";
+      html+=`<div class="wk-cell"><span class="wk-val" style="color:${col}">${a||"—"}</span>${arrow?`<span style="font-size:10px;${arrowCol}">${arrow}</span>`:""}`;
+      if(a)html+=`<div style="height:2px;background:${col};border-radius:1px;margin-top:3px;width:${(a/10*100)}%"></div>`;
+      html+=`</div>`;
+    });
+    html+=`</div>`;
+  });
+  html+=`</div>`;
+  const inhDays=weeks.map((w,i)=>({w:i+1,ri:wData[i].reduce((s,e)=>s+(e.breathing?.relieveCount||0),0)}));
+  html+=`<div class="gp-section" style="margin-top:10px"><h3>Ventolin uses per week</h3>`;
+  inhDays.forEach(wd=>{html+=`<div class="gp-row"><span class="lbl">Week ${wd.w}</span><span class="val ${wd.ri>5?"gp-val-bad":wd.ri>2?"gp-val-warn":"gp-val-good"}">${wd.ri} uses</span></div>`;});
+  html+=`</div>`;
+  c.innerHTML=html;
+}
+
+// ── GP REPORT SUMMARY & EXPORT ──
+function renderReport(){
+  const data=getRange("2026-06-17","2026-07-02");const c=document.getElementById("gp-summary-content");
+  if(!data.length){c.innerHTML='<div class="empty">Start logging daily to build your GP report.</div>';return;}
+  const ri=data.reduce((sum,e)=>sum+(e.breathing?.relieveCount||0),0);const si=data.reduce((sum,e)=>sum+(e.breathing?.steroidCount||0),0);const rid=data.filter(e=>(e.breathing?.relieveCount||0)>0).length;
+  const pfs=data.map(e=>e.breathing?.pfAM).filter(Boolean);const apf=pfs.length?Math.round(pfs.reduce((a,b)=>a+b,0)/pfs.length):"—";
+  const rt=triggers.filter(t=>t.date>="2026-06-17"&&t.date<="2026-07-02");const tf=[...new Set(rt.map(t=>t.food))];
+  const awq=mAvg("sleepQuality",data),awe=mAvg("wakeEnergy",data),asod=mAvg("startOfDay",data);
+  const dryDays=data.filter(e=>e.morning?.dryMouth).length,mbDays=data.filter(e=>e.morning?.mouthBreathing===true).length,bathDays=data.filter(e=>e.morning?.wokeToBathroom).length;
+  c.innerHTML=`
+  <div class="gp-section"><h3>Shiera — 17 June to 2 July 2026</h3>
+    <div class="gp-row"><span class="lbl">Days logged</span><span class="val">${data.length} of 16</span></div>
+    <div class="gp-row"><span class="lbl">Conditions</span><span class="val">MCAS (suspected 95%+) + MTHFR C677T TT + HLA-DQ8</span></div>
+  </div>
+  <div class="gp-section"><h3>Sleep & Morning</h3>
+    <div class="gp-row"><span class="lbl">Avg start of day</span><span class="val ${asod>=7?"gp-val-good":asod>=5?"gp-val-warn":"gp-val-bad"}">${asod||"—"}/10</span></div>
+    <div class="gp-row"><span class="lbl">Avg sleep quality</span><span class="val ${awq>=7?"gp-val-good":awq>=5?"gp-val-warn":"gp-val-bad"}">${awq||"—"}/10</span></div>
+    <div class="gp-row"><span class="lbl">Avg wake-up energy</span><span class="val ${awe>=7?"gp-val-good":awe>=5?"gp-val-warn":"gp-val-bad"}">${awe||"—"}/10</span></div>
+    <div class="gp-row"><span class="lbl">Woke to bathroom</span><span class="val">${bathDays}/${data.length} nights</span></div>
+    <div class="gp-row"><span class="lbl">Dry mouth on waking</span><span class="val">${dryDays}/${data.length} days</span></div>
+    <div class="gp-row"><span class="lbl">Mouth breathing noted</span><span class="val">${mbDays}/${data.length} days</span></div>
+  </div>
+  <div class="gp-section"><h3>Asthma — Breathing</h3>
+    <div class="gp-row"><span class="lbl">Avg peak flow AM</span><span class="val ${apf!=="—"?(apf<300?"gp-val-bad":apf<380?"gp-val-warn":"gp-val-good"):""}">${apf}${apf!=="—"?" L/min":""}</span></div>
+    <div class="gp-row"><span class="lbl">Range</span><span class="val">${pfs.length?Math.min(...pfs)+"–"+Math.max(...pfs)+" L/min":"—"}</span></div>
+    <div class="gp-row"><span class="lbl">Ventolin uses (${rid} days)</span><span class="val ${ri>10?"gp-val-bad":ri>4?"gp-val-warn":"gp-val-good"}">${ri}</span></div>
+    <div class="gp-row"><span class="lbl">Pulmicort uses</span><span class="val">${si}</span></div>
+  </div>
+  <div class="gp-section"><h3>Daytime scores (avg)</h3>
+    <div class="avg-g">${DAYTIME_SYSTEMS.map(s=>{const a=wAvg(s.key,data);const col=a>=8?"var(--teal)":a>=5?"var(--amber)":"var(--red)";return `<div class="avg-i"><div class="al">${s.label}</div><div class="av" style="color:${a?col:"var(--text-ter)"}">${a||"—"}</div><div class="ab"><div class="af" style="width:${a?a*10:0}%;background:${col}"></div></div></div>`;}).join("")}</div>
+  </div>
+  <div class="gp-section"><h3>Trigger foods (${rt.length} reactions)</h3>
+    ${tf.length?tf.map(f=>{const rxs=rt.filter(t=>t.food===f);const delays=rxs.filter(r=>r.delayMinutes!==null).map(r=>r.delayMinutes);const ad=delays.length?Math.round(delays.reduce((a,b)=>a+b,0)/delays.length)+"min":"—";const syms=[...new Set(rxs.flatMap(r=>r.symptoms||[]))];return `<div class="gp-row" style="flex-direction:column;align-items:flex-start;gap:2px"><span style="font-weight:500">${f}</span><span style="font-size:12px;color:var(--text-sec)">${rxs.length}× · delay ${ad} · ${syms.join(", ")||"not noted"}</span></div>`;}).join(""):'<div style="font-size:13px;color:var(--text-ter)">None logged yet</div>'}
+  </div>`;
+}
+
+function renderExport(){document.getElementById("report-text").textContent=buildExport();}
+function buildExport(){
+  const data=getRange("2026-06-17","2026-07-02");if(!data.length)return"No data logged yet.";
+  const ri=data.reduce((sum,e)=>sum+(e.breathing?.relieveCount||0),0),si=data.reduce((sum,e)=>sum+(e.breathing?.steroidCount||0),0);
+  const rid=data.filter(e=>(e.breathing?.relieveCount||0)>0).length;
+  const pfs=data.map(e=>e.breathing?.pfAM).filter(Boolean);const apf=pfs.length?Math.round(pfs.reduce((a,b)=>a+b,0)/pfs.length):"—";
+  const rt=triggers.filter(t=>t.date>="2026-06-17"&&t.date<="2026-07-02"),tf=[...new Set(rt.map(t=>t.food))];
+  const awq=mAvg("sleepQuality",data),awe=mAvg("wakeEnergy",data),asod=mAvg("startOfDay",data);
+  const weeks=getWeeks();
+  return["╔══════════════════════════════════════╗",
+    "   SHIERA'S CLINICAL SYMPTOM LOG","   DOB: 06/01/1966  |  Dublin, Ireland",
+    "   Period: 17 June – 2 July 2026",
+    "   MCAS suspected (95%+ probability) + MTHFR C677T TT","   HLA-DQ8 carrier · Gluten-free",
+    "   HRT: Evorel 50 + Progesterone 200mg",
+    "   Asthma: Ventolin + Pulmicort",
+    "╚══════════════════════════════════════╝","",
+    "── SLEEP & MORNING ──",
+    `  Avg start of day:    ${asod||"—"}/10`,
+    `  Avg sleep quality:   ${awq||"—"}/10`,
+    `  Avg wake-up energy:  ${awe||"—"}/10  ← distinct from daytime`,
+    `  Woke to bathroom:    ${data.filter(e=>e.morning?.wokeToBathroom).length}/${data.length} nights`,
+    `  Dry mouth on waking: ${data.filter(e=>e.morning?.dryMouth).length}/${data.length} days`,
+    `  Mouth breathing:     ${data.filter(e=>e.morning?.mouthBreathing===true).length}/${data.length} days`,
+    "","── ASTHMA / BREATHING ──",
+    `  Avg peak flow AM:    ${apf}${apf!=="—"?" L/min":""}`,
+    `  PF range:            ${pfs.length?Math.min(...pfs)+"–"+Math.max(...pfs)+" L/min":"not yet measured"}`,
+    `  Ventolin uses:       ${ri} (${rid} days)`,
+    `  Pulmicort uses:      ${si}`,
+    "","── DAYTIME SCORES (avg) ──",
+    ...DAYTIME_SYSTEMS.map(s=>{const v=data.map(e=>e.scores?.[s.key]).filter(v=>v!=null);const a=v.length?(v.reduce((x,y)=>x+y,0)/v.length).toFixed(1):"—";return `  ${s.label.padEnd(20)} ${a}/10`;}),
+    "",`── TRIGGER FOODS (${rt.length} reactions) ──`,
+    ...(tf.length?tf.map(f=>{const rxs=rt.filter(t=>t.food===f);const delays=rxs.filter(r=>r.delayMinutes!==null).map(r=>r.delayMinutes);const ad=delays.length?Math.round(delays.reduce((a,b)=>a+b,0)/delays.length)+"min":"—";const syms=[...new Set(rxs.flatMap(r=>r.symptoms||[]))];return `  ${f.padEnd(20)} ${rxs.length}× · delay ${ad} · ${syms.join(", ")||"not noted"}`;}):[" None logged"]),
+    ``,`── HRT SPOTTING (${hrtSpotting.length} events) ──`,
+    ...(hrtSpotting.length?[...hrtSpotting].sort().map(d=>{const patchNear=[-1,0,1,2,3].some(off=>{const dd=new Date(d+"T12:00:00");dd.setDate(dd.getDate()+off);return hrtLog[dd.toISOString().slice(0,10)]?.patch;});return `  ${fmtDate(d)}${patchNear?" (near patch day)":""}`;}):[" None recorded"]),
+    "","── WEEKLY BREAKDOWN ──",
+    ...weeks.flatMap((w,i)=>{const wd=getRange(w.start,w.end);if(!wd.length)return[`  Week ${i+1}: no data`];const wi=wd.reduce((sum,e)=>sum+(e.breathing?.relieveCount||0),0);const wp=wd.map(e=>e.breathing?.pfAM).filter(Boolean);const wapf=wp.length?Math.round(wp.reduce((a,b)=>a+b,0)/wp.length):"—";return[`  Week ${i+1} (${fmtDate(w.start)} – ${fmtDate(w.end)})`,`    Days: ${wd.length} · PF: ${wapf}${wapf!=="—"?" L/min":""} · Ventolin: ${wi}×`,`    Start ${mAvg("startOfDay",wd)||"—"} · Wake ${mAvg("wakeEnergy",wd)||"—"} · Energy ${wAvg("energyday",wd)||"—"} · Gut ${wAvg("gut",wd)||"—"}/10`];}),
+    "","── MEDICATION AWARENESS ──",
+    "  NSAIDs (ibuprofen/aspirin): documented mast cell triggers — paracetamol preferred.",
+    "  Morphine/codeine: known mast cell degranulators — discuss alternatives if opioid needed.",
+    "  Antibiotics: some past courses triggered reactions — class not certain — verify with patient.",
+    "  ⚠️ Surgery: please inform anaesthetist of mast cell activation before any procedure.",
+    "  MRI (Affidea Santry, March 2026): three-tendon tendinopathy — no tears.",
+    "  Three tendons simultaneously affected, consistent with systemic contributing factor.",
+    "  Serum folate: 16.2 (2022) → 11.5 (2024) on adequate diet.",
+    "  No PPI/H2 blocker. Falling folate = MTHFR, not medication.",
+    "  Identified via AI analysis and DNA methylation report (Stride, 2026).",
+    "  MTHFR C677T TT confirmed. Please add to GP record.",
+    "  Requesting: homocysteine, D25-OH, B12, RBC folate, formal MTHFR.",
+    `\n── Generated ${new Date().toLocaleDateString("en-IE",{day:"numeric",month:"long",year:"numeric"})} ──`
+  ].join("\n");
+}
+function copyReport(){navigator.clipboard.writeText(document.getElementById("report-text").textContent);const btn=document.getElementById("copy-btn");btn.textContent="✓ Copied";btn.classList.add("copied");setTimeout(()=>{btn.textContent="Copy to clipboard ↗";btn.classList.remove("copied");},2500);}
+// ── BLOOD HISTORY ──
+function parseTarget(marker){
+  const t=marker.target;
+  if(t.startsWith(">"))return{op:">",val:parseFloat(t.slice(1))};
+  if(t.startsWith("<"))return{op:"<",val:parseFloat(t.slice(1))};
+  const m=t.match(/([0-9.]+)\s*[–-]\s*([0-9.]+)/);
+  if(m)return{op:"range",lo:Number(m[1]),hi:Number(m[2])};
+  return null;
+}
+function isGood(marker,value){
+  if(value===null||value===undefined||isNaN(Number(value)))return null;
+  const v=Number(value);
+  if(marker.good==="high"){const t=parseFloat(marker.target.replace(/[^0-9.]/g,""));return v>=t;}
+  if(marker.good==="low"){const t=parseFloat(marker.target.replace(/[^0-9.]/g,""));return v<=t;}
+  if(marker.good==="norm"){
+    const rm=marker.ref.match(/([0-9.]+)\s*[–-]\s*([0-9.]+)/);
+    if(rm)return v>=Number(rm[1])&&v<=Number(rm[2]);
+    if(marker.ref.startsWith(">"))return v>parseFloat(marker.ref.slice(1));
+    if(marker.ref.startsWith("<"))return v<parseFloat(marker.ref.slice(1));
+  }
+  return null;
+}
+function trendArrow(marker,results){
+  const vals=results.filter(r=>r.value!==null&&r.value!==undefined&&!isNaN(Number(r.value)));
+  if(vals.length<2)return{arrow:"",col:"var(--text-ter)"};
+  const last=Number(vals[vals.length-1].value),prev=Number(vals[vals.length-2].value);
+  const diff=last-prev;
+  if(Math.abs(diff)<0.01)return{arrow:"→",col:"var(--text-ter)"};
+  const lastGood=isGood(marker,last),prevGood=isGood(marker,prev);
+  if(lastGood===true&&prevGood!==true)return{arrow:"↑",col:"var(--teal)"};
+  if(lastGood===false&&prevGood!==false)return{arrow:"↓",col:"var(--red)"};
+  const improving=(marker.good==="high"&&diff>0)||(marker.good==="low"&&diff<0);
+  if(improving)return{arrow:"↑",col:"var(--teal)"};
+  if(!improving&&marker.good!=="norm")return{arrow:"↓",col:"var(--red)"};
+  return{arrow:"→",col:"var(--text-ter)"};
+}
+function dotColor(marker,value){
+  const g=isGood(marker,value);
+  if(g===null)return{bg:"var(--bg-sec)",col:"var(--text-ter)"};
+  return g?{bg:"var(--teal-bg)",col:"var(--teal)"}:{bg:"var(--coral-bg)",col:"var(--coral)"};
+}
+function renderBloods(){
+  const sel=document.getElementById("blood-marker-select");
+  if(sel){
+    sel.innerHTML=BLOOD_CATS.map(cat=>{
+      const markers=BLOOD_MARKERS.filter(m=>m.cat===cat.id);
+      if(!markers.length)return"";
+      return `<optgroup label="${cat.label}">${markers.map(m=>`<option value="${m.key}">${m.name} (${m.unit})</option>`).join("")}</optgroup>`;
+    }).join("");
+  }
+  const c=document.getElementById("blood-markers-list");if(!c)return;
+  let html="";
+  BLOOD_CATS.forEach(cat=>{
+    const markers=BLOOD_MARKERS.filter(m=>m.cat===cat.id);
+    if(!markers.length)return;
+    html+=`<div class="sh">${cat.label}</div>`;
+    markers.forEach(m=>{
+      const results=(bloodData[m.key]||[]).sort((a,b)=>a.date.localeCompare(b.date));
+      const latest=results.filter(r=>r.value!==null&&r.value!==undefined).slice(-1)[0];
+      const trend=trendArrow(m,results);
+      const latVal=latest?.value;
+      const g=isGood(m,latVal);
+      const cardClass=latVal===null||latVal===undefined?"pending":g===true?"good":g===false?"bad":"warn";
+      const latDot=latVal!=null?dotColor(m,latVal):{bg:"var(--bg-sec)",col:"var(--text-ter)"};
+      html+=`<div class="bm-card ${cardClass}">
+        <div class="bm-header">
+          <div style="flex:1">
+            <div class="bm-name">${m.name} <span style="font-size:10px;color:var(--text-ter);font-weight:400">${m.unit}</span></div>
+            ${m.note?`<div style="font-size:11px;color:var(--text-ter);margin-top:1px">${m.note}</div>`:""}
+          </div>
+          <div class="bm-latest">
+            ${latVal!=null?
+              `<div class="bm-val" style="color:${latDot.col}">${latVal}</div>
+               <div style="font-size:9px;color:var(--text-ter)">${(latest.date||"").replace("-06","")}</div>
+               ${trend.arrow?`<div style="font-size:13px;font-weight:700;color:${trend.col};text-align:center">${trend.arrow}</div>`:""}`
+              :`<div style="font-size:11px;color:var(--text-ter);margin-top:4px">Not tested</div>`}
+          </div>
+        </div>
+        <div class="bm-target">Target: <strong>${m.target}</strong> · Range: ${m.ref}</div>
+        ${results.length?`<div class="bm-history" style="margin-top:8px">${results.map((r,i)=>{
+          const dc=r.value!=null?dotColor(m,r.value):{bg:"var(--bg-sec)",col:"var(--text-ter)"};
+          const yr=(r.date||"").replace("-06","");
+          const tr=i<results.length-1?trendArrow(m,results.slice(0,i+2)):{arrow:"",col:""};
+          return `<div class="bm-dot" style="min-width:42px">
+            <div class="bm-dot-val" style="background:${dc.bg};color:${dc.col}">${r.value!=null?r.value:"—"}</div>
+            <div class="bm-dot-date">${yr}</div>
+            ${r.note?`<div style="font-size:9px;color:var(--text-ter);max-width:55px;text-align:center">${r.note.slice(0,25)}</div>`:""}
+          </div>${tr.arrow?`<div class="bm-arrow" style="color:${tr.col};padding-bottom:20px">${tr.arrow}</div>`:""}`;
+        }).join("")}</div>`:`<div class="bm-no-data">No results yet</div>`}
+      </div>`;
+    });
+  });
+  c.innerHTML=html;
+}
+function addBloodResult(){
+  const key=document.getElementById("blood-marker-select").value;
+  const date=document.getElementById("blood-date").value;
+  const rawVal=document.getElementById("blood-value").value;
+  const note=document.getElementById("blood-note").value.trim();
+  if(!date){alert("Please enter a date.");return;}
+  const value=rawVal===""?null:Number(rawVal);
+  if(!bloodData[key])bloodData[key]=[];
+  bloodData[key].push({date,value,note});
+  bloodData[key].sort((a,b)=>a.date.localeCompare(b.date));
+  sv("shiera-bloods",bloodData);
+  document.getElementById("blood-date").value="";
+  document.getElementById("blood-value").value="";
+  document.getElementById("blood-note").value="";
+  renderBloods();
+}
+
 loadAll();
 </script>
 </body>
