@@ -769,9 +769,12 @@ textarea { min-height: 70px; resize: vertical; line-height: 1.6; }
       </div>
       <div class="sh">Upcoming — request at next appointment</div>
       <div class="card">
-        <div style="font-size:12px;color:var(--text-sec);line-height:2">
-          Homocysteine · Vitamin D (25-OH) · B12 (serum) · RBC Folate · Ferritin · MTHFR formal test<br>
-          Repeat: Serum Folate · CRP · LDL · Phosphorus
+        <div style="font-size:12px;color:var(--text-sec);line-height:2.2">
+          <div><strong>Homocysteine</strong> <span style="color:var(--text-ter)">— cardiovascular risk marker, elevated in MTHFR TT</span></div>
+          <div><strong>Vitamin D (25-OH)</strong> <span style="color:var(--text-ter)">— VDR variant, likely deficient</span></div>
+          <div><strong>B12 (holotranscobalamin)</strong> <span style="color:var(--text-ter)">— true cellular B12 uptake</span></div>
+          <div><strong>RBC Folate</strong> <span style="color:var(--text-ter)">— tissue folate, more accurate than serum</span></div>
+          <div style="margin-top:4px;font-size:11px;color:var(--text-ter)">Repeat: Serum Folate · CRP · LDL · Phosphorus</div>
         </div>
       </div>
     </div>
@@ -955,6 +958,7 @@ const DEFAULT_BLOODS={
 
 let bloodData={};
 let collapsedCats=new Set(["fbc","metabolic","kidney","liver","inflam","lipids"]);
+let collapsedProto=new Set(["proto-am","proto-pm","proto-night","proto-supps","proto-sleep","proto-exercise","proto-food","proto-hydration"]);
 const KEY_BLOOD=['folate','crp','ldl','phosphorus','homocys','vitd','b12','rbcfol'];
 
 function todayStr(){return new Date().toISOString().slice(0,10);}
@@ -1670,7 +1674,7 @@ function buildExport(){
     "  No PPI/H2 blocker. Falling folate = MTHFR, not medication.",
     "  Identified via AI analysis and DNA methylation report (Stride, 2026).",
     "  MTHFR C677T TT confirmed. Please add to medical record.",
-    "  Requesting: homocysteine, D25-OH, B12, RBC folate, formal MTHFR.",
+    "  Requesting: homocysteine, D25-OH, holotranscobalamin B12, RBC folate.",
 
     "","── MEDICATION AWARENESS ──",
     "  NSAIDs (ibuprofen/aspirin): documented mast cell triggers — paracetamol preferred.",
