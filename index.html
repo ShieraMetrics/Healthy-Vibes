@@ -198,6 +198,12 @@ textarea { min-height: 70px; resize: vertical; line-height: 1.6; }
 .bp-row { display: flex; align-items: center; gap: 8px; }
 .bp-slash { font-size: 22px; font-weight: 300; color: var(--text-ter); padding-top:14px; }
 /* BLOOD MARKERS */
+.cat-toggle { width:100%; display:flex; justify-content:space-between; align-items:center; background:none; border:none; padding:9px 0; cursor:pointer; font-size:11px; font-weight:600; color:var(--text-ter); text-transform:uppercase; letter-spacing:0.07em; border-bottom:0.5px solid var(--border); margin-bottom:6px; }
+.cat-toggle .cat-status { font-size:10px; font-weight:400; text-transform:none; letter-spacing:0; color:var(--text-ter); display:flex; align-items:center; gap:6px; }
+.cat-arrow { font-size:10px; transition:transform 0.2s; }
+.cat-arrow.open { transform:rotate(90deg); }
+.key-marker-section { background:white; border:0.5px solid var(--border); border-radius:var(--radius); padding:12px; margin-bottom:10px; }
+.key-marker-title { font-size:11px; font-weight:600; color:var(--text-ter); text-transform:uppercase; letter-spacing:0.07em; margin-bottom:10px; }
 .bm-card { background: white; border: 0.5px solid var(--border); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 8px; }
 .bm-card.good { border-left: 3px solid var(--teal); }
 .bm-card.warn { border-left: 3px solid var(--amber); }
@@ -420,8 +426,6 @@ textarea { min-height: 70px; resize: vertical; line-height: 1.6; }
         <div style="margin-top:9px" id="supps"></div>
       </div>
 
-      <div class="sh">Daily Protocol — Food &amp; Drinks</div>
-      <div class="card" id="foods"></div>
 
       <div class="sh">Notes</div>
       <div class="card"><textarea id="notes" placeholder="How you feel overall, anything different..."></textarea></div>
@@ -475,9 +479,9 @@ textarea { min-height: 70px; resize: vertical; line-height: 1.6; }
       <div id="today-trig-empty" class="empty" style="display:none">No triggers logged today.</div>
     </div>
     <div id="triggers-patterns" style="display:none">
-      <div class="sh">2-week pattern analysis</div>
+      <div id="patterns-summary"></div>
       <div id="pattern-list"></div>
-      <div id="pattern-empty" class="empty" style="display:none">Log some triggers to see patterns.</div>
+      <div id="pattern-empty" class="empty" style="display:none">Log at least 3 triggers to see patterns emerge.</div>
     </div>
   </div>
 
@@ -527,13 +531,13 @@ textarea { min-height: 70px; resize: vertical; line-height: 1.6; }
       </div>
       <div class="mh-card">
         <div class="mh-title">Multiple Symptoms</div>
-        <div class="mh-row">Asthma · Psoriasis · Eczema · Cystitis · Gastritis · Dry eyes · Tinnitus · Joint pain · Fatigue · Brain fog · Bladder irritation · Skin flares · Frozen shoulder</div>
+        <div class="mh-row">Asthma · Psoriasis · Eczema · Cystitis · Gastritis · Tinnitus · Joint pain · Fatigue · Bladder irritation · Skin flares · Shoulder tendinopathy</div>
       </div>
       <div class="mh-card">
         <div class="mh-title">Background</div>
         <div class="mh-row">80+ antibiotic courses from age 18, including fluoroquinolones. Menopause Oct 2018 removed progesterone (natural mast cell stabiliser) — unmasking full picture.</div>
-        <div class="mh-row" style="margin-top:4px"><strong>MRI (Affidea Santry, March 2026):</strong> three-tendon tendinopathy, no tears. Three tendons simultaneously — consistent with systemic contributing factor.</div>
-        <div class="mh-row" style="margin-top:4px">Identified via AI analysis + DNA methylation report (Stride 2026). Protocol started February 2026. 72-hour multi-system response.</div>
+        <div class="mh-row" style="margin-top:4px"><strong>MRI (Affidea Santry, March 2026):</strong> three-tendon tendinopathy, no tears. No obvious event or trauma to explain it. Consistent with mast cell connective tissue involvement.</div>
+        <div class="mh-row" style="margin-top:4px">Identified via AI analysis + DNA methylation report (Stride 2026). Protocol started February 2026. Symptom improvement following trigger removal and dietary protocol.</div>
       </div>
       <div class="mh-card">
         <div class="mh-title">Key Triggers</div>
@@ -576,7 +580,7 @@ textarea { min-height: 70px; resize: vertical; line-height: 1.6; }
       <div class="dna-card mod">
         <div class="dna-head"><span class="dna-gene">MTHFD1</span><span class="dna-badge amber">TT — Compounds it</span></div>
         <div class="dna-meaning">Reduces folate processing upstream, limiting supply to methionine cycle.</div>
-        <div class="dna-fix">💊 Methylfolate + B2 (Canxida has 20mg) ✓</div>
+        <div class="dna-fix">💊 Methylfolate + B2 riboflavin 20mg ✓</div>
       </div>
       <div class="dna-cat">B12 — Triple impairment</div>
       <div class="dna-card mod">
@@ -618,8 +622,8 @@ textarea { min-height: 70px; resize: vertical; line-height: 1.6; }
       </div>
       <div class="dna-card mod">
         <div class="dna-head"><span class="dna-gene">PEMT</span><span class="dna-badge amber">CT — Choline synthesis reduced</span></div>
-        <div class="dna-meaning">Can't make adequate choline. Worse postmenopause. Affects liver and brain.</div>
-        <div class="dna-fix">💊 Eggs daily (choline — a clinical food) ✓</div>
+        <div class="dna-meaning">Reduced choline synthesis. Worse postmenopause. Choline supports liver function and cell membranes.</div>
+        <div class="dna-fix">🥚 Choline food sources recommended: eggs (richest source) · fish · sunflower seeds · broccoli</div>
       </div>
       <div class="dna-cat">Detox & vitamins</div>
       <div class="dna-card mod">
@@ -671,7 +675,7 @@ textarea { min-height: 70px; resize: vertical; line-height: 1.6; }
           <div class="pt-item"><div class="pt-time">6:40</div><div class="pt-content"><div class="pt-title">Breakfast</div><div class="pt-detail">Morning juice → chia pudding → eggs. With food: methylfolate · D3+K2 · Vit C · Creatine.</div></div></div>
           <div class="pt-item"><div class="pt-time">9:30</div><div class="pt-content"><div class="pt-title">L-Glutamine — empty stomach</div><div class="pt-detail">5g between meals. Goes directly to gut lining, not competing with protein.</div></div></div>
           <div class="pt-item"><div class="pt-time">12:00</div><div class="pt-content"><div class="pt-title">DGL + Zinc carnosine</div><div class="pt-detail">15 mins before lunch. Coat stomach lining before food arrives.</div></div></div>
-          <div class="pt-item"><div class="pt-time">12:15</div><div class="pt-content"><div class="pt-title">Lunch — your main meal</div><div class="pt-detail">Salmon or white fish + rocket + olive oil + vegetables. With food: Canxida · Quercetin · NAC · Curcumin · P5P.</div></div></div>
+          <div class="pt-item"><div class="pt-time">12:15</div><div class="pt-content"><div class="pt-title">Lunch — your main meal</div><div class="pt-detail">Salmon or white fish + rocket + olive oil + vegetables. With food: Quercetin · NAC · Curcumin · P5P.</div></div></div>
           <div class="pt-item"><div class="pt-time">2:30pm</div><div class="pt-content"><div class="pt-title">Exercise — weather-dependent</div><div class="pt-detail">Rebound always. Walk only if humidity &lt;70% + stable pressure. Gym 3x/week. Cold shower after. Protein within 30 mins.</div></div></div>
           <div class="pt-item"><div class="pt-time">6:00pm</div><div class="pt-content"><div class="pt-title">Dinner — light</div><div class="pt-detail">White fish or eggs + cooked vegetables. No high histamine. Vit C with dinner. Nothing heavy — gut generates histamine overnight.</div></div></div>
           <div class="pt-item"><div class="pt-time">7:00pm</div><div class="pt-content"><div class="pt-title">Magnesium citrate</div><div class="pt-detail">In warm water. Warmth helps absorption.</div></div></div>
@@ -690,7 +694,7 @@ textarea { min-height: 70px; resize: vertical; line-height: 1.6; }
         <div class="proto-row"><strong>With breakfast + fat:</strong> Methylfolate · D3+K2 · Vit C · Creatine</div>
         <div class="proto-row"><strong>Mid-morning empty stomach:</strong> L-Glutamine — goes direct to gut, not competing with digestion</div>
         <div class="proto-row"><strong>15 mins before lunch:</strong> DGL · Zinc carnosine — coat stomach before food</div>
-        <div class="proto-row"><strong>With lunch:</strong> Canxida (4+ hrs after methylfolate always) · Quercetin · NAC · Curcumin · P5P</div>
+        <div class="proto-row"><strong>With lunch:</strong> Quercetin · NAC 600mg · Curcumin + Boswellia · P5P (active B6)</div>
         <div class="proto-row"><strong>With dinner:</strong> Vit C</div>
         <div class="proto-row"><strong>Early evening:</strong> Magnesium citrate in warm water</div>
         <div class="proto-row"><strong>Bedtime:</strong> Progesterone · Magnesium glycinate · Psyllium · Slippery Elm</div>
@@ -714,14 +718,14 @@ textarea { min-height: 70px; resize: vertical; line-height: 1.6; }
         <div class="proto-row"><strong>4. Pool — indoor, weather-independent.</strong> Monitor chlorine sensitivity.</div>
         <div class="proto-row"><strong>5. Sauna + cold plunge — 2-3x/week.</strong> Always plunge after. Builds mast cell resilience over time.</div>
         <div class="proto-row"><strong>Running: autumn 2026.</strong> Peak flow consistently above 380 L/min first.</div>
-        <div class="proto-row stop"><strong>Stop if wheeze starts.</strong> Rest → Ventolin → if no improvement in 30 mins → GP/A&E.</div>
+        <div class="proto-row stop"><strong>Stop if wheeze starts.</strong> Rest → Ventolin → if no improvement in 30 mins → doctor/A&E.</div>
         <div class="proto-row warn"><strong>Skip exercise</strong> if start of day score below 5.</div>
       </div>
 
       <div class="proto-section">
         <div class="proto-title">🍽️ Food — Structure Matters More Than You Think</div>
         <div class="proto-row"><strong>Lunch = main meal. Dinner = light.</strong> Heavy dinners generate overnight histamine. Flipping this improves sleep scores.</div>
-        <div class="proto-row"><strong>Morning:</strong> Juice → chia pudding → eggs. Eggs every day (choline, tryptophan, B6).</div>
+        <div class="proto-row"><strong>Morning:</strong> Juice → chia pudding → eggs. Eggs are the richest dietary source of choline (PEMT variant) and also provide tryptophan and B6.</div>
         <div class="proto-row"><strong>Lunch:</strong> Salmon 3-4x/week (frozen → cooked from frozen). White fish otherwise. Rocket + olive oil first.</div>
         <div class="proto-row"><strong>Dinner:</strong> Eggs or white fish + cooked vegetables. Nothing high histamine.</div>
         <div class="proto-row"><strong>Daily:</strong> Eggs · Pumpkin seeds · Berries · Apple · Olive oil.</div>
@@ -743,7 +747,7 @@ textarea { min-height: 70px; resize: vertical; line-height: 1.6; }
 
     <div id="myhealth-bloods" style="display:none">
       <div class="mh-card" style="border-left:3px solid var(--teal);margin-bottom:12px">
-        <div style="font-size:12px;font-weight:600;color:var(--teal);margin-bottom:4px">✓ GP review 2025 — overall picture within normal range</div>
+        <div style="font-size:12px;font-weight:600;color:var(--teal);margin-bottom:4px">✓ Doctor review 2025 — overall picture within normal range</div>
         <div style="font-size:12px;color:var(--text-sec);line-height:1.6">No findings requiring immediate action. Key trends being monitored: folate declining (MTHFR), phosphorus low-normal, LDL above target. These are the conversations for the May 2026 appointment.</div>
       </div>
       <div class="sh">Blood Test History</div>
@@ -763,7 +767,7 @@ textarea { min-height: 70px; resize: vertical; line-height: 1.6; }
           <input type="text" id="blood-note" placeholder="e.g. fasting, post-supplement..."></div>
         <button class="btn btn-dark" onclick="addBloodResult()" style="margin-top:10px">Add result</button>
       </div>
-      <div class="sh">Upcoming — request at GP appointment</div>
+      <div class="sh">Upcoming — request at next appointment</div>
       <div class="card">
         <div style="font-size:12px;color:var(--text-sec);line-height:2">
           Homocysteine · Vitamin D (25-OH) · B12 (serum) · RBC Folate · Ferritin · MTHFR formal test<br>
@@ -801,8 +805,8 @@ textarea { min-height: 70px; resize: vertical; line-height: 1.6; }
         <input type="file" id="restore-input" accept=".json" style="display:none" onchange="importBackup(event)">
         <div id="restore-status" style="font-size:12px;color:var(--teal);margin-top:8px;display:none"></div>
       </div>
-      <div class="sh">GP clinical summary</div>
-      <p style="font-size:12px;color:var(--text-sec);margin-bottom:10px">Copy and share with your GP.</p>
+      <div class="sh">Clinical summary</div>
+      <p style="font-size:12px;color:var(--text-sec);margin-bottom:10px">Copy and share with your doctor.</p>
       <div class="card"><div class="report-pre" id="report-text"></div></div>
       <button class="btn btn-outline" id="copy-btn" onclick="copyReport()">Copy to clipboard ↗</button>
     </div>
@@ -827,13 +831,12 @@ const SUPP_GROUPS=[
   {time:"With breakfast",sub:"With fat",items:["Methylfolate 800mcg","D3 4000 IU + K2","Vit C (morning)","Creatine 5g"]},
   {time:"Mid-morning",sub:"Empty stomach",items:["L-Glutamine 5g"]},
   {time:"Before lunch",sub:"15 mins before eating",items:["DGL","Zinc carnosine"]},
-  {time:"With lunch",sub:"4+ hrs after methylfolate",items:["Canxida Restore","Quercetin (lunch)","NAC 600mg","Curcumin + Boswellia","P5P active B6"]},
+  {time:"With lunch",sub:"",items:["Quercetin (lunch)","NAC 600mg","Curcumin + Boswellia","P5P active B6"]},
   {time:"With dinner",sub:"",items:["Vit C (evening)"]},
   {time:"Evening",sub:"In warm water",items:["Mag citrate"]},
   {time:"Bedtime",sub:"",items:["Progesterone 200mg","Mag glycinate","Psyllium husk","Slippery Elm"]},
 ];
 const SUPPLEMENTS=SUPP_GROUPS.flatMap(g=>g.items);
-const FOODS=["Morning juice","Chia pudding","Eggs","Salmon","Beetroot","Rocket salad","Olive oil","Berries","Ginger tea","Chamomile tea","Dandelion tea","Lemon balm tea"];
 const TRIG_SYMS=["Gut","Breathing","Skin","Bladder","Energy","Mood","Brain fog","Shoulder","Throat","Other"];
 const ACTIVITIES=[
   {key:"physio",label:"Physio exercises",icon:"🦾"},
@@ -845,12 +848,11 @@ const ACTIVITIES=[
   {key:"rebound",label:"Rebound",icon:"⚡"},
 ];
 const CHART_LINES=[
-  {id:"startOfDay",morning:true,color:"#7C3AED",dash:[],lw:2.5,label:"Start of day"},
-  {id:"wakeEnergy",morning:true,color:"#9333EA",dash:[4,3],lw:1.5,label:"Wake energy"},
-  {id:"energyday",morning:false,color:"#1D9E75",dash:[],lw:2,label:"Daytime energy"},
-  {id:"gut",morning:false,color:"#BA7517",dash:[],lw:1.5,label:"Gut"},
-  {id:"breathingday",morning:false,color:"#185FA5",dash:[],lw:1.5,label:"Breathing"},
-  {id:"brainfog",morning:false,color:"#DC2626",dash:[3,2],lw:1.5,label:"Mental clarity"},
+  {id:"startOfDay",morning:true,color:"#7C3AED",dash:[],lw:3,label:"Start of day"},
+  {id:"wakeEnergy",morning:true,color:"#E879A0",dash:[],lw:2,label:"Wake energy"},
+  {id:"energyday",morning:false,color:"#1D9E75",dash:[],lw:2.5,label:"Daytime energy"},
+  {id:"gut",morning:false,color:"#D97706",dash:[],lw:2,label:"Gut comfort"},
+  {id:"breathingday",morning:false,color:"#185FA5",dash:[],lw:2,label:"Breathing ease"},
 ];
 const DAY_NAMES=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 
@@ -952,6 +954,8 @@ const DEFAULT_BLOODS={
 };
 
 let bloodData={};
+let collapsedCats=new Set(["fbc","metabolic","kidney","liver","inflam","lipids"]);
+const KEY_BLOOD=['folate','crp','ldl','phosphorus','homocys','vitd','b12','rbcfol'];
 
 function todayStr(){return new Date().toISOString().slice(0,10);}
 function fmtDate(d){return new Date(d+"T12:00:00").toLocaleDateString("en-IE",{weekday:"short",day:"numeric",month:"short"});}
@@ -965,7 +969,7 @@ function emptyEntry(date){
     morning:{startOfDay:5,sleepHours:7,sleepQuality:7,wakeEnergy:5,wokeToBathroom:false,wakeBreathing:[],dryMouth:false,mouthBreathing:false,sleepScore:null,deepSleepMins:null,spO2:null,restingHR:null,stressScore:null,bpSys:null,bpDia:null},
     breathing:{pfAM:null,pfPM:null,relieveCount:0,steroidCount:0,symptoms:[]},
     scores:Object.fromEntries(DAYTIME_SYSTEMS.map(s=>[s.key,7])),
-    supplements:[],foods:[],juicing:false,notes:""};
+    supplements:[],juicing:false,notes:""};
 }
 function emptyActivity(date){return{date:date||todayStr(),activities:Object.fromEntries(ACTIVITIES.map(a=>[a.key,{done:false,duration:"",feel:7}]))};}
 function getMondayOfWeek(d){const dt=new Date(d+"T12:00:00");const day=dt.getDay();const diff=day===0?-6:1-day;dt.setDate(dt.getDate()+diff);return dt.toISOString().slice(0,10);}
@@ -1035,7 +1039,7 @@ function trendBadge(t){
   if(!t)return"";
   return `<span style="font-size:12px;font-weight:600;color:${t.col}">${t.arrow}</span><span style="font-size:10px;color:var(--text-ter);margin-left:2px">was ${t.was}</span>`;
 }
-function renderHealth(){renderSOD();renderMorning();renderBreathing();renderScores();renderSupps();renderFoods();document.getElementById("notes").value=entry.notes||"";}
+function renderHealth(){renderSOD();renderMorning();renderBreathing();renderScores();renderSupps();document.getElementById("notes").value=entry.notes||"";}
 
 function renderSOD(){
   const cur=entry.morning.startOfDay||5;
@@ -1158,8 +1162,6 @@ function toggleSupp(s,el){
   const group=SUPP_GROUPS.find(g=>g.items.includes(s));
   if(group)renderSupps();
 }
-function renderFoods(){document.getElementById("foods").innerHTML=FOODS.map(f=>`<span class="pill${entry.foods.includes(f)?" on-teal":""}" onclick="toggleFood('${f}',this)">${f}</span>`).join("");}
-function toggleFood(f,el){if(entry.foods.includes(f)){entry.foods=entry.foods.filter(x=>x!==f);el.className="pill";}else{entry.foods.push(f);el.className="pill on-teal";}}
 function saveHealth(){entry.notes=document.getElementById("notes").value;health=[entry,...health.filter(e=>e.date!==entry.date)].sort((a,b)=>b.date.localeCompare(a.date));sv("shiera-v8",health);flashBtn("save-h","✓ Saved","Save today's entry");}
 function loadHealth(date){entry.notes=document.getElementById("notes").value;const ex=health.find(e=>e.date===date);entry=ex?JSON.parse(JSON.stringify(ex)):emptyEntry(date);document.getElementById("h-date-lbl").textContent=date===todayStr()?"Today":fmtDate(date);renderHealth();}
 function flashBtn(id,on,off){const btn=document.getElementById(id);btn.textContent=on;btn.classList.add("saved");setTimeout(()=>{btn.textContent=off;btn.classList.remove("saved");},2000);}
@@ -1176,7 +1178,7 @@ function renderHist(){
 function loadHealthAndSwitch(date){loadHealth(date);showSub("health","log",document.querySelectorAll("#page-health .inner-tab")[0]);}
 
 const TRIG_TYPE_HINTS={
-  food:"e.g. wine, bread, chicken soup, chocolate, crisps...",
+  food:"e.g. wine, bread, chocolate, crisps, pesto...",
   exercise:"e.g. walking, gym session, climbing stairs, rebounding...",
   temperature:"e.g. hot bath, cold air, cold shower, hot weather, temperature change...",
   environmental:"e.g. dust, perfume, pollen, cleaning products, smoke...",
@@ -1208,10 +1210,101 @@ function renderTodayTriggers(){
 }
 function removeTrigger(id){triggers=triggers.filter(t=>t.id!==id);sv("shiera-trig",triggers);renderTodayTriggers();}
 function renderPatterns(){
-  const cutoff=new Date();cutoff.setDate(cutoff.getDate()-14);const recent=triggers.filter(t=>new Date(t.date)>=cutoff);const c=document.getElementById("pattern-list"),e2=document.getElementById("pattern-empty");
-  if(!recent.length){c.innerHTML="";e2.style.display="block";return;}e2.style.display="none";
-  const fm={};recent.forEach(t=>{const k=t.food.toLowerCase().trim();if(!fm[k])fm[k]={food:t.food,count:0,delays:[],symptoms:{},severities:[]};fm[k].count++;if(t.delayMinutes!==null)fm[k].delays.push(t.delayMinutes);fm[k].severities.push(t.severity);(t.symptoms||[]).forEach(s=>{fm[k].symptoms[s]=(fm[k].symptoms[s]||0)+1;});});
-  c.innerHTML=Object.values(fm).sort((a,b)=>b.count-a.count).map(f=>{const ad=f.delays.length?Math.round(f.delays.reduce((a,b)=>a+b,0)/f.delays.length):null;const as=Math.round(f.severities.reduce((a,b)=>a+b,0)/f.severities.length);const ts=Object.entries(f.symptoms).sort((a,b)=>b[1]-a[1]).slice(0,4);const ds=ad!==null?(ad>=60?`${Math.floor(ad/60)}h ${ad%60}m avg delay`:`${ad}min avg delay`):"no delay recorded";return `<div class="pattern-item"><div class="pattern-food">${f.food} <span style="font-size:12px;font-weight:400;color:var(--text-ter)">${f.count} reaction${f.count>1?"s":""}</span></div><div class="pattern-stats">⏱ ${ds} · Avg severity ${as}/10</div>${ts.length?`<div style="margin-top:6px">${ts.map(([s])=>`<span class="pill on-coral" style="font-size:11px">${s}</span>`).join("")}</div>`:""}</div>`;}).join("");
+  const cutoff=new Date();cutoff.setDate(cutoff.getDate()-30);
+  const recent=triggers.filter(t=>new Date(t.date)>=cutoff);
+  const c=document.getElementById("pattern-list"),s=document.getElementById("patterns-summary"),e2=document.getElementById("pattern-empty");
+  if(recent.length<3){c.innerHTML="";s.innerHTML="";e2.style.display="block";return;}
+  e2.style.display="none";
+
+  // System frequency
+  const sysFq={};recent.forEach(t=>(t.symptoms||[]).forEach(sym=>{sysFq[sym]=(sysFq[sym]||0)+1;}));
+  const topSys=Object.entries(sysFq).sort((a,b)=>b[1]-a[1]).slice(0,4);
+
+  // By trigger type
+  const typeFq={};recent.forEach(t=>{const tp=t.trigType||"other";typeFq[tp]=(typeFq[tp]||0)+1;});
+  const typeLabels={"food":"🍽️ Food","exercise":"🏃 Exercise","temperature":"🌡️ Temperature","environmental":"🌿 Environmental","medication":"💊 Medication","other":"Other"};
+  const topType=Object.entries(typeFq).sort((a,b)=>b[1]-a[1])[0];
+
+  // Avg delay across all
+  const allDelays=recent.filter(t=>t.delayMinutes!==null).map(t=>t.delayMinutes);
+  const avgDelay=allDelays.length?Math.round(allDelays.reduce((a,b)=>a+b,0)/allDelays.length):null;
+
+  // Severity trend
+  const avgSev=recent.length?Math.round(recent.reduce((a,t)=>a+(t.severity||5),0)/recent.length):null;
+
+  // Summary card
+  s.innerHTML=`
+    <div class="card" style="margin-bottom:10px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px;padding-bottom:6px;border-bottom:0.5px solid var(--border)">Last 30 days — ${recent.length} trigger event${recent.length!==1?"s":""}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <div style="text-align:center;background:var(--bg-sec);border-radius:var(--radius-sm);padding:8px">
+          <div style="font-size:20px;font-weight:700;color:var(--coral)">${recent.length}</div>
+          <div style="font-size:10px;color:var(--text-ter)">total reactions</div>
+        </div>
+        <div style="text-align:center;background:var(--bg-sec);border-radius:var(--radius-sm);padding:8px">
+          <div style="font-size:20px;font-weight:700;color:var(--amber)">${avgSev||"—"}/10</div>
+          <div style="font-size:10px;color:var(--text-ter)">avg severity</div>
+        </div>
+      </div>
+      ${topType?`<div style="font-size:12px;color:var(--text-sec);margin-bottom:4px"><strong>Most common type:</strong> ${typeLabels[topType[0]]||topType[0]} (${topType[1]}×)</div>`:""}
+      ${avgDelay!==null?`<div style="font-size:12px;color:var(--text-sec);margin-bottom:4px"><strong>Avg delay to symptoms:</strong> ${avgDelay>=60?Math.floor(avgDelay/60)+"h "+avgDelay%60+"m":avgDelay+" mins"}</div>`:""}
+      ${topSys.length?`<div style="margin-top:8px"><div style="font-size:10px;color:var(--text-ter);margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em">Systems most affected</div><div>${topSys.map(([s,n])=>`<span class="pill on-coral" style="font-size:11px">${s} ${n}×</span>`).join("")}</div></div>`:""}
+    </div>
+
+    <div class="sh">By trigger type</div>
+    <div class="card" style="margin-bottom:10px">
+      ${Object.entries(typeFq).sort((a,b)=>b[1]-a[1]).map(([tp,count])=>{
+        const tTrig=recent.filter(t=>(t.trigType||"other")===tp);
+        const tDelays=tTrig.filter(t=>t.delayMinutes!==null).map(t=>t.delayMinutes);
+        const tAvgD=tDelays.length?Math.round(tDelays.reduce((a,b)=>a+b,0)/tDelays.length):null;
+        const tSysFq={};tTrig.forEach(t=>(t.symptoms||[]).forEach(s=>{tSysFq[s]=(tSysFq[s]||0)+1;}));
+        const tTopSys=Object.entries(tSysFq).sort((a,b)=>b[1]-a[1]).slice(0,2).map(([s])=>s);
+        const pct=Math.round(count/recent.length*100);
+        return `<div style="padding:7px 0;border-bottom:0.5px solid var(--border)">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <span style="font-size:13px;font-weight:500">${typeLabels[tp]||tp}</span>
+            <span style="font-size:12px;color:var(--text-ter)">${count}× · ${pct}%</span>
+          </div>
+          <div style="height:4px;background:var(--border);border-radius:2px;margin-bottom:5px">
+            <div style="height:4px;width:${pct}%;background:var(--coral);border-radius:2px"></div>
+          </div>
+          <div style="font-size:11px;color:var(--text-ter)">${tAvgD!==null?"⏱ "+tAvgD+" min delay · ":""}${tTopSys.length?"Hits: "+tTopSys.join(", "):""}</div>
+        </div>`;
+      }).join("")}
+    </div>
+
+    <div class="sh">Top triggers</div>`;
+
+  // Trigger frequency map
+  const fm={};
+  recent.forEach(t=>{
+    const k=t.food.toLowerCase().trim();
+    if(!fm[k])fm[k]={food:t.food,count:0,delays:[],symptoms:{},severities:[],types:[]};
+    fm[k].count++;
+    if(t.delayMinutes!==null)fm[k].delays.push(t.delayMinutes);
+    fm[k].severities.push(t.severity||5);
+    fm[k].types.push(t.trigType||"other");
+    (t.symptoms||[]).forEach(s=>{fm[k].symptoms[s]=(fm[k].symptoms[s]||0)+1;});
+  });
+
+  c.innerHTML=Object.values(fm).sort((a,b)=>b.count-a.count).map(f=>{
+    const ad=f.delays.length?Math.round(f.delays.reduce((a,b)=>a+b,0)/f.delays.length):null;
+    const as=(f.severities.reduce((a,b)=>a+b,0)/f.severities.length).toFixed(1);
+    const ts=Object.entries(f.symptoms).sort((a,b)=>b[1]-a[1]).slice(0,4);
+    const ds=ad!==null?(ad>=60?`${Math.floor(ad/60)}h ${ad%60}m`:`${ad} mins`):"—";
+    const sevColor=Number(as)>=7?"var(--red)":Number(as)>=4?"var(--amber)":"var(--teal)";
+    return `<div class="pattern-item">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div class="pattern-food">${f.food}</div>
+        <div style="text-align:right">
+          <div style="font-size:15px;font-weight:700;color:${sevColor}">${as}</div>
+          <div style="font-size:9px;color:var(--text-ter)">severity</div>
+        </div>
+      </div>
+      <div class="pattern-stats">${f.count} reaction${f.count>1?"s":""} · ⏱ ${ds} delay</div>
+      ${ts.length?`<div style="margin-top:6px">${ts.map(([s,n])=>`<span class="pill on-coral" style="font-size:11px">${s}${n>1?" "+n+"×":""}</span>`).join("")}</div>`:""}
+    </div>`;
+  }).join("");
 }
 
 // ── ACTIVITY ──
@@ -1278,13 +1371,13 @@ function generateInsights(dayCount){
   const w1=data.slice(0,half),w2=data.slice(-half);
 
   // 1. Find fastest improving daytime metric
-  const metricDeltas=DAYTIME_SYSTEMS.map(s=>{
+  const metricDeltas=DAYTIME_SYSTEMS.filter(s=>s.key!=="breathingday").map(s=>{
     const a1=wAvg(s.key,w1),a2=wAvg(s.key,w2);
     return{label:s.label,key:s.key,a1,a2,diff:a1&&a2?a2-a1:null};
   }).filter(m=>m.diff!==null).sort((a,b)=>b.diff-a.diff);
   const best=metricDeltas[0];
   if(best&&best.diff>0.4){
-    insights.push({type:"green",title:`↑ ${best.label} leading the recovery`,body:`Up ${best.diff.toFixed(1)} points in this period. ${best.a1.toFixed(1)} → ${best.a2.toFixed(1)}. The protocol is working on this system.`});
+    insights.push({type:"green",title:`↑ ${best.label} improving`,body:`Up ${best.diff.toFixed(1)} points this period. ${best.a1.toFixed(1)} → ${best.a2.toFixed(1)}.`});
   }
 
   // 2. Overall start of day trend
@@ -1329,7 +1422,7 @@ function generateInsights(dayCount){
   const pf2=w2.map(e=>e.breathing?.pfAM).filter(Boolean);
   const apf1=pf1.length?Math.round(pf1.reduce((a,b)=>a+b,0)/pf1.length):null;
   const apf2=pf2.length?Math.round(pf2.reduce((a,b)=>a+b,0)/pf2.length):null;
-  if(apf1&&apf2&&apf2>apf1+5)insights.push({type:"green",title:"↑ Peak flow improving",body:`${apf1} → ${apf2} L/min. Airways opening. The numbers your GP wants to see trending up.`});
+  if(apf1&&apf2&&apf2>apf1+5)insights.push({type:"green",title:"↑ Peak flow improving",body:`${apf1} → ${apf2} L/min. Peak flow trending up — good direction.`});
 
   return insights;
 }
@@ -1353,13 +1446,14 @@ function renderChartLegend(){
     CHART_LINES.map(l=>`<span class="cl-item"><span class="cl-dot" style="background:${l.color}"></span>${l.label}</span>`).join("")+
     `<span class="cl-item"><span style="color:#D85A30;font-size:12px">▲</span> Trigger</span>`+
     `<span class="cl-item"><span class="cl-dot" style="background:#185FA5"></span>Ventolin</span>`+
-    `<span class="cl-item"><span class="cl-dot" style="background:#DC2626"></span>Spotting</span>`;
+    `<span class="cl-item"><span class="cl-dot" style="background:#DC2626"></span>Spotting</span>`+
+    `<span class="cl-item" style="font-size:10px;color:var(--teal)">— target threshold</span>`;
 }
 
 function drawTrends(dayCount){
   const canvas=document.getElementById("trends-canvas");if(!canvas)return;
   const W=canvas.offsetWidth||440;if(W===0){setTimeout(()=>drawTrends(dayCount),100);return;}
-  const H=230;const dpr=Math.min(window.devicePixelRatio||1,2);
+  const H=260;const dpr=Math.min(window.devicePixelRatio||1,2);
   canvas.width=W*dpr;canvas.height=H*dpr;canvas.style.height=H+"px";
   const ctx=canvas.getContext("2d");ctx.scale(dpr,dpr);
   const rawData=dayCount===0?[...health].reverse():[...health].slice(0,dayCount).reverse();
@@ -1368,8 +1462,14 @@ function drawTrends(dayCount){
   ctx.fillStyle="#f0efeb";ctx.fillRect(0,0,W,H);
   ctx.fillStyle="white";ctx.beginPath();ctx.roundRect?ctx.roundRect(ml,mt,cW,cH,4):ctx.rect(ml,mt,cW,cH);ctx.fill();
   for(let i=0;i<=10;i+=2){
-    const y=mt+cH-(i/10*cH);ctx.beginPath();ctx.strokeStyle=i===7?"#9FE1CB":"#e5e5e0";ctx.lineWidth=i===7?1:0.5;ctx.setLineDash(i===7?[4,3]:[]);ctx.moveTo(ml,y);ctx.lineTo(ml+cW,y);ctx.stroke();ctx.setLineDash([]);
-    if(i>0&&i<10){ctx.fillStyle="#ccc";ctx.font="8px -apple-system,sans-serif";ctx.textAlign="right";ctx.fillText(i,ml-3,y+3);}
+    const y=mt+cH-(i/10*cH);ctx.beginPath();
+    ctx.strokeStyle=i===7?"#1D9E75":"#e8e8e4";
+    ctx.lineWidth=i===7?1.5:0.5;
+    ctx.setLineDash(i===7?[5,3]:[]);
+    ctx.moveTo(ml,y);ctx.lineTo(ml+cW,y);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=i===7?"#1D9E75":"#bbb";
+    ctx.font=i===7?"bold 8px -apple-system,sans-serif":"8px -apple-system,sans-serif";
+    ctx.textAlign="right";ctx.fillText(i,ml-3,y+3);
   }
   const xPos=(i)=>ml+(i/Math.max(rawData.length-1,1))*cW;const yPos=(v)=>mt+cH-(Math.max(0,Math.min(10,v))/10*cH);
   CHART_LINES.forEach(line=>{
@@ -1380,6 +1480,17 @@ function drawTrends(dayCount){
     ctx.stroke();ctx.setLineDash([]);
     pts.forEach(p=>{if(!p)return;ctx.beginPath();ctx.arc(p.x,p.y,2,0,Math.PI*2);ctx.fillStyle=line.color;ctx.fill();});
   });
+  // End-of-line value labels at rightmost point
+  if(rawData.length>=2){
+    CHART_LINES.forEach(line=>{
+      const last=rawData[rawData.length-1];
+      const v=line.morning?last?.morning?.[line.id]:last?.scores?.[line.id];
+      if(v==null)return;
+      const x=xPos(rawData.length-1);const y=yPos(v);
+      ctx.fillStyle=line.color;ctx.font="bold 9px -apple-system,sans-serif";ctx.textAlign="left";
+      ctx.fillText(Number(v).toFixed(1),x+5,y+3);
+    });
+  }
   const maxL=Math.min(rawData.length,8);const step=Math.max(1,Math.floor(rawData.length/maxL));
   rawData.forEach((e,i)=>{
     if(i%step!==0&&i!==rawData.length-1)return;
@@ -1389,12 +1500,18 @@ function drawTrends(dayCount){
   const tDates=new Set(triggers.map(t=>t.date));
   rawData.forEach((e,i)=>{
     const x=xPos(i);
-    if(tDates.has(e.date)){ctx.beginPath();ctx.fillStyle="#D85A30";ctx.moveTo(x,mt+cH+14);ctx.lineTo(x-4,mt+cH+23);ctx.lineTo(x+4,mt+cH+23);ctx.closePath();ctx.fill();}
-    if((e.breathing?.relieveCount||0)>0){ctx.beginPath();ctx.arc(x,mt+cH+30,3.5,0,Math.PI*2);ctx.fillStyle="#185FA5";ctx.fill();}
-    if(hrtSpotting.includes(e.date)){ctx.beginPath();ctx.arc(x,mt+cH+40,3,0,Math.PI*2);ctx.fillStyle="#DC2626";ctx.fill();}
+    if(tDates.has(e.date)){
+      const bv=e.scores?.breathingday;
+      const ty=bv!=null?yPos(bv)-10:mt+cH+14;
+      ctx.beginPath();ctx.fillStyle="#D85A30";
+      ctx.moveTo(x,ty);ctx.lineTo(x-5,ty+9);ctx.lineTo(x+5,ty+9);
+      ctx.closePath();ctx.fill();
+    }
+    if((e.breathing?.relieveCount||0)>0){ctx.beginPath();ctx.arc(x,mt+cH+18,3.5,0,Math.PI*2);ctx.fillStyle="#185FA5";ctx.fill();}
+    if(hrtSpotting.includes(e.date)){ctx.beginPath();ctx.arc(x,mt+cH+28,3,0,Math.PI*2);ctx.fillStyle="#DC2626";ctx.fill();}
   });
   ctx.fillStyle="#aaa";ctx.font="8px sans-serif";ctx.textAlign="left";
-  ctx.fillText("▲triggers",ml,mt+cH+27);ctx.fillText("●Ventolin",ml+60,mt+cH+34);ctx.fillText("●spot",ml+120,mt+cH+43);
+  ctx.fillText("▲on breathing line = trigger",ml,mt+cH+12);ctx.fillText("●Ventolin",ml,mt+cH+24);ctx.fillText("●spot",ml+58,mt+cH+24);
 }
 
 // ── WEEKLY COMPARISON ──
@@ -1445,10 +1562,10 @@ function renderWeekly(){
   c.innerHTML=html;
 }
 
-// ── GP REPORT SUMMARY & EXPORT ──
+// ── DATA REPORT SUMMARY & EXPORT ──
 function renderReport(){
   const data=getRange("2026-06-17","2026-07-02");const c=document.getElementById("gp-summary-content");
-  if(!data.length){c.innerHTML='<div class="empty">Start logging daily to build your GP report.</div>';return;}
+  if(!data.length){c.innerHTML='<div class="empty">Start logging daily to build your clinical summary.</div>';return;}
   const ri=data.reduce((sum,e)=>sum+(e.breathing?.relieveCount||0),0);const si=data.reduce((sum,e)=>sum+(e.breathing?.steroidCount||0),0);const rid=data.filter(e=>(e.breathing?.relieveCount||0)>0).length;
   const pfs=data.map(e=>e.breathing?.pfAM).filter(Boolean);const apf=pfs.length?Math.round(pfs.reduce((a,b)=>a+b,0)/pfs.length):"—";
   const rt=triggers.filter(t=>t.date>="2026-06-17"&&t.date<="2026-07-02");const tf=[...new Set(rt.map(t=>t.food))];
@@ -1548,18 +1665,19 @@ function buildExport(){
     ...(hrtSpotting.length?[...hrtSpotting].sort().map(d=>{const patchNear=[-1,0,1,2,3].some(off=>{const dd=new Date(d+"T12:00:00");dd.setDate(dd.getDate()+off);return hrtLog[dd.toISOString().slice(0,10)]?.patch;});return `  ${fmtDate(d)}${patchNear?" (near patch day)":""}`;}):[" None recorded"]),
     "","── WEEKLY BREAKDOWN ──",
     ...weeks.flatMap((w,i)=>{const wd=getRange(w.start,w.end);if(!wd.length)return[`  Week ${i+1}: no data`];const wi=wd.reduce((sum,e)=>sum+(e.breathing?.relieveCount||0),0);const wp=wd.map(e=>e.breathing?.pfAM).filter(Boolean);const wapf=wp.length?Math.round(wp.reduce((a,b)=>a+b,0)/wp.length):"—";return[`  Week ${i+1} (${fmtDate(w.start)} – ${fmtDate(w.end)})`,`    Days: ${wd.length} · PF: ${wapf}${wapf!=="—"?" L/min":""} · Ventolin: ${wi}×`,`    Start ${mAvg("startOfDay",wd)||"—"} · Wake ${mAvg("wakeEnergy",wd)||"—"} · Energy ${wAvg("energyday",wd)||"—"} · Gut ${wAvg("gut",wd)||"—"}/10`];}),
-    "","── NOTES FOR GP ──",
+    "","── CLINICAL NOTES ──",
     "  Serum folate: 16.2 (2023) → 14.4 (2024) → 11.5 (2025) on adequate diet.",
     "  No PPI/H2 blocker. Falling folate = MTHFR, not medication.",
     "  Identified via AI analysis and DNA methylation report (Stride, 2026).",
-    "  MTHFR C677T TT confirmed. Please add to GP record.",
+    "  MTHFR C677T TT confirmed. Please add to medical record.",
     "  Requesting: homocysteine, D25-OH, B12, RBC folate, formal MTHFR.",
-    "  MRI (Affidea Santry, March 2026): three-tendon tendinopathy — no tears.",
-    "  Three tendons simultaneously affected, consistent with systemic contributing factor.",
+
     "","── MEDICATION AWARENESS ──",
     "  NSAIDs (ibuprofen/aspirin): documented mast cell triggers — paracetamol preferred.",
     "  Morphine/codeine: known mast cell degranulators — discuss alternatives if opioid needed.",
     "  Antibiotics: some past courses triggered reactions — class not certain — verify with patient.",
+    "  MRI (Affidea Santry, March 2026): three-tendon tendinopathy — no tears.",
+    "  Three tendons simultaneously — mast cells concentrate in connective tissue/tendons.",
     "  ⚠️ Surgery: please inform anaesthetist of mast cell activation before any procedure.",
     `\n── Generated ${new Date().toLocaleDateString("en-IE",{day:"numeric",month:"long",year:"numeric"})} ──`
   ].join("\n");
@@ -1652,58 +1770,74 @@ function dotColor(marker,value){
   if(g===null)return{bg:"var(--bg-sec)",col:"var(--text-ter)"};
   return g?{bg:"var(--teal-bg)",col:"var(--teal)"}:{bg:"var(--coral-bg)",col:"var(--coral)"};
 }
+function toggleCat(catId){
+  if(collapsedCats.has(catId))collapsedCats.delete(catId);else collapsedCats.add(catId);
+  renderBloods();
+}
+function bmCard(m){
+  const results=(bloodData[m.key]||[]).sort((a,b)=>a.date.localeCompare(b.date));
+  const latest=results.filter(r=>r.value!==null&&r.value!==undefined).slice(-1)[0];
+  const trend=trendArrow(m,results);
+  const latVal=latest?.value;
+  const g=isGood(m,latVal);
+  const cardClass=latVal===null||latVal===undefined?"pending":g===true?"good":g===false?"bad":"warn";
+  const latDot=latVal!=null?dotColor(m,latVal):{bg:"var(--bg-sec)",col:"var(--text-ter)"};
+  return `<div class="bm-card ${cardClass}">
+    <div class="bm-header">
+      <div style="flex:1">
+        <div class="bm-name">${m.name} <span style="font-size:10px;color:var(--text-ter);font-weight:400">${m.unit}</span></div>
+        ${m.note?`<div style="font-size:11px;color:var(--text-ter);margin-top:1px">${m.note}</div>`:""}
+      </div>
+      <div class="bm-latest">
+        ${latVal!=null?`<div class="bm-val" style="color:${latDot.col}">${latVal}</div>
+          <div style="font-size:9px;color:var(--text-ter)">${(latest.date||"").replace("-06","")}</div>
+          ${trend.arrow?`<div style="font-size:13px;font-weight:700;color:${trend.col};text-align:center">${trend.arrow}</div>`:""}`
+          :`<div style="font-size:11px;color:var(--text-ter);margin-top:4px">Not tested</div>`}
+      </div>
+    </div>
+    <div class="bm-target">Target: <strong>${m.target}</strong> · Range: ${m.ref}</div>
+    ${results.length?`<div class="bm-history" style="margin-top:8px">${results.map((r,i)=>{
+      const dc=r.value!=null?dotColor(m,r.value):{bg:"var(--bg-sec)",col:"var(--text-ter)"};
+      const yr=(r.date||"").replace("-06","");
+      const tr=i<results.length-1?trendArrow(m,results.slice(0,i+2)):{arrow:"",col:""};
+      return `<div class="bm-dot" style="min-width:42px">
+        <div class="bm-dot-val" style="background:${dc.bg};color:${dc.col}">${r.value!=null?r.value:"—"}</div>
+        <div class="bm-dot-date">${yr}</div>
+        ${r.note?`<div style="font-size:9px;color:var(--text-ter);max-width:55px;text-align:center">${r.note.slice(0,25)}</div>`:""}
+      </div>${tr.arrow?`<div class="bm-arrow" style="color:${tr.col};padding-bottom:20px">${tr.arrow}</div>`:""}`;
+    }).join("")}</div>`:`<div class="bm-no-data">No results yet</div>`}
+  </div>`;
+}
 function renderBloods(){
   const sel=document.getElementById("blood-marker-select");
-  if(sel){
-    sel.innerHTML=BLOOD_CATS.map(cat=>{
-      const markers=BLOOD_MARKERS.filter(m=>m.cat===cat.id);
-      if(!markers.length)return"";
-      return `<optgroup label="${cat.label}">${markers.map(m=>`<option value="${m.key}">${m.name} (${m.unit})</option>`).join("")}</optgroup>`;
-    }).join("");
-  }
+  if(sel){sel.innerHTML=BLOOD_CATS.map(cat=>{const markers=BLOOD_MARKERS.filter(m=>m.cat===cat.id);if(!markers.length)return"";return `<optgroup label="${cat.label}">${markers.map(m=>`<option value="${m.key}">${m.name} (${m.unit})</option>`).join("")}</optgroup>`;}).join("");}
   const c=document.getElementById("blood-markers-list");if(!c)return;
-  let html="";
-  BLOOD_CATS.forEach(cat=>{
-    const markers=BLOOD_MARKERS.filter(m=>m.cat===cat.id);
+  let out="";
+
+  // KEY MARKERS SECTION — always visible at top
+  const keyMarkers=KEY_BLOOD.map(k=>BLOOD_MARKERS.find(m=>m.key===k)).filter(Boolean);
+  out+=`<div class="key-marker-section">
+    <div class="key-marker-title">⚑ Key markers — watch & pending</div>
+    ${keyMarkers.map(m=>bmCard(m)).join("")}
+  </div>`;
+
+  // COLLAPSIBLE CATEGORIES — skip pending (already in key markers) and skip key markers from their category
+  const skipCats=new Set(["pending"]);
+  BLOOD_CATS.filter(cat=>!skipCats.has(cat.id)).forEach(cat=>{
+    const markers=BLOOD_MARKERS.filter(m=>m.cat===cat.id&&!KEY_BLOOD.includes(m.key));
     if(!markers.length)return;
-    html+=`<div class="sh">${cat.label}</div>`;
-    markers.forEach(m=>{
-      const results=(bloodData[m.key]||[]).sort((a,b)=>a.date.localeCompare(b.date));
-      const latest=results.filter(r=>r.value!==null&&r.value!==undefined).slice(-1)[0];
-      const trend=trendArrow(m,results);
-      const latVal=latest?.value;
-      const g=isGood(m,latVal);
-      const cardClass=latVal===null||latVal===undefined?"pending":g===true?"good":g===false?"bad":"warn";
-      const latDot=latVal!=null?dotColor(m,latVal):{bg:"var(--bg-sec)",col:"var(--text-ter)"};
-      html+=`<div class="bm-card ${cardClass}">
-        <div class="bm-header">
-          <div style="flex:1">
-            <div class="bm-name">${m.name} <span style="font-size:10px;color:var(--text-ter);font-weight:400">${m.unit}</span></div>
-            ${m.note?`<div style="font-size:11px;color:var(--text-ter);margin-top:1px">${m.note}</div>`:""}
-          </div>
-          <div class="bm-latest">
-            ${latVal!=null?
-              `<div class="bm-val" style="color:${latDot.col}">${latVal}</div>
-               <div style="font-size:9px;color:var(--text-ter)">${(latest.date||"").replace("-06","")}</div>
-               ${trend.arrow?`<div style="font-size:13px;font-weight:700;color:${trend.col};text-align:center">${trend.arrow}</div>`:""}`
-              :`<div style="font-size:11px;color:var(--text-ter);margin-top:4px">Not tested</div>`}
-          </div>
-        </div>
-        <div class="bm-target">Target: <strong>${m.target}</strong> · Range: ${m.ref}</div>
-        ${results.length?`<div class="bm-history" style="margin-top:8px">${results.map((r,i)=>{
-          const dc=r.value!=null?dotColor(m,r.value):{bg:"var(--bg-sec)",col:"var(--text-ter)"};
-          const yr=(r.date||"").replace("-06","");
-          const tr=i<results.length-1?trendArrow(m,results.slice(0,i+2)):{arrow:"",col:""};
-          return `<div class="bm-dot" style="min-width:42px">
-            <div class="bm-dot-val" style="background:${dc.bg};color:${dc.col}">${r.value!=null?r.value:"—"}</div>
-            <div class="bm-dot-date">${yr}</div>
-            ${r.note?`<div style="font-size:9px;color:var(--text-ter);max-width:55px;text-align:center">${r.note.slice(0,25)}</div>`:""}
-          </div>${tr.arrow?`<div class="bm-arrow" style="color:${tr.col};padding-bottom:20px">${tr.arrow}</div>`:""}`;
-        }).join("")}</div>`:`<div class="bm-no-data">No results yet</div>`}
-      </div>`;
-    });
+    const collapsed=collapsedCats.has(cat.id);
+    const allGood=markers.every(m=>{const results=(bloodData[m.key]||[]).filter(r=>r.value!=null);const latest=results.slice(-1)[0];return latest?isGood(m,latest.value)===true:true;});
+    const statusText=allGood?`<span style="color:var(--teal)">✓ All normal</span>`:`<span style="color:var(--amber)">⚠ Review</span>`;
+    out+=`<div style="margin-bottom:4px">
+      <button class="cat-toggle" onclick="toggleCat('${cat.id}')">
+        <span>${cat.label}</span>
+        <span class="cat-status">${statusText}<span class="cat-arrow${collapsed?"":' open'}">▶</span></span>
+      </button>
+      ${collapsed?"":`<div>${markers.map(m=>bmCard(m)).join("")}</div>`}
+    </div>`;
   });
-  c.innerHTML=html;
+  c.innerHTML=out;
 }
 function addBloodResult(){
   const key=document.getElementById("blood-marker-select").value;
