@@ -197,6 +197,13 @@ textarea { min-height: 70px; resize: vertical; line-height: 1.6; }
 .watch-num:focus { border-color:#999; }
 .bp-row { display: flex; align-items: center; gap: 8px; }
 .bp-slash { font-size: 22px; font-weight: 300; color: var(--text-ter); padding-top:14px; }
+/* PROTOCOL COLLAPSIBLE */
+details.proto-drop { background:white; border:0.5px solid var(--border); border-radius:var(--radius); margin-bottom:6px; overflow:hidden; }
+details.proto-drop summary { list-style:none; padding:13px 14px; font-size:13px; font-weight:600; color:var(--text); cursor:pointer; display:flex; justify-content:space-between; align-items:center; user-select:none; }
+details.proto-drop summary::-webkit-details-marker { display:none; }
+details.proto-drop summary::after { content:"▶"; font-size:10px; color:var(--text-ter); transition:transform 0.2s; }
+details.proto-drop[open] summary::after { content:"▼"; color:var(--text-ter); }
+details.proto-drop .proto-inner { padding:0 14px 12px; }
 /* BLOOD MARKERS */
 .cat-toggle { width:100%; display:flex; justify-content:space-between; align-items:center; background:none; border:none; padding:9px 0; cursor:pointer; font-size:11px; font-weight:600; color:var(--text-ter); text-transform:uppercase; letter-spacing:0.07em; border-bottom:0.5px solid var(--border); margin-bottom:6px; }
 .cat-toggle .cat-status { font-size:10px; font-weight:400; text-transform:none; letter-spacing:0; color:var(--text-ter); display:flex; align-items:center; gap:6px; }
@@ -664,85 +671,100 @@ textarea { min-height: 70px; resize: vertical; line-height: 1.6; }
     </div>
 
     <div id="myhealth-protocol" style="display:none">
-      <div class="proto-section">
-        <div class="proto-title">🌅 The Ideal Day</div>
-        <div class="pt-wrap">
-          <div class="pt-item"><div class="pt-time">6:00am</div><div class="pt-content"><div class="pt-title">Wake — no snooze</div><div class="pt-detail">B12 sublingual (hold 90 secs) · 500ml warm water + pinch sea salt · Nasal strip off</div></div></div>
-          <div class="pt-item"><div class="pt-time">6:05</div><div class="pt-content"><div class="pt-title">10 mins natural light outside</div><div class="pt-detail">Even grey Dublin sky. Resets circadian clock. Drives dopamine + serotonin morning ramp-up.</div></div></div>
-          <div class="pt-item"><div class="pt-time">6:10</div><div class="pt-content"><div class="pt-title">Cold water — face or plunge</div><div class="pt-detail">Noradrenaline up to 300%. Most powerful free intervention for very tired on waking.</div></div></div>
-          <div class="pt-item"><div class="pt-time">6:15</div><div class="pt-content"><div class="pt-title">Log morning data</div><div class="pt-detail">Huawei watch readings · BP · Morning scores in tracker.</div></div></div>
+      <details class="proto-drop">
+        <summary>🌅 Morning — 6:00am to 12:00pm</summary>
+        <div class="proto-inner pt-wrap">
+          <div class="pt-item"><div class="pt-time">6:00am</div><div class="pt-content"><div class="pt-title">Wake — no snooze</div><div class="pt-detail">B12 sublingual (hold 90 secs) · 500ml warm water + sea salt · Nasal strip off</div></div></div>
+          <div class="pt-item"><div class="pt-time">6:05</div><div class="pt-content"><div class="pt-title">10 mins natural light outside</div><div class="pt-detail">Resets circadian clock. Drives dopamine + serotonin ramp-up.</div></div></div>
+          <div class="pt-item"><div class="pt-time">6:10</div><div class="pt-content"><div class="pt-title">Cold water — face or plunge</div><div class="pt-detail">Noradrenaline up to 300%. Most powerful intervention for very tired on waking.</div></div></div>
+          <div class="pt-item"><div class="pt-time">6:15</div><div class="pt-content"><div class="pt-title">Log morning data</div><div class="pt-detail">Huawei watch · BP · morning scores in tracker.</div></div></div>
           <div class="pt-item"><div class="pt-time">6:20</div><div class="pt-content"><div class="pt-title">Pre-breakfast supplements</div><div class="pt-detail">Quercetin · Phosphatidylserine · Betaine/TMG — 20 mins before food.</div></div></div>
           <div class="pt-item"><div class="pt-time">6:40</div><div class="pt-content"><div class="pt-title">Breakfast</div><div class="pt-detail">Morning juice → chia pudding → eggs. With food: methylfolate · D3+K2 · Vit C · Creatine.</div></div></div>
-          <div class="pt-item"><div class="pt-time">9:30</div><div class="pt-content"><div class="pt-title">L-Glutamine — empty stomach</div><div class="pt-detail">5g between meals. Goes directly to gut lining, not competing with protein.</div></div></div>
-          <div class="pt-item"><div class="pt-time">12:00</div><div class="pt-content"><div class="pt-title">DGL + Zinc carnosine</div><div class="pt-detail">15 mins before lunch. Coat stomach lining before food arrives.</div></div></div>
-          <div class="pt-item"><div class="pt-time">12:15</div><div class="pt-content"><div class="pt-title">Lunch — your main meal</div><div class="pt-detail">Salmon or white fish + rocket + olive oil + vegetables. With food: Quercetin · NAC · Curcumin · P5P.</div></div></div>
-          <div class="pt-item"><div class="pt-time">2:30pm</div><div class="pt-content"><div class="pt-title">Exercise — weather-dependent</div><div class="pt-detail">Rebound always. Walk only if humidity &lt;70% + stable pressure. Gym 3x/week. Cold shower after. Protein within 30 mins.</div></div></div>
-          <div class="pt-item"><div class="pt-time">6:00pm</div><div class="pt-content"><div class="pt-title">Dinner — light</div><div class="pt-detail">White fish or eggs + cooked vegetables. No high histamine. Vit C with dinner. Nothing heavy — gut generates histamine overnight.</div></div></div>
-          <div class="pt-item"><div class="pt-time">7:00pm</div><div class="pt-content"><div class="pt-title">Magnesium citrate</div><div class="pt-detail">In warm water. Warmth helps absorption.</div></div></div>
-          <div class="pt-item"><div class="pt-time">8:00pm</div><div class="pt-content"><div class="pt-title">Chamomile tea · Screens off</div><div class="pt-detail">Apigenin binds GABA-A receptors. Blue light suppresses melatonin (a mast cell stabiliser).</div></div></div>
-          <div class="pt-item"><div class="pt-time">9:00pm</div><div class="pt-content"><div class="pt-title">Lemon balm tea · Room cooling</div><div class="pt-detail">Open window — bedroom 16-18°C for deep sleep. Lemon balm extends chamomile effect.</div></div></div>
-          <div class="pt-item"><div class="pt-time">9:30pm</div><div class="pt-content"><div class="pt-title">Nasal strip on</div><div class="pt-detail">Nasal breathing: produces nitric oxide, keeps SpO2 up, reduces overnight histamine from airway mast cells.</div></div></div>
-          <div class="pt-item"><div class="pt-time">10:00pm</div><div class="pt-content"><div class="pt-title">Bedtime supplements</div><div class="pt-detail">Progesterone 200mg · Magnesium glycinate · Psyllium husk · Slippery Elm.</div></div></div>
-          <div class="pt-item"><div class="pt-time">10:30pm</div><div class="pt-content"><div class="pt-title">Sleep — same time every night</div><div class="pt-detail">Circadian rhythm consistency is a MTHFR recovery tool. Non-negotiable.</div></div></div>
+          <div class="pt-item"><div class="pt-time">9:30</div><div class="pt-content"><div class="pt-title">L-Glutamine — empty stomach</div><div class="pt-detail">5g between meals. Goes directly to gut lining.</div></div></div>
         </div>
-      </div>
-
-      <div class="proto-section">
-        <div class="proto-title">💊 Supplement Timing — Why It Matters</div>
-        <div class="proto-row"><strong>On waking:</strong> B12 sublingual — nothing else in mouth</div>
-        <div class="proto-row"><strong>20 mins pre-breakfast:</strong> Quercetin (pre-loads mast cell stabilisation before food hits) · Phosphatidylserine · Betaine/TMG</div>
-        <div class="proto-row"><strong>With breakfast + fat:</strong> Methylfolate · D3+K2 · Vit C · Creatine</div>
-        <div class="proto-row"><strong>Mid-morning empty stomach:</strong> L-Glutamine — goes direct to gut, not competing with digestion</div>
-        <div class="proto-row"><strong>15 mins before lunch:</strong> DGL · Zinc carnosine — coat stomach before food</div>
-        <div class="proto-row"><strong>With lunch:</strong> Quercetin · NAC 600mg · Curcumin + Boswellia · P5P (active B6)</div>
-        <div class="proto-row"><strong>With dinner:</strong> Vit C</div>
-        <div class="proto-row"><strong>Early evening:</strong> Magnesium citrate in warm water</div>
-        <div class="proto-row"><strong>Bedtime:</strong> Progesterone · Magnesium glycinate · Psyllium · Slippery Elm</div>
-      </div>
-
-      <div class="proto-section">
-        <div class="proto-title">😴 Sleep — The Overnight Histamine Rules</div>
-        <div class="proto-row"><strong>Same bedtime — 10:30pm.</strong> Circadian stability is a methylation recovery tool.</div>
-        <div class="proto-row"><strong>No food within 3 hours of bed.</strong> Gut generates histamine overnight. This one change shifts SpO2 and wake energy.</div>
-        <div class="proto-row"><strong>No screens after 9pm.</strong> Blue light suppresses melatonin — a mast cell stabiliser.</div>
-        <div class="proto-row"><strong>Bedroom 16-18°C.</strong> Core temperature drops = deep sleep. Open the window.</div>
-        <div class="proto-row"><strong>Nasal strips every night.</strong> Better SpO2 · less airway histamine · more deep sleep.</div>
-        <div class="proto-row"><strong>Target: 90+ mins deep sleep.</strong> Currently ~54 mins. Every rule above serves this number.</div>
-      </div>
-
-      <div class="proto-section">
-        <div class="proto-title">🏃 Exercise — The Weather-Aware Hierarchy</div>
-        <div class="proto-row"><strong>1. Rebound daily — 10-20 mins.</strong> Lymphatic drainage, weather-independent, always safe.</div>
-        <div class="proto-row"><strong>2. Weights 3x/week — 30-40 mins.</strong> Growth hormone (tendon healing), energy, resilience. Take PS post-workout.</div>
-        <div class="proto-row"><strong>3. Walk — humidity &lt;70% + stable pressure only.</strong> Ventolin in pocket. Morning preferred. Build 15→30 mins.</div>
-        <div class="proto-row"><strong>4. Pool — indoor, weather-independent.</strong> Monitor chlorine sensitivity.</div>
-        <div class="proto-row"><strong>5. Sauna + cold plunge — 2-3x/week.</strong> Always plunge after. Builds mast cell resilience over time.</div>
-        <div class="proto-row"><strong>Running: autumn 2026.</strong> Peak flow consistently above 380 L/min first.</div>
-        <div class="proto-row stop"><strong>Stop if wheeze starts.</strong> Rest → Ventolin → if no improvement in 30 mins → doctor/A&E.</div>
-        <div class="proto-row warn"><strong>Skip exercise</strong> if start of day score below 5.</div>
-      </div>
-
-      <div class="proto-section">
-        <div class="proto-title">🍽️ Food — Structure Matters More Than You Think</div>
-        <div class="proto-row"><strong>Lunch = main meal. Dinner = light.</strong> Heavy dinners generate overnight histamine. Flipping this improves sleep scores.</div>
-        <div class="proto-row"><strong>Morning:</strong> Juice → chia pudding → eggs. Eggs are the richest dietary source of choline (PEMT variant) and also provide tryptophan and B6.</div>
-        <div class="proto-row"><strong>Lunch:</strong> Salmon 3-4x/week (frozen → cooked from frozen). White fish otherwise. Rocket + olive oil first.</div>
-        <div class="proto-row"><strong>Dinner:</strong> Eggs or white fish + cooked vegetables. Nothing high histamine.</div>
-        <div class="proto-row"><strong>Daily:</strong> Eggs · Pumpkin seeds · Berries · Apple · Olive oil.</div>
-        <div class="proto-row"><strong>Sunday batch:</strong> Freeze salmon · Roast sweet potato · Hardboil eggs · Soak chia.</div>
-        <div class="proto-row stop"><strong>Never:</strong> Gluten · Rapeseed oil · Yeast extract · Pre-prepared fish.</div>
-        <div class="proto-row warn"><strong>Moderation:</strong> Coffee 1-2 cups max (never instant) · Spice/tomatoes/chocolate in small amounts.</div>
-      </div>
-
-      <div class="proto-section">
-        <div class="proto-title">💧 Hydration</div>
-        <div class="proto-row"><strong>2 to 2.5 litres of water daily.</strong> MCAS increases vascular permeability — you need more than standard advice. Sip consistently, don't gulp.</div>
-        <div class="proto-row"><strong>On waking:</strong> 500ml warm water + pinch sea salt. Flushes overnight metabolites. Non-optional.</div>
-        <div class="proto-row"><strong>Stop drinking 90 mins before bed.</strong> Reduces overnight bathroom trips fragmenting your sleep.</div>
-        <div class="proto-row"><strong>Room temperature or warm only.</strong> Cold water can trigger airway mast cells — same logic as cold air.</div>
-        <div class="proto-row"><strong>The teas are medicine:</strong> Ginger (morning, mast cell stabiliser) · Dandelion root (before meals, bile) · Chamomile (evening, GABA, sleep) · Lemon balm (bedtime, cortisol reduction).</div>
-        <div class="proto-row stop"><strong>Never:</strong> Alcohol · Instant coffee · Fizzy drinks with additives · Anything with sulphites.</div>
-      </div>
+      </details>
+      <details class="proto-drop">
+        <summary>☀️ Afternoon — 12:00pm to 6:00pm</summary>
+        <div class="proto-inner pt-wrap">
+          <div class="pt-item"><div class="pt-time">12:00</div><div class="pt-content"><div class="pt-title">DGL + Zinc carnosine</div><div class="pt-detail">15 mins before lunch. Coat stomach lining before food arrives.</div></div></div>
+          <div class="pt-item"><div class="pt-time">12:15</div><div class="pt-content"><div class="pt-title">Lunch — main meal</div><div class="pt-detail">Salmon or white fish + rocket + olive oil + vegetables. With food: Quercetin · NAC · Curcumin · P5P.</div></div></div>
+          <div class="pt-item"><div class="pt-time">2:30pm</div><div class="pt-content"><div class="pt-title">Exercise — weather-dependent</div><div class="pt-detail">Rebound always. Walk only if humidity &lt;70% + stable pressure. Cold shower after.</div></div></div>
+        </div>
+      </details>
+      <details class="proto-drop">
+        <summary>🌙 Evening &amp; Night — 6:00pm to 10:30pm</summary>
+        <div class="proto-inner pt-wrap">
+          <div class="pt-item"><div class="pt-time">6:00pm</div><div class="pt-content"><div class="pt-title">Dinner — light</div><div class="pt-detail">White fish or eggs + cooked vegetables. Vit C with dinner. No high histamine.</div></div></div>
+          <div class="pt-item"><div class="pt-time">7:00pm</div><div class="pt-content"><div class="pt-title">Magnesium citrate</div><div class="pt-detail">In warm water.</div></div></div>
+          <div class="pt-item"><div class="pt-time">8:00pm</div><div class="pt-content"><div class="pt-title">Chamomile tea · Screens off</div><div class="pt-detail">Apigenin binds GABA-A. Blue light suppresses melatonin.</div></div></div>
+          <div class="pt-item"><div class="pt-time">9:00pm</div><div class="pt-content"><div class="pt-title">Lemon balm · Room cooling</div><div class="pt-detail">Open window — 16-18°C. Lemon balm extends chamomile effect.</div></div></div>
+          <div class="pt-item"><div class="pt-time">9:30pm</div><div class="pt-content"><div class="pt-title">Nasal strip on</div><div class="pt-detail">Better SpO2 · less overnight airway histamine.</div></div></div>
+          <div class="pt-item"><div class="pt-time">10:00pm</div><div class="pt-content"><div class="pt-title">Bedtime supplements</div><div class="pt-detail">Progesterone 200mg · Magnesium glycinate · Psyllium husk · Slippery Elm.</div></div></div>
+          <div class="pt-item"><div class="pt-time">10:30pm</div><div class="pt-content"><div class="pt-title">Sleep — same time every night</div><div class="pt-detail">Circadian stability is a methylation recovery tool.</div></div></div>
+        </div>
+      </details>
+      <details class="proto-drop">
+        <summary>💊 Supplement Timing</summary>
+        <div class="proto-inner">
+          <div class="proto-row"><strong>On waking:</strong> B12 sublingual — nothing else in mouth</div>
+          <div class="proto-row"><strong>Pre-breakfast (20 mins):</strong> Quercetin · Phosphatidylserine · Betaine/TMG</div>
+          <div class="proto-row"><strong>With breakfast + fat:</strong> Methylfolate · D3+K2 · Vit C · Creatine</div>
+          <div class="proto-row"><strong>Mid-morning empty stomach:</strong> L-Glutamine</div>
+          <div class="proto-row"><strong>15 mins before lunch:</strong> DGL · Zinc carnosine</div>
+          <div class="proto-row"><strong>With lunch:</strong> Quercetin · NAC · Curcumin + Boswellia · P5P</div>
+          <div class="proto-row"><strong>With dinner:</strong> Vit C</div>
+          <div class="proto-row"><strong>Early evening:</strong> Magnesium citrate in warm water</div>
+          <div class="proto-row"><strong>Bedtime:</strong> Progesterone · Magnesium glycinate · Psyllium · Slippery Elm</div>
+        </div>
+      </details>
+      <details class="proto-drop">
+        <summary>😴 Sleep Rules</summary>
+        <div class="proto-inner">
+          <div class="proto-row"><strong>Same bedtime — 10:30pm.</strong> Circadian stability is a methylation recovery tool.</div>
+          <div class="proto-row"><strong>No food within 3 hours of bed.</strong> Gut generates histamine overnight.</div>
+          <div class="proto-row"><strong>No screens after 9pm.</strong> Blue light suppresses melatonin — a mast cell stabiliser.</div>
+          <div class="proto-row"><strong>Bedroom 16-18°C.</strong> Core temperature drops = deep sleep.</div>
+          <div class="proto-row"><strong>Nasal strips every night.</strong> Better SpO2 · less airway histamine · more deep sleep.</div>
+          <div class="proto-row"><strong>Target: 90+ mins deep sleep.</strong> Every rule above serves this number.</div>
+        </div>
+      </details>
+      <details class="proto-drop">
+        <summary>🏃 Exercise Hierarchy</summary>
+        <div class="proto-inner">
+          <div class="proto-row"><strong>1. Rebound daily — 10-20 mins.</strong> Lymphatic drainage, always safe.</div>
+          <div class="proto-row"><strong>2. Weights 3x/week — 30-40 mins.</strong> Growth hormone, energy, resilience. PS post-workout.</div>
+          <div class="proto-row"><strong>3. Walk — humidity &lt;70% + stable pressure only.</strong> Ventolin in pocket.</div>
+          <div class="proto-row"><strong>4. Pool — indoor, weather-independent.</strong> Monitor chlorine sensitivity.</div>
+          <div class="proto-row"><strong>5. Sauna + cold plunge — 2-3x/week.</strong> Always plunge after.</div>
+          <div class="proto-row"><strong>Running: autumn 2026.</strong> Peak flow above 380 L/min first.</div>
+          <div class="proto-row stop"><strong>Stop if wheeze starts.</strong> Rest → Ventolin → 30 mins no improvement → doctor/A&amp;E.</div>
+          <div class="proto-row warn"><strong>Skip exercise</strong> if start of day below 5.</div>
+        </div>
+      </details>
+      <details class="proto-drop">
+        <summary>🍽️ Food Structure</summary>
+        <div class="proto-inner">
+          <div class="proto-row"><strong>Lunch = main meal. Dinner = light.</strong> Heavy dinners generate overnight histamine.</div>
+          <div class="proto-row"><strong>Morning:</strong> Juice → chia pudding → eggs.</div>
+          <div class="proto-row"><strong>Lunch:</strong> Salmon 3-4x/week (frozen → cooked from frozen). White fish otherwise. Rocket + olive oil first.</div>
+          <div class="proto-row"><strong>Dinner:</strong> Eggs or white fish + cooked vegetables. Nothing high histamine.</div>
+          <div class="proto-row"><strong>Daily:</strong> Eggs · Pumpkin seeds · Berries · Apple · Olive oil.</div>
+          <div class="proto-row"><strong>Sunday batch:</strong> Freeze salmon · Roast sweet potato · Hardboil eggs · Soak chia.</div>
+          <div class="proto-row stop"><strong>Never:</strong> Gluten · Rapeseed oil · Yeast extract · Pre-prepared fish.</div>
+          <div class="proto-row warn"><strong>Moderation:</strong> Coffee 1-2 cups max (never instant) · Spice/tomatoes/chocolate.</div>
+        </div>
+      </details>
+      <details class="proto-drop">
+        <summary>💧 Hydration</summary>
+        <div class="proto-inner">
+          <div class="proto-row"><strong>2 to 2.5 litres daily.</strong> Sip consistently, don't gulp.</div>
+          <div class="proto-row"><strong>On waking:</strong> 500ml warm water + pinch sea salt. Non-optional.</div>
+          <div class="proto-row"><strong>Stop drinking 90 mins before bed.</strong> Reduces overnight bathroom trips.</div>
+          <div class="proto-row"><strong>Room temperature or warm only.</strong> Cold water can trigger airway mast cells.</div>
+          <div class="proto-row"><strong>Teas as medicine:</strong> Ginger (morning) · Dandelion root (before meals) · Chamomile (evening) · Lemon balm (bedtime).</div>
+          <div class="proto-row stop"><strong>Never:</strong> Alcohol · Instant coffee · Fizzy drinks · Sulphites.</div>
+        </div>
+      </details>
     </div>
 
     <div id="myhealth-bloods" style="display:none">
@@ -1777,6 +1799,13 @@ function dotColor(marker,value){
 function toggleCat(catId){
   if(collapsedCats.has(catId))collapsedCats.delete(catId);else collapsedCats.add(catId);
   renderBloods();
+}
+function toggleProto(id){
+  if(collapsedProto.has(id))collapsedProto.delete(id);else collapsedProto.add(id);
+  const content=document.getElementById(id);
+  const arrow=document.getElementById(id+"-arrow");
+  if(content)content.style.display=collapsedProto.has(id)?"none":"block";
+  if(arrow)arrow.textContent=collapsedProto.has(id)?"▶":"▼";
 }
 function bmCard(m){
   const results=(bloodData[m.key]||[]).sort((a,b)=>a.date.localeCompare(b.date));
