@@ -1536,11 +1536,34 @@ function flashBtn(id,on,off){const btn=document.getElementById(id);btn.textConte
 function renderHist(){
   const c=document.getElementById("hist-list");if(!health.length){c.innerHTML='<div class="empty">No entries yet.</div>';return;}
   c.innerHTML=health.map(e=>{
-    const b=e.breathing||{};const m=e.morning||{};const ri=(b.relieveCount||0)>0,si=(b.steroidCount||0)>0;
-    const badges=[ri?`<span class="badge amber">Ventolin×${b.relieveCount}</span>`:"",si?`<span class="badge blue">Relvar×${b.steroidCount}</span>`:"",e.juicing?'<span class="badge teal">juiced</span>':"",(b.pfAM)?`<span class="badge blue">PF${b.pfAM}</span>`:""].filter(Boolean).join("");
+    const b=e.breathing||{};const m=e.morning||{};
+    const ri=(b.relieveCount||0)>0,si=(b.steroidCount||0)>0;
     const sod=m.startOfDay;
-    const scores=[["sod","Start",sod],["wakeEnergy","Wake",m.wakeEnergy],["energyday","Energy",e.scores?.energyday],["gut","Gut",e.scores?.gut],["brainfog","Clarity",e.scores?.brainfog]].map(([k,l,v])=>`<div class="sm-item"><div class="lbl">${l}</div><div class="val" style="color:${scoreColor(v||0)}">${v||"—"}</div></div>`).join("");
-    return `<div class="hist-item${(ri||si)?" has-inhaler":""}" onclick="loadHealthAndSwitch('${e.date}')"><div class="hist-date">${fmtDate(e.date)}<div class="badges">${badges}</div></div><div class="scores-mini">${scores}</div>${e.notes?`<div class="hist-note">${e.notes.slice(0,100)}${e.notes.length>100?"…":""}</div>`:""}</div>`;
+    const pf=b.pfAM;
+    const vent=b.relieveCount||0;
+    const relvar=b.steroidCount||0;
+    const se=(e.relvarSideEffects||[]).filter(s=>s!=="No side effects");
+
+    // Breathing row
+    const pfColor=pf?pf>=380?"var(--teal)":pf>=300?"var(--amber)":"var(--red)":"var(--text-ter)";
+    const ventColor=vent===0?"var(--teal)":vent<=2?"var(--amber)":"var(--red)";
+    const breathScore=e.scores?.breathingday;
+    const breathRow=`<div style="display:flex;gap:10px;align-items:center;padding:5px 0;border-bottom:0.5px solid var(--border);margin-bottom:5px">
+      <div class="sm-item"><div class="lbl">Breathing</div><div class="val" style="color:${scoreColor(breathScore||0)}">${breathScore||"—"}</div></div>
+      <div class="sm-item"><div class="lbl">Peak flow</div><div class="val" style="color:${pfColor}">${pf||"—"}</div></div>
+      <div class="sm-item"><div class="lbl">Ventolin</div><div class="val" style="color:${ventColor}">${vent}×</div></div>
+      <div class="sm-item"><div class="lbl">Relvar</div><div class="val" style="color:${relvar>0?"var(--teal)":"var(--text-ter)"}">${relvar>0?"✓":"—"}</div></div>
+      ${se.length?`<div style="font-size:10px;color:var(--amber);align-self:center">⚠️ ${se[0]}</div>`:""}
+    </div>`;
+
+    const scores=[["sod","Start",sod],["wakeEnergy","Wake",m.wakeEnergy],["energyday","Energy",e.scores?.energyday],["gut","Gut",e.scores?.gut],["shoulder","Shoulder",e.scores?.shoulder]].map(([k,l,v])=>`<div class="sm-item"><div class="lbl">${l}</div><div class="val" style="color:${scoreColor(v||0)}">${v||"—"}</div></div>`).join("");
+
+    return `<div class="hist-item" onclick="loadHealthAndSwitch('${e.date}')">
+      <div class="hist-date">${fmtDate(e.date)}</div>
+      ${breathRow}
+      <div class="scores-mini">${scores}</div>
+      ${e.notes?`<div class="hist-note">${e.notes.slice(0,100)}${e.notes.length>100?"…":""}</div>`:""}
+    </div>`;
   }).join("");
 }
 function loadHealthAndSwitch(date){loadHealth(date);showSub("health","log",document.querySelectorAll("#page-health .inner-tab")[0]);}
