@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Shiera's Health Tracker">
+<meta name="apple-mobile-web-app-title" content="Histamine Tracker">
 <meta name="theme-color" content="#ffffff">
 <link rel="manifest" href="manifest.json">
-<title>Shiera's Health Tracker</title>
+<title>Histamine Tracker</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -204,6 +204,21 @@ details.proto-drop summary::-webkit-details-marker { display:none; }
 details.proto-drop summary::after { content:"▶"; font-size:10px; color:var(--text-ter); transition:transform 0.2s; }
 details.proto-drop[open] summary::after { content:"▼"; color:var(--text-ter); }
 details.proto-drop .proto-inner { padding:0 14px 12px; }
+/* FOOD CARDS */
+.food-card { background:white; border:0.5px solid var(--border); border-radius:var(--radius); padding:11px 13px; margin-bottom:8px; }
+.food-card.trigger { border-left:3px solid var(--red); }
+.food-card.caution { border-left:3px solid var(--amber); }
+.food-card.safe { border-left:3px solid var(--teal); }
+.food-card.safe-tea { border-left:3px solid #7C3AED; }
+.food-head { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px; }
+.food-name { font-size:13px; font-weight:600; color:var(--text); }
+.food-badge { font-size:10px; font-weight:600; padding:2px 7px; border-radius:20px; }
+.food-badge.red { background:var(--coral-bg); color:var(--red); }
+.food-badge.amber { background:var(--amber-bg); color:var(--amber); }
+.food-badge.teal { background:var(--teal-bg); color:var(--teal); }
+.food-badge.purple { background:var(--purple-bg); color:var(--violet); }
+.food-mech { font-size:11px; color:var(--text-sec); margin-bottom:3px; }
+.food-confirm { font-size:10px; color:var(--text-ter); font-style:italic; }
 /* BLOOD MARKERS */
 .cat-toggle { width:100%; display:flex; justify-content:space-between; align-items:center; background:none; border:none; padding:9px 0; cursor:pointer; font-size:11px; font-weight:600; color:var(--text-ter); text-transform:uppercase; letter-spacing:0.07em; border-bottom:0.5px solid var(--border); margin-bottom:6px; }
 .cat-toggle .cat-status { font-size:10px; font-weight:400; text-transform:none; letter-spacing:0; color:var(--text-ter); display:flex; align-items:center; gap:6px; }
@@ -286,8 +301,8 @@ details.proto-drop .proto-inner { padding:0 14px 12px; }
 <body>
 <div class="app">
   <div class="nav">
-    <div class="nav-title">Shiera's Health Tracker</div>
-    <div class="nav-sub">Tracking to 2 July 2026</div>
+    <div class="nav-title">Histamine Tracker</div>
+    <div class="nav-sub">Tracking from 2 July 2026</div>
     <div class="nav-tabs">
       <button class="nav-tab active" onclick="showPage('health',this)">Tracking</button>
       <button class="nav-tab" onclick="showPage('triggers',this)">Triggers</button>
@@ -411,7 +426,7 @@ details.proto-drop .proto-inner { padding:0 14px 12px; }
             </div>
           </div>
           <div class="inhaler-block">
-            <div class="inhaler-name">🟤 Pulmicort (steroid)</div>
+            <div class="inhaler-name">🟣 Relvar Ellipta (once daily)</div>
             <div class="stepper">
               <button class="stepper-btn" onclick="changeInhaler('steroid',-1)">−</button>
               <span class="stepper-val" id="steroid-count">0</span>
@@ -421,12 +436,66 @@ details.proto-drop .proto-inner { padding:0 14px 12px; }
         </div>
         <div class="bf-label" style="margin-bottom:6px">Daytime breathing symptoms</div>
         <div id="breath-syms"></div>
+        <div style="margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border)">
+          <div class="bf-label" style="margin-bottom:6px">🟣 Relvar — side effects today?</div>
+          <div id="relvar-pills"></div>
+        </div>
       </div>
 
       <div class="sh">Daytime scores — 1 poor · 10 excellent</div>
       <div class="card"><div class="score-grid" id="score-rows"></div></div>
 
-      <div class="sh">Supplements</div>
+      <div class="sh">Antihistamine Response</div>
+      <div class="card" id="anti-log-card">
+        <div style="font-size:12px;color:var(--text-sec);margin-bottom:10px">Log when you take Telfast or Pepcid and track how fast it works.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+          <div>
+            <div class="bf-label" style="margin-bottom:4px">Medication taken</div>
+            <select id="anti-med" style="width:100%;padding:8px;font-size:13px;border:0.5px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-sec)">
+              <option value="">Select...</option>
+              <option value="Telfast (H1)">Telfast (H1)</option>
+              <option value="Pepcid (H2)">Pepcid (H2)</option>
+              <option value="Both">Both</option>
+            </select>
+          </div>
+          <div>
+            <div class="bf-label" style="margin-bottom:4px">Time taken</div>
+            <input type="time" id="anti-time" style="width:100%;padding:8px;font-size:13px;border:0.5px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-sec)">
+          </div>
+        </div>
+        <div style="margin-bottom:8px">
+          <div class="bf-label" style="margin-bottom:4px">Symptom being treated</div>
+          <input type="text" id="anti-symptom" placeholder="e.g. wheeze, skin flare, gut pain..." style="width:100%;padding:8px;font-size:13px;border:0.5px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-sec)">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+          <div>
+            <div class="bf-label" style="margin-bottom:4px">Severity before (1-10)</div>
+            <input type="number" id="anti-before" min="1" max="10" placeholder="—" style="width:100%;padding:8px;font-size:13px;border:0.5px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-sec)">
+          </div>
+          <div>
+            <div class="bf-label" style="margin-bottom:4px">Time to relief</div>
+            <select id="anti-speed" style="width:100%;padding:8px;font-size:13px;border:0.5px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-sec)">
+              <option value="">Select...</option>
+              <option value="<30 mins">&lt;30 mins</option>
+              <option value="30-60 mins">30-60 mins</option>
+              <option value="1-2 hours">1-2 hours</option>
+              <option value=">2 hours">&gt;2 hours</option>
+              <option value="No effect">No effect</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-bottom:10px">
+          <div class="bf-label" style="margin-bottom:4px">Effect</div>
+          <div style="display:flex;gap:6px">
+            <span class="pill" onclick="setAntiEffect('Much better',this)">Much better</span>
+            <span class="pill" onclick="setAntiEffect('Better',this)">Better</span>
+            <span class="pill" onclick="setAntiEffect('No change',this)">No change</span>
+            <span class="pill" onclick="setAntiEffect('Worse',this)">Worse</span>
+          </div>
+        </div>
+        <button class="btn btn-dark" onclick="logAntihistamine()" style="margin-top:0">Log response</button>
+        <div id="anti-log-list" style="margin-top:10px"></div>
+      </div>
       <div class="card">
         <div class="comp-label" id="supp-label">0/19 · 0%</div>
         <div class="comp-bar"><div class="comp-fill" id="supp-bar" style="width:0%;background:var(--red)"></div></div>
@@ -516,6 +585,7 @@ details.proto-drop .proto-inner { padding:0 14px 12px; }
       <button class="inner-tab" onclick="showSub('myhealth','dna',this)">My DNA</button>
       <button class="inner-tab" onclick="showSub('myhealth','hrt',this)">HRT</button>
       <button class="inner-tab" onclick="showSub('myhealth','bloods',this)">Bloods</button>
+      <button class="inner-tab" onclick="showSub('myhealth','foods',this)">Foods</button>
       <button class="inner-tab" onclick="showSub('myhealth','protocol',this)">Protocol</button>
     </div>
 
@@ -538,7 +608,7 @@ details.proto-drop .proto-inner { padding:0 14px 12px; }
       </div>
       <div class="mh-card">
         <div class="mh-title">Multiple Symptoms</div>
-        <div class="mh-row">Asthma · Psoriasis · Eczema · Cystitis · Gastritis · Tinnitus · Joint pain · Fatigue · Bladder irritation · Skin flares · Shoulder tendinopathy</div>
+        <div class="mh-row">Asthma · Psoriasis · Eczema · Cystitis · Gastritis · Tinnitus · Joint pain · Fatigue · Bladder irritation · Skin flares · Three-tendon tendinopathy (MRI confirmed, no obvious cause)</div>
       </div>
       <div class="mh-card">
         <div class="mh-title">Background</div>
@@ -548,12 +618,22 @@ details.proto-drop .proto-inner { padding:0 14px 12px; }
       </div>
       <div class="mh-card">
         <div class="mh-title">Key Triggers</div>
-        <div class="mh-row">🍽️ <strong>Food:</strong> Yeast extract · Rapeseed/seed oils · Alcohol &amp; sulphites · Pre-prepared fish · Gluten · Fermented foods · Spinach · Lentils</div>
+        <div class="mh-row">🍽️ <strong>Food:</strong> Yeast extract · Rapeseed/seed oils · Alcohol &amp; sulphites · Pre-prepared fish · Gluten · Fermented foods · Spinach · Lentils · Peanuts</div>
         <div class="mh-row">⚠️ In excess only: spice · tomatoes · chocolate · crisps · coffee (1-2 cups OK, never instant)</div>
         <div class="mh-row">🌡️ <strong>Temperature:</strong> Heat · Cold · Rapid change · High humidity + exercise (wheeze within 5 mins, June 2026)</div>
         <div class="mh-row">🌿 <strong>Environmental:</strong> Dust mites (confirmed allergy) · Perfumes · Pollen · Low atmospheric pressure</div>
         <div class="mh-row">💊 <strong>Medications:</strong> NSAIDs · Morphine/codeine · Some antibiotics (class uncertain — verify)</div>
         <div class="mh-row" style="font-size:11px;color:var(--text-ter);margin-top:4px">Full trigger log with delays and patterns → Triggers tab</div>
+      </div>
+      <div class="mh-card">
+        <div class="mh-title">✅ Confirmed Safe Foods</div>
+        <div class="mh-row">🐟 <strong>Protein:</strong> Fresh/frozen salmon (cook from frozen) · white fish · eggs daily</div>
+        <div class="mh-row">🥗 <strong>Vegetables:</strong> Rocket · carrots · celery · cucumber · courgette · sweet potato</div>
+        <div class="mh-row">🌿 <strong>Herbs:</strong> Parsley · coriander · ginger · fresh herbs</div>
+        <div class="mh-row">🫐 <strong>Fruit:</strong> Apple · blueberries/berries · lemon</div>
+        <div class="mh-row">🌾 <strong>Other:</strong> Chia seeds · pumpkin seeds · gluten-free oats · almond milk · olive oil</div>
+        <div class="mh-row">🍵 <strong>Teas:</strong> Ginger · chamomile · lemon balm · dandelion root · nettle (plain, no hibiscus)</div>
+        <div class="mh-row" style="font-size:11px;color:var(--text-ter);margin-top:4px">All fish fresh or cook from frozen. Pre-prepared/packaged fish = histamine risk.</div>
       </div>
       <div class="mh-card" style="border-left:3px solid var(--amber)">
         <div class="mh-title">⚠️ Medication Awareness — For Any Healthcare Provider</div>
@@ -670,6 +750,176 @@ details.proto-drop .proto-inner { padding:0 14px 12px; }
       <div id="hrt-history-list"></div>
     </div>
 
+    <div id="myhealth-foods" style="display:none">
+      <div class="sh">🚫 Confirmed Triggers</div>
+      <p style="font-size:12px;color:var(--text-sec);margin-bottom:10px">Each one confirmed through real-time testing or long-term pattern recognition.</p>
+
+      <div class="food-card trigger">
+        <div class="food-head"><span class="food-name">Yeast Extract (all aliases)</span><span class="food-badge red">Severe</span></div>
+        <div class="food-mech">Direct histamine bomb. Autolysed yeast contains preformed histamine at very high levels.</div>
+        <div class="food-confirm">Confirmed Day 4 — Knorr stock cube caused immediate gastritis flare.</div>
+      </div>
+
+      <div class="food-card trigger">
+        <div class="food-head"><span class="food-name">Rapeseed / Seed Oils</span><span class="food-badge red">Severe</span></div>
+        <div class="food-mech">High omega-6 drives mast cell inflammatory cascade. Simultaneous multi-system response.</div>
+        <div class="food-confirm">Confirmed Day 3 — poppadoms caused simultaneous gut pain + wheezing within minutes.</div>
+      </div>
+
+      <div class="food-card trigger">
+        <div class="food-head"><span class="food-name">Gluten</span><span class="food-badge red">Severe</span></div>
+        <div class="food-mech">Increases intestinal permeability via zonulin. DQ8 gene risk — coeliac challenge was extremely symptomatic. Non-negotiable avoidance.</div>
+        <div class="food-confirm">HLA-DQ8 confirmed. Gluten challenge severely symptomatic.</div>
+      </div>
+
+      <div class="food-card trigger">
+        <div class="food-head"><span class="food-name">Alcohol &amp; Sulphites</span><span class="food-badge red">Severe</span></div>
+        <div class="food-mech">Blocks DAO enzyme, triggers mast cell degranulation, contains histamine. Sulphites (E220-E228) cause direct airway mast cell activation. White wine = triple hit: sulphites + acidity + alcohol.</div>
+        <div class="food-confirm">Years of pattern. White wine = worst bladder trigger. Sulphites = wheeze.</div>
+      </div>
+
+      <div class="food-card trigger">
+        <div class="food-head"><span class="food-name">Pre-prepared Fish</span><span class="food-badge red">Severe</span></div>
+        <div class="food-mech">Histamine accumulates rapidly in fish from bacterial action during storage. Pre-packaged or deli fish carries high histamine load.</div>
+        <div class="food-confirm">Years — wheezing from cold salmon salad, skin rash from packaged fish.</div>
+      </div>
+
+      <div class="food-card trigger">
+        <div class="food-head"><span class="food-name">Lentils / Chickpeas / Legumes</span><span class="food-badge amber">Avoid</span></div>
+        <div class="food-mech">Histamine liberators — cause mast cells to release histamine even if the food itself contains little. Bile overload from high fat + fibre combination.</div>
+        <div class="food-confirm">Confirmed Day 3 — poppadoms (lentil flour base).</div>
+      </div>
+
+      <div class="food-card trigger">
+        <div class="food-head"><span class="food-name">Peanuts</span><span class="food-badge amber">Avoid</span></div>
+        <div class="food-mech">High omega-6, histamine liberator, bile overload. Multiple simultaneous mechanisms.</div>
+        <div class="food-confirm">Confirmed Day 3 — nausea after peanuts + dandelion tea combination.</div>
+      </div>
+
+      <div class="food-card trigger">
+        <div class="food-head"><span class="food-name">Spinach</span><span class="food-badge amber">Avoid</span></div>
+        <div class="food-mech">One of the highest histamine vegetables. Also high oxalate — compounds gut permeability issues.</div>
+        <div class="food-confirm">Well-established histamine food. Avoidance confirmed.</div>
+      </div>
+
+      <div class="food-card trigger">
+        <div class="food-head"><span class="food-name">Fermented Foods</span><span class="food-badge amber">Avoid</span></div>
+        <div class="food-mech">Fermentation produces histamine. Yoghurt, kefir, sauerkraut, vinegar, pickles — all high. Paradox: healthy for most, inflammatory for MCAS.</div>
+        <div class="food-confirm">Pattern confirmed — fermented foods worsen all systems.</div>
+      </div>
+
+      <div class="food-card trigger">
+        <div class="food-head"><span class="food-name">Coffee &amp; Decaf</span><span class="food-badge amber">Avoid</span></div>
+        <div class="food-mech">Mast cell degranulation independent of caffeine. Decaf equally problematic. One fresh ground coffee in morning is tolerated — instant is worst.</div>
+        <div class="food-confirm">Known. Instant coffee = worst trigger. One fresh ground coffee acceptable.</div>
+      </div>
+
+      <div class="food-card trigger">
+        <div class="food-head"><span class="food-name">Smoked / Cured Foods</span><span class="food-badge amber">Avoid</span></div>
+        <div class="food-mech">Processing and smoking create histamine. Smoked salmon, deli meats, bacon — all high histamine from processing.</div>
+        <div class="food-confirm">Known pattern. Fresh only.</div>
+      </div>
+
+      <div class="food-card trigger">
+        <div class="food-head"><span class="food-name">Excess Tomatoes / Chocolate / Spice</span><span class="food-badge amber">Moderation</span></div>
+        <div class="food-mech">Histamine liberators in large amounts. Small quantities generally tolerated. Dose-dependent response.</div>
+        <div class="food-confirm">In moderation only. Excess triggers reaction.</div>
+      </div>
+
+      <div class="sh" style="margin-top:16px">✅ Confirmed Safe Foods</div>
+      <p style="font-size:12px;color:var(--text-sec);margin-bottom:10px">Each one tested and confirmed well tolerated. The foundation of the protocol diet.</p>
+
+      <div class="food-card safe">
+        <div class="food-head"><span class="food-name">🐟 Fresh / Frozen Salmon</span><span class="food-badge teal">Daily</span></div>
+        <div class="food-mech">Omega-3 anti-inflammatory, collagen, complete protein. Cook from frozen every time — eliminates histamine accumulation from fresh storage.</div>
+        <div class="food-confirm">Primary protein source. Fresh or frozen only, never pre-prepared.</div>
+      </div>
+
+      <div class="food-card safe">
+        <div class="food-head"><span class="food-name">🥚 Eggs</span><span class="food-badge teal">Daily</span></div>
+        <div class="food-mech">Richest dietary source of choline (critical for PEMT CT variant). Tryptophan (serotonin precursor), B6 (DAO cofactor). Complete amino acid profile.</div>
+        <div class="food-confirm">Daily anchor food. Clinical food for PEMT CT genotype.</div>
+      </div>
+
+      <div class="food-card safe">
+        <div class="food-head"><span class="food-name">🌱 Chia Seeds (soaked)</span><span class="food-badge teal">Daily</span></div>
+        <div class="food-mech">Gel-forming fibre feeds butyrate-producing bacteria, omega-3 anti-inflammatory, mucosal coating. Must be soaked overnight — reduces phytic acid, improves absorption.</div>
+        <div class="food-confirm">Breakfast anchor. Soaked overnight in almond milk.</div>
+      </div>
+
+      <div class="food-card safe">
+        <div class="food-head"><span class="food-name">🎃 Pumpkin Seeds</span><span class="food-badge teal">Daily</span></div>
+        <div class="food-mech">Natural zinc source (DAO enzyme cofactor), tryptophan (serotonin precursor), magnesium. Supports histamine clearance directly.</div>
+        <div class="food-confirm">Daily snack or breakfast addition.</div>
+      </div>
+
+      <div class="food-card safe">
+        <div class="food-head"><span class="food-name">🫒 Olive Oil</span><span class="food-badge teal">Daily</span></div>
+        <div class="food-mech">Primary fat. Oleocanthal is a natural anti-inflammatory (COX inhibitor). Supports bile production, fat-soluble vitamin absorption.</div>
+        <div class="food-confirm">Primary cooking and dressing fat. Anti-inflammatory baseline.</div>
+      </div>
+
+      <div class="food-card safe">
+        <div class="food-head"><span class="food-name">🥗 Rocket</span><span class="food-badge teal">Daily</span></div>
+        <div class="food-mech">Low histamine green. Bitter compounds stimulate bile production and liver detox. Taken before meals with olive oil as bile flow primer.</div>
+        <div class="food-confirm">Pre-meal salad staple. Bile primer.</div>
+      </div>
+
+      <div class="food-card safe">
+        <div class="food-head"><span class="food-name">🥕 Carrots · Celery · Cucumber</span><span class="food-badge teal">Daily</span></div>
+        <div class="food-mech">Carrots: beta-carotene, mucosal health. Celery: apigenin (mast cell stabiliser), same mechanism as chamomile. Cucumber: hydrating, anti-inflammatory, quercetin.</div>
+        <div class="food-confirm">Juicing and snack staples. Quercetin and apigenin in food form.</div>
+      </div>
+
+      <div class="food-card safe">
+        <div class="food-head"><span class="food-name">🍋 Lemon · Parsley · Coriander</span><span class="food-badge teal">Daily</span></div>
+        <div class="food-mech">Lemon: vitamin C, liver support. Parsley: highest vitamin C of common herbs. Coriander: liver support, chelator, heavy metal binding.</div>
+        <div class="food-confirm">Daily juice ingredients. Pharmacology in a glass.</div>
+      </div>
+
+      <div class="food-card safe">
+        <div class="food-head"><span class="food-name">🍎 Apple · Blueberries / Berries</span><span class="food-badge teal">Daily</span></div>
+        <div class="food-mech">Apple: quercetin (mast cell stabiliser — food form). Berries: anthocyanins support BDNF (brain repair and growth), anti-inflammatory, low histamine.</div>
+        <div class="food-confirm">Daily fruit. Quercetin and BDNF support.</div>
+      </div>
+
+      <div class="food-card safe">
+        <div class="food-head"><span class="food-name">🍠 Sweet Potato</span><span class="food-badge teal">Weekly</span></div>
+        <div class="food-mech">Complex carbohydrate, beta-carotene, potassium. Low histamine. Gentle on gut. Anchor meal with eggs (sweet potato omelette).</div>
+        <div class="food-confirm">Safe anchor meal — sweet potato omelette as biochemical reset.</div>
+      </div>
+
+      <div class="food-card safe-tea">
+        <div class="food-head"><span class="food-name">🫖 Ginger Tea</span><span class="food-badge purple">Morning</span></div>
+        <div class="food-mech">Gingerols inhibit mast cell degranulation. Anti-nausea. Anti-inflammatory. Supports gut motility. Natural mast cell stabiliser in tea form.</div>
+        <div class="food-confirm">Morning tea. Mast cell stabiliser before the day begins.</div>
+      </div>
+
+      <div class="food-card safe-tea">
+        <div class="food-head"><span class="food-name">🌼 Chamomile Tea</span><span class="food-badge purple">Evening</span></div>
+        <div class="food-mech">Apigenin binds GABA-A receptors directly — same target as benzodiazepines but gentle, no dependency. Deepens sleep architecture. Anti-spasmodic for gut.</div>
+        <div class="food-confirm">Evening tea. GABA-A activation, sleep deepening.</div>
+      </div>
+
+      <div class="food-card safe-tea">
+        <div class="food-head"><span class="food-name">🌿 Lemon Balm Tea</span><span class="food-badge purple">Bedtime</span></div>
+        <div class="food-mech">Rosmarinic acid inhibits the enzyme that breaks GABA down — extends chamomile's effect. Cortisol reduction. Calming without sedation.</div>
+        <div class="food-confirm">Bedtime tea. GABA extension, cortisol reduction.</div>
+      </div>
+
+      <div class="food-card safe-tea">
+        <div class="food-head"><span class="food-name">🌱 Dandelion Root Tea</span><span class="food-badge purple">Before meals</span></div>
+        <div class="food-mech">Stimulates bile production and release. Supports cholesterol conversion. Liver protective. Taken before meals to prime bile flow.</div>
+        <div class="food-confirm">Pre-meal tea. Bile primer, liver support.</div>
+      </div>
+
+      <div class="food-card safe-tea">
+        <div class="food-head"><span class="food-name">🌿 Nettle Tea</span><span class="food-badge purple">Anytime</span></div>
+        <div class="food-mech">Natural antihistamine — inhibits histamine release from mast cells directly. Contains quercetin. Gentle H1 antagonist in tea form. Check blends for hibiscus.</div>
+        <div class="food-confirm">Natural antihistamine. Any time of day. Plain only.</div>
+      </div>
+
+    </div>
     <div id="myhealth-protocol" style="display:none">
       <details class="proto-drop">
         <summary>🌅 Morning — 6:00am to 12:00pm</summary>
@@ -742,6 +992,28 @@ details.proto-drop .proto-inner { padding:0 14px 12px; }
         </div>
       </details>
       <details class="proto-drop">
+        <summary>🏠 Environment</summary>
+        <div class="proto-inner">
+          <div class="proto-row"><strong>Air purifier:</strong> Run when at home. Reduces dust mites, pollen, airborne histamine triggers.</div>
+          <div class="proto-row"><strong>Dehumidifier:</strong> Run when out. Target indoor humidity 40-50%. Below 50% kills dust mites.</div>
+          <div class="proto-row"><strong>Bedroom:</strong> 16-18°C. Cool, dry, nasal strips every night.</div>
+          <div class="proto-row"><strong>Dust mite confirmed allergy:</strong> Humidity control is the primary management tool.</div>
+        </div>
+      </details>
+
+      <details class="proto-drop">
+        <summary>🌿 Vagus Nerve Exercises</summary>
+        <div class="proto-inner">
+          <div class="proto-row"><strong>Why:</strong> Vagus nerve activation calms mast cells via the cholinergic anti-inflammatory pathway. Direct parasympathetic support.</div>
+          <div class="proto-row"><strong>Gargling:</strong> Vigorous gargling with water for 30 seconds. Activates vagus nerve branches in the throat. Do morning and evening.</div>
+          <div class="proto-row"><strong>Humming:</strong> Low humming or chanting. Vibrates the vagus nerve. Even 2-3 minutes is effective.</div>
+          <div class="proto-row"><strong>4-7-8 breathing:</strong> Inhale 4 counts · hold 7 counts · exhale 8 counts. Three cycles. Powerful parasympathetic activation.</div>
+          <div class="proto-row"><strong>Cold water on face:</strong> Splash cold water on face for 30 seconds. Activates dive reflex — immediate vagal tone.</div>
+          <div class="proto-row"><strong>Cold plunge:</strong> Full vagus nerve activation. Always after sauna for maximum benefit.</div>
+        </div>
+      </details>
+
+      <details class="proto-drop">
         <summary>🍽️ Food Structure</summary>
         <div class="proto-inner">
           <div class="proto-row"><strong>Lunch = main meal. Dinner = light.</strong> Heavy dinners generate overnight histamine.</div>
@@ -751,7 +1023,8 @@ details.proto-drop .proto-inner { padding:0 14px 12px; }
           <div class="proto-row"><strong>Daily:</strong> Eggs · Pumpkin seeds · Berries · Apple · Olive oil.</div>
           <div class="proto-row"><strong>Sunday batch:</strong> Freeze salmon · Roast sweet potato · Hardboil eggs · Soak chia.</div>
           <div class="proto-row stop"><strong>Never:</strong> Gluten · Rapeseed oil · Yeast extract · Pre-prepared fish.</div>
-          <div class="proto-row warn"><strong>Moderation:</strong> Coffee 1-2 cups max (never instant) · Spice/tomatoes/chocolate.</div>
+          <div class="proto-row warn"><strong>Coffee:</strong> One fresh ground coffee, after breakfast, before noon. Never instant. Non-negotiable in both directions.</div>
+          <div class="proto-row warn"><strong>Moderation:</strong> Spice · tomatoes · chocolate — small amounts only.</div>
         </div>
       </details>
       <details class="proto-drop">
@@ -761,7 +1034,8 @@ details.proto-drop .proto-inner { padding:0 14px 12px; }
           <div class="proto-row"><strong>On waking:</strong> 500ml warm water + pinch sea salt. Non-optional.</div>
           <div class="proto-row"><strong>Stop drinking 90 mins before bed.</strong> Reduces overnight bathroom trips.</div>
           <div class="proto-row"><strong>Room temperature or warm only.</strong> Cold water can trigger airway mast cells.</div>
-          <div class="proto-row"><strong>Teas as medicine:</strong> Ginger (morning) · Dandelion root (before meals) · Chamomile (evening) · Lemon balm (bedtime).</div>
+          <div class="proto-row"><strong>Teas as medicine:</strong> Ginger (morning, mast cell stabiliser) · Dandelion root (before meals, bile) · Chamomile (evening, GABA) · Lemon balm (bedtime, cortisol) · Nettle tea (natural antihistamine, mast cell stabiliser — any time).</div>
+          <div class="proto-row"><strong>Catacrom eye drops:</strong> 2 drops per nostril 3-4x daily — sodium cromoglicate reaches nasal mucosa and drains to upper GI. Pharmacist confirmed safe. OTC, any pharmacy.</div>
           <div class="proto-row stop"><strong>Never:</strong> Alcohol · Instant coffee · Fizzy drinks · Sulphites.</div>
         </div>
       </details>
@@ -859,6 +1133,7 @@ const SUPP_GROUPS=[
   {time:"With lunch",sub:"",items:["Quercetin (lunch)","NAC 600mg","Curcumin + Boswellia","P5P active B6"]},
   {time:"With dinner",sub:"",items:["Vit C (evening)"]},
   {time:"Evening",sub:"In warm water",items:["Mag citrate"]},
+  {time:"PRN — if histamine symptoms",sub:"Take when needed, not daily",items:["Telfast / fexofenadine (H1)","Pepcid / famotidine (H2)"]},
   {time:"Bedtime",sub:"",items:["Progesterone 200mg","Mag glycinate","Psyllium husk","Slippery Elm"]},
 ];
 const SUPPLEMENTS=SUPP_GROUPS.flatMap(g=>g.items);
@@ -995,7 +1270,7 @@ function emptyEntry(date){
     morning:{startOfDay:5,sleepHours:7,sleepQuality:7,wakeEnergy:5,wokeToBathroom:false,wakeBreathing:[],dryMouth:false,mouthBreathing:false,sleepScore:null,deepSleepMins:null,spO2:null,restingHR:null,stressScore:null,bpSys:null,bpDia:null},
     breathing:{pfAM:null,pfPM:null,relieveCount:0,steroidCount:0,symptoms:[]},
     scores:Object.fromEntries(DAYTIME_SYSTEMS.map(s=>[s.key,7])),
-    supplements:[],juicing:false,notes:""};
+    supplements:[],juicing:false,relvarSideEffects:[],notes:""};
 }
 function emptyActivity(date){return{date:date||todayStr(),activities:Object.fromEntries(ACTIVITIES.map(a=>[a.key,{done:false,duration:"",feel:7}]))};}
 function getMondayOfWeek(d){const dt=new Date(d+"T12:00:00");const day=dt.getDay();const diff=day===0?-6:1-day;dt.setDate(dt.getDate()+diff);return dt.toISOString().slice(0,10);}
@@ -1017,7 +1292,7 @@ function loadAll(){
 function setNow(){const t=new Date().toTimeString().slice(0,5);const te=document.getElementById("t-eaten");const ts=document.getElementById("t-syms");if(te&&!te.value)te.value=t;if(ts&&!ts.value)ts.value=t;}
 function sv(key,data){try{localStorage.setItem(key,JSON.stringify(data));}catch{}}
 
-const subPanelMap={health:["log","hist"],triggers:["log-now","today","patterns"],activity:["log","hist"],myhealth:["overview","dna","hrt","bloods","protocol"],report:["summary","trends","weekly","export"]};
+const subPanelMap={health:["log","hist"],triggers:["log-now","today","patterns"],activity:["log","hist"],myhealth:["overview","dna","hrt","bloods","foods","protocol"],report:["summary","trends","weekly","export"]};
 const subState={health:"log",triggers:"log-now",activity:"log",myhealth:"overview",report:"summary"};
 
 function showPage(id,el){
@@ -1065,7 +1340,7 @@ function trendBadge(t){
   if(!t)return"";
   return `<span style="font-size:12px;font-weight:600;color:${t.col}">${t.arrow}</span><span style="font-size:10px;color:var(--text-ter);margin-left:2px">was ${t.was}</span>`;
 }
-function renderHealth(){renderSOD();renderMorning();renderBreathing();renderScores();renderSupps();document.getElementById("notes").value=entry.notes||"";}
+function renderHealth(){renderSOD();renderMorning();renderBreathing();renderScores();renderSupps();renderRelvarPills();renderAntiLog();document.getElementById("notes").value=entry.notes||"";}
 
 function renderSOD(){
   const cur=entry.morning.startOfDay||5;
@@ -1179,6 +1454,73 @@ function renderSupps(){
     </div>`;
   }).join("");
 }
+const RELVAR_SE=["Throat mucus","Tracheal irritation","Hoarse voice","Oral irritation","Headache","No side effects"];
+function renderRelvarPills(){
+  const c=document.getElementById("relvar-pills");if(!c)return;
+  const current=entry.relvarSideEffects||[];
+  c.innerHTML=RELVAR_SE.map(s=>{
+    const on=current.includes(s);
+    const col=s==="No side effects"?"on-teal":"on-amber";
+    return `<span class="pill${on?" "+col:""}" onclick="toggleRelvarSE('${s}',this,'${col}')">${s}</span>`;
+  }).join("");
+}
+function toggleRelvarSE(s,el,col){
+  if(!entry.relvarSideEffects)entry.relvarSideEffects=[];
+  if(s==="No side effects"){
+    entry.relvarSideEffects=["No side effects"];
+    document.querySelectorAll("#relvar-pills .pill").forEach(p=>p.className="pill");
+    el.className="pill on-teal";return;
+  }
+  entry.relvarSideEffects=entry.relvarSideEffects.filter(x=>x!=="No side effects");
+  if(entry.relvarSideEffects.includes(s)){
+    entry.relvarSideEffects=entry.relvarSideEffects.filter(x=>x!==s);
+    el.className="pill";
+  } else {
+    entry.relvarSideEffects.push(s);
+    el.className="pill "+col;
+  }
+  renderRelvarPills();
+}
+// ── ANTIHISTAMINE TRACKER ──
+let antiEffect='';
+let antiLog=JSON.parse(localStorage.getItem('shiera-anti')||'[]');
+function setAntiEffect(val,el){
+  antiEffect=val;
+  document.querySelectorAll('#anti-log-card .pill').forEach(p=>p.className='pill');
+  const colMap={'Much better':'on-teal','Better':'on-teal','No change':'on-amber','Worse':'on-coral'};
+  el.className='pill '+(colMap[val]||'on-teal');
+}
+function logAntihistamine(){
+  const med=document.getElementById('anti-med').value;
+  const time=document.getElementById('anti-time').value;
+  const symptom=document.getElementById('anti-symptom').value.trim();
+  const before=document.getElementById('anti-before').value;
+  const speed=document.getElementById('anti-speed').value;
+  if(!med||!symptom){alert('Please select medication and describe symptom.');return;}
+  const entry2={id:Date.now(),date:todayStr(),med,time,symptom,before:Number(before)||null,speed,effect:antiEffect};
+  antiLog.unshift(entry2);
+  localStorage.setItem('shiera-anti',JSON.stringify(antiLog));
+  document.getElementById('anti-med').value='';
+  document.getElementById('anti-symptom').value='';
+  document.getElementById('anti-before').value='';
+  document.getElementById('anti-speed').value='';
+  antiEffect='';
+  document.querySelectorAll('#anti-log-card .pill').forEach(p=>p.className='pill');
+  renderAntiLog();
+  alert('✓ Logged');
+}
+function renderAntiLog(){
+  const c=document.getElementById('anti-log-list');if(!c)return;
+  const today=antiLog.filter(e=>e.date===todayStr());
+  if(!today.length){c.innerHTML='';return;}
+  const effColor={'Much better':'var(--teal)','Better':'var(--teal)','No change':'var(--amber)','Worse':'var(--red)'};
+  c.innerHTML='<div class="sh" style="margin-top:8px">Today\'s responses</div>'+
+    today.map(e=>`<div style="background:var(--bg-sec);border-radius:var(--radius-sm);padding:8px 10px;margin-bottom:6px;font-size:12px">
+      <div style="font-weight:600;color:var(--text)">${e.med} ${e.time?'at '+e.time:''}</div>
+      <div style="color:var(--text-sec)">Symptom: ${e.symptom}${e.before?' · Severity '+e.before+'/10':''}</div>
+      <div>${e.speed?'⏱ '+e.speed:''}${e.effect?' · <span style="color:'+effColor[e.effect]+'">'+e.effect+'</span>':''}</div>
+    </div>`).join('');
+}
 function toggleSupp(s,el){
   if(entry.supplements.includes(s)){entry.supplements=entry.supplements.filter(x=>x!==s);el.className="pill";}else{entry.supplements.push(s);el.className="pill on-purple";}
   const taken=entry.supplements.length,total=SUPPLEMENTS.length,pct=Math.round(taken/total*100);
@@ -1195,7 +1537,7 @@ function renderHist(){
   const c=document.getElementById("hist-list");if(!health.length){c.innerHTML='<div class="empty">No entries yet.</div>';return;}
   c.innerHTML=health.map(e=>{
     const b=e.breathing||{};const m=e.morning||{};const ri=(b.relieveCount||0)>0,si=(b.steroidCount||0)>0;
-    const badges=[ri?`<span class="badge amber">Ventolin×${b.relieveCount}</span>`:"",si?`<span class="badge blue">Pulmicort×${b.steroidCount}</span>`:"",e.juicing?'<span class="badge teal">juiced</span>':"",(b.pfAM)?`<span class="badge blue">PF${b.pfAM}</span>`:""].filter(Boolean).join("");
+    const badges=[ri?`<span class="badge amber">Ventolin×${b.relieveCount}</span>`:"",si?`<span class="badge blue">Relvar×${b.steroidCount}</span>`:"",e.juicing?'<span class="badge teal">juiced</span>':"",(b.pfAM)?`<span class="badge blue">PF${b.pfAM}</span>`:""].filter(Boolean).join("");
     const sod=m.startOfDay;
     const scores=[["sod","Start",sod],["wakeEnergy","Wake",m.wakeEnergy],["energyday","Energy",e.scores?.energyday],["gut","Gut",e.scores?.gut],["brainfog","Clarity",e.scores?.brainfog]].map(([k,l,v])=>`<div class="sm-item"><div class="lbl">${l}</div><div class="val" style="color:${scoreColor(v||0)}">${v||"—"}</div></div>`).join("");
     return `<div class="hist-item${(ri||si)?" has-inhaler":""}" onclick="loadHealthAndSwitch('${e.date}')"><div class="hist-date">${fmtDate(e.date)}<div class="badges">${badges}</div></div><div class="scores-mini">${scores}</div>${e.notes?`<div class="hist-note">${e.notes.slice(0,100)}${e.notes.length>100?"…":""}</div>`:""}</div>`;
@@ -1204,7 +1546,7 @@ function renderHist(){
 function loadHealthAndSwitch(date){loadHealth(date);showSub("health","log",document.querySelectorAll("#page-health .inner-tab")[0]);}
 
 const TRIG_TYPE_HINTS={
-  food:"e.g. wine, bread, chocolate, crisps, pesto...",
+  food:"e.g. wine, bread, peanuts, crisps, pesto...",
   exercise:"e.g. walking, gym session, climbing stairs, rebounding...",
   temperature:"e.g. hot bath, cold air, cold shower, hot weather, temperature change...",
   environmental:"e.g. dust, perfume, pollen, cleaning products, smoke...",
@@ -1468,12 +1810,18 @@ function renderInsights(dayCount){
 }
 
 function renderChartLegend(){
+  const chartData=currentTrendDays===0?[...health]:[...health].slice(0,currentTrendDays);
+  const chartDates=chartData.map(e=>e.date).filter(Boolean).sort();
+  const firstDate=chartDates.length?new Date(chartDates[0]).toLocaleDateString("en-IE",{day:"numeric",month:"short"}):"";
+  const lastDate=chartDates.length?new Date(chartDates[chartDates.length-1]).toLocaleDateString("en-IE",{day:"numeric",month:"short"}):"";
+  const entryCount=chartData.filter(e=>e.morning?.startOfDay).length;
   document.getElementById("chart-legend").innerHTML=
     CHART_LINES.map(l=>`<span class="cl-item"><span class="cl-dot" style="background:${l.color}"></span>${l.label}</span>`).join("")+
     `<span class="cl-item"><span style="color:#D85A30;font-size:12px">▲</span> Trigger</span>`+
     `<span class="cl-item"><span class="cl-dot" style="background:#185FA5"></span>Ventolin</span>`+
     `<span class="cl-item"><span class="cl-dot" style="background:#DC2626"></span>Spotting</span>`+
-    `<span class="cl-item" style="font-size:10px;color:var(--teal)">— target threshold</span>`;
+    `<span class="cl-item" style="font-size:10px;color:var(--teal)">— target threshold</span>`+
+    (entryCount?`<div style="width:100%;font-size:10px;color:var(--text-ter);margin-top:4px;padding-top:4px;border-top:0.5px solid var(--border)">Showing data from ${firstDate} · ${entryCount} entries logged</div>`:"");
 }
 
 function drawTrends(dayCount){
@@ -1590,7 +1938,7 @@ function renderWeekly(){
 
 // ── DATA REPORT SUMMARY & EXPORT ──
 function renderReport(){
-  const data=getRange("2026-06-17","2026-07-02");const c=document.getElementById("gp-summary-content");
+  const data=[...health].filter(e=>e.date>="2026-07-02").sort((a,b)=>a.date.localeCompare(b.date));const c=document.getElementById("gp-summary-content");
   if(!data.length){c.innerHTML='<div class="empty">Start logging daily to build your clinical summary.</div>';return;}
   const ri=data.reduce((sum,e)=>sum+(e.breathing?.relieveCount||0),0);const si=data.reduce((sum,e)=>sum+(e.breathing?.steroidCount||0),0);const rid=data.filter(e=>(e.breathing?.relieveCount||0)>0).length;
   const pfs=data.map(e=>e.breathing?.pfAM).filter(Boolean);const apf=pfs.length?Math.round(pfs.reduce((a,b)=>a+b,0)/pfs.length):"—";
@@ -1611,7 +1959,7 @@ function renderReport(){
   const deepData=data.filter(e=>e.morning?.deepSleepMins);
   const avgDeep=deepData.length?Math.round(deepData.reduce((s,e)=>s+(e.morning.deepSleepMins||0),0)/deepData.length):"—";
   c.innerHTML=`
-  <div class="gp-section"><h3>Shiera — 17 June to 2 July 2026</h3>
+  <div class="gp-section"><h3>Shiera — Clinical Treatment Log · From July 2, 2026</h3>
     <div class="gp-row"><span class="lbl">Days logged</span><span class="val">${data.length} of 16</span></div>
     <div class="gp-row"><span class="lbl">Conditions</span><span class="val">MCAS (suspected 95%+) + MTHFR C677T TT + HLA-DQ8</span></div>
   </div>
@@ -1635,7 +1983,7 @@ function renderReport(){
     <div class="gp-row"><span class="lbl">Avg peak flow AM</span><span class="val ${apf!=="—"?(apf<300?"gp-val-bad":apf<380?"gp-val-warn":"gp-val-good"):""}">${apf}${apf!=="—"?" L/min":""}</span></div>
     <div class="gp-row"><span class="lbl">Range</span><span class="val">${pfs.length?Math.min(...pfs)+"–"+Math.max(...pfs)+" L/min":"—"}</span></div>
     <div class="gp-row"><span class="lbl">Ventolin uses (${rid} days)</span><span class="val ${ri>10?"gp-val-bad":ri>4?"gp-val-warn":"gp-val-good"}">${ri}</span></div>
-    <div class="gp-row"><span class="lbl">Pulmicort uses</span><span class="val">${si}</span></div>
+    <div class="gp-row"><span class="lbl">Relvar Ellipta uses</span><span class="val">${si}</span></div>
   </div>
   <div class="gp-section"><h3>Daytime scores (avg)</h3>
     <div class="avg-g">${DAYTIME_SYSTEMS.map(s=>{const a=wAvg(s.key,data);const col=a>=8?"var(--teal)":a>=5?"var(--amber)":"var(--red)";return `<div class="avg-i"><div class="al">${s.label}</div><div class="av" style="color:${a?col:"var(--text-ter)"}">${a||"—"}</div><div class="ab"><div class="af" style="width:${a?a*10:0}%;background:${col}"></div></div></div>`;}).join("")}</div>
@@ -1650,7 +1998,7 @@ function renderReport(){
 
 function renderExport(){document.getElementById("report-text").textContent=buildExport();}
 function buildExport(){
-  const data=getRange("2026-06-17","2026-07-02");if(!data.length)return"No data logged yet.";
+  const data=[...health].filter(e=>e.date>="2026-07-02").sort((a,b)=>a.date.localeCompare(b.date));if(!data.length)return"No data logged yet.";
   const ri=data.reduce((sum,e)=>sum+(e.breathing?.relieveCount||0),0),si=data.reduce((sum,e)=>sum+(e.breathing?.steroidCount||0),0);
   const rid=data.filter(e=>(e.breathing?.relieveCount||0)>0).length;
   const pfs=data.map(e=>e.breathing?.pfAM).filter(Boolean);const apf=pfs.length?Math.round(pfs.reduce((a,b)=>a+b,0)/pfs.length):"—";
@@ -1659,10 +2007,11 @@ function buildExport(){
   const weeks=getWeeks();
   return["╔══════════════════════════════════════╗",
     "   SHIERA'S CLINICAL SYMPTOM LOG","   DOB: 06/01/1966  |  Dublin, Ireland",
-    "   Period: 17 June – 2 July 2026",
+    "   Period: From 2 July 2026",
     "   MCAS suspected (95%+ probability) + MTHFR C677T TT","   HLA-DQ8 carrier · Gluten-free",
     "   HRT: Evorel 50 + Progesterone 200mg",
-    "   Asthma: Ventolin + Pulmicort",
+    "   Asthma: Ventolin (rescue) + Relvar Ellipta (once daily)",
+    "   Antihistamines: Telfast (H1 — fexofenadine) + Pepcid (H2 — famotidine)",
     "╚══════════════════════════════════════╝","",
     "── SLEEP & MORNING ──",
     `  Avg start of day:    ${asod||"—"}/10`,
@@ -1682,7 +2031,8 @@ function buildExport(){
     `  Avg peak flow AM:    ${apf}${apf!=="—"?" L/min":""}`,
     `  PF range:            ${pfs.length?Math.min(...pfs)+"–"+Math.max(...pfs)+" L/min":"not yet measured"}`,
     `  Ventolin uses:       ${ri} (${rid} days)`,
-    `  Pulmicort uses:      ${si}`,
+    `  Relvar Ellipta uses: ${si}`,
+    `  Relvar side effects reported: ${[...new Set(data.flatMap(e=>e.relvarSideEffects||[]).filter(s=>s!=="No side effects"))].join(", ")||"none logged"}`,
     "","── DAYTIME SCORES (avg, all 1=poor·10=excellent) ──",
     ...DAYTIME_SYSTEMS.map(s=>{const v=data.map(e=>e.scores?.[s.key]).filter(v=>v!=null);const a=v.length?(v.reduce((x,y)=>x+y,0)/v.length).toFixed(1):"—";return `  ${s.label.padEnd(20)} ${a}/10`;}),
     "",`── TRIGGER FOODS (${rt.length} reactions) ──`,
@@ -1714,7 +2064,7 @@ function exportBackup(){
   const backup={
     version:1,
     exported:new Date().toISOString(),
-    app:"Shiera's Health Tracker",
+    app:"Histamine Tracker",
     data:{health,activity:actHistory,triggers,hrt:hrtLog,spotting:hrtSpotting,bloods:bloodData}
   };
   const json=JSON.stringify(backup,null,2);
@@ -1744,7 +2094,7 @@ function importBackup(event){
       entry=ex?JSON.parse(JSON.stringify(ex)):emptyEntry();
       const ax=actHistory.find(e=>e.date===todayStr());
       actEntry=ax?JSON.parse(JSON.stringify(ax)):emptyActivity();
-      renderHealth();renderActGrid();renderTrigSymPills();
+      renderHealth();renderActGrid();renderTrigSymPills();renderAntiLog();
       const status=document.getElementById("restore-status");
       status.style.display="block";
       status.textContent="✓ Restored — "+health.length+" health entries, "+triggers.length+" trigger logs loaded.";
