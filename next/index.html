@@ -17,19 +17,19 @@
 :root{
   --bg:#f4f1ea;--bg2:#ebe7de;--card:#ffffff;--ink:#1b2325;--ink2:#3d4749;--mute:#6f7977;--line:#e4dfd4;--shadow:0 1px 3px rgba(30,30,20,.06),0 6px 18px rgba(30,30,20,.05);
   --green:#4d8f7b;--green-ink:#2f6a58;--green-soft:#e1efea;
-  --amber:#c7811a;--amber-ink:#8a5606;--amber-soft:#fbeed6;
+  --amber:#b9643a;--amber-ink:#8a4526;--amber-soft:#f7e4da;
   --red:#c6433d;--red-ink:#93302b;--red-soft:#fae3e1;
   --blue:#2f6f86;--blue-ink:#1f5366;--blue-soft:#dde9ee;
-  --violet:#6a4fc4;--violet-soft:#ebe5fa;
+  --violet:#7a6ea6;--violet-soft:#e9e6f3;
   --ring:#e4dfd4;--r:16px;--rs:11px;
 }
 [data-theme=dark]{
   --bg:#12151a;--bg2:#1a1f26;--card:#1d232b;--ink:#eceae3;--ink2:#c9cbc4;--mute:#949d9a;--line:#2b333c;--shadow:0 1px 2px rgba(0,0,0,.4),0 8px 20px rgba(0,0,0,.25);
   --green:#5fa892;--green-ink:#9ad2bf;--green-soft:#1b332c;
-  --amber:#e3a23a;--amber-ink:#f0c57a;--amber-soft:#3a2d13;
+  --amber:#d98a65;--amber-ink:#ecb49a;--amber-soft:#3a2219;
   --red:#e3645e;--red-ink:#f39b96;--red-soft:#3d1f1d;
   --blue:#6fa5ba;--blue-ink:#9fc8d8;--blue-soft:#172c34;
-  --violet:#a48ae8;--violet-soft:#2a2340;
+  --violet:#aaa0d0;--violet-soft:#282541;
   --ring:#2b333c;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -253,8 +253,8 @@ const PHASES=[
   {name:"Baseline", from:1, to:1, col:"#8a8f8e", what:"Measure everything. Fasting glucose draw, watch on 24/7, waist and hip, body fat, grip, 1.6 km walk test, 7-day food and symptom log."},
   {name:"Foundation", from:2, to:9, col:"#4d8f7b", what:"Strength 3x, Zone 2 3x, nutrition habits set, small calorie deficit. Weeks 7–8 (21 Dec – 3 Jan) are maintenance: no loss target."},
   {name:"Build", from:10, to:17, col:"#2f6f86", what:"Heavier strength, longer Zone 2, first interval sessions (3×3 min in weeks 10–13)."},
-  {name:"Intensify", from:18, to:25, col:"#6d4fc2", what:"Weekly 4×4 intervals, strongest strength block (sets of 5–8)."},
-  {name:"Retest", from:26, to:26, col:"#c9820a", what:"Repeat every baseline measure, fasting bloods, GP visit with results."},
+  {name:"Intensify", from:18, to:25, col:"#7a6ea6", what:"Weekly 4×4 intervals, strongest strength block (sets of 5–8)."},
+  {name:"Retest", from:26, to:26, col:"#b9643a", what:"Repeat every baseline measure, fasting bloods, GP visit with results."},
 ];
 const phaseOf=w=>PHASES.find(p=>w>=p.from&&w<=p.to)||null;
 
