@@ -265,7 +265,7 @@ const SUPP_GROUPS=[
 const SUPP_FROM={"Creatine 3–5 g":"2026-11-16","Plant sterols ~2 g":"2026-11-30"};
 const PRN=[
   {name:"Telfast / fexofenadine (H1)"},
-  {name:"Pepcid / famotidine (H2)",flag:"Confirm: your Diary says no H2 blocker"},
+  {name:"Pepcid / famotidine (H2)"},
   {name:"Salbutamol inhaler"},
   {name:"Sucralfate"},
 ];
@@ -426,7 +426,7 @@ const OTHER_TRIGGERS=[
 ];
 const SAFE=[
   ["🐟 Salmon (frozen, cooked from frozen) · white fish","Primary protein. Salmon twice a week at least. Never pre-prepared."],
-  ["🥚 Eggs, 2 a day","Choline (PEMT CT), protein. First thing to review if LDL stays high."],
+  ["🥚 Eggs, 1 a day","Choline (PEMT CT), protein. First thing to review if LDL stays high."],
   ["🌾 Gluten-free oats, 70–80 g","About 3 g beta-glucan for LDL. Check the label."],
   ["🌱 Chia (soaked) · flax · pumpkin seeds · almonds","Fibre, omega-3, zinc for DAO."],
   ["🫒 Olive oil","Main fat."],
@@ -850,8 +850,7 @@ function logAnti(){
     </div>
     <label class="fld" style="margin-top:8px"><span>Why</span><input type="text" id="a-why" placeholder="symptoms, suspected trigger"></label>
     <div class="sg">Effect</div><div class="pills" id="a-eff">${["Clear relief","Some relief","No change","Worse"].map((e,i)=>`<span class="pill${i===3?" bad":""}" data-act="antieff" data-k="${e}">${e}</span>`).join("")}</div>
-    <button class="btn full" style="margin-top:10px" data-act="addanti">Log</button>
-    <div class="small mute" style="margin-top:6px"><span class="flag">Confirm</span> Pepcid is listed because it was in your old app; your Diary says no H2 blocker.</div></div>
+    <button class="btn full" style="margin-top:10px" data-act="addanti">Log</button></div>
     <div class="card"><div class="h">History<small>${S.anti.length}</small></div>`;
   if(!S.anti.length) h+=`<div class="mute small">Nothing logged.</div>`;
   for(const a of S.anti.slice().sort((x,y)=>y.when>x.when?1:-1).slice(0,40))
