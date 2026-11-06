@@ -1,6 +1,6 @@
 // Offline support. Network first, so a new version shows as soon as you're online;
 // the cached copy is used only when there's no connection.
-const CACHE = "shieras-health-v1";
+const CACHE = "shieras-health-v2";
 const ASSETS = ["./", "./index.html", "./manifest.json", "./icon-180.png", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", e => {
