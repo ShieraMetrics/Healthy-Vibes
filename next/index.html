@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en-IE">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Shiera's Health App">
+<meta name="theme-color" content="#f6f4ef">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<title>Shiera's Health App</title>
+<style>
+:root{
+  --bg:#f6f4ef;--card:#fff;--ink:#1f2a2a;--mute:#6b7473;--line:#e6e2d9;
+  --green:#1D9E75;--green-soft:#e3f4ed;--amber:#c9820a;--amber-soft:#fbf0dc;
+  --red:#c2413b;--red-soft:#fbe6e4;--blue:#2f6fa8;--blue-soft:#e3eef8;--violet:#6d4fc2;
+  --r:14px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+header{position:sticky;top:0;z-index:5;background:var(--bg);padding:calc(10px + env(safe-area-inset-top)) 16px 8px;border-bottom:1px solid var(--line)}
+.hrow{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.appname{font-weight:700;font-size:17px}
+.wk{font-size:13px;color:var(--mute);text-align:right}
+.wk b{color:var(--green)}
+main{padding:12px 14px calc(90px + env(safe-area-inset-bottom));max-width:680px;margin:0 auto}
+nav.tabs{position:fixed;bottom:0;left:0;right:0;z-index:6;background:#fff;border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom)}
+nav.tabs button{flex:1;background:none;border:0;padding:8px 0 9px;font-size:11px;color:var(--mute);display:flex;flex-direction:column;align-items:center;gap:2px}
+nav.tabs button .ic{font-size:20px;line-height:1}
+nav.tabs button.on{color:var(--green);font-weight:600}
+.page{display:none}.page.on{display:block}
+.sub{display:flex;gap:6px;overflow-x:auto;margin:0 0 10px;padding-bottom:2px}
+.sub button{border:1px solid var(--line);background:#fff;border-radius:20px;padding:6px 13px;font-size:13px;white-space:nowrap}
+.sub button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.card{background:var(--card);border-radius:var(--r);padding:14px;margin-bottom:12px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.h{font-weight:700;font-size:15px;margin:0 0 8px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.h small{font-weight:400;color:var(--mute);font-size:12px}
+.sh{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);margin:16px 2px 8px}
+.mute{color:var(--mute)}.small{font-size:12.5px}
+.daynav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.daynav button{border:1px solid var(--line);background:#fff;border-radius:10px;width:40px;height:36px;font-size:18px}
+.daynav .d{text-align:center}.daynav .d b{display:block;font-size:16px}
+.banner{border-radius:12px;padding:10px 12px;margin-bottom:12px;font-size:13.5px}
+.banner.g{background:var(--green-soft)}.banner.a{background:var(--amber-soft)}.banner.r{background:var(--red-soft)}.banner.b{background:var(--blue-soft)}
+.sess{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--line)}
+.sess:first-of-type{border-top:0}
+.tick{flex:0 0 26px;height:26px;border-radius:8px;border:2px solid #c9c4b8;background:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;color:#fff;cursor:pointer}
+.tick.on{background:var(--green);border-color:var(--green)}
+.sess .t{font-size:12px;color:var(--mute);min-width:40px;padding-top:3px}
+.sess .l{flex:1}.sess .l b{font-weight:600}.sess .l div{font-size:12.5px;color:var(--mute)}
+.sess.done .l b{text-decoration:line-through;color:var(--mute)}
+.kind{font-size:10.5px;padding:1px 6px;border-radius:6px;margin-left:4px;vertical-align:1px}
+.k-train{background:var(--green-soft);color:#126b50}.k-recover{background:var(--blue-soft);color:var(--blue)}.k-task{background:var(--amber-soft);color:#8a5a06}.k-habit{background:#efeaf9;color:var(--violet)}
+.prog{height:8px;background:var(--line);border-radius:6px;overflow:hidden}.prog i{display:block;height:100%;background:var(--green)}
+.row{display:flex;gap:10px;align-items:center;margin:8px 0}
+.row label{flex:1;font-size:14px}
+.row output{min-width:28px;text-align:right;font-weight:700}
+input[type=range]{flex:1.3;accent-color:var(--green)}
+input[type=number],input[type=text],input[type=time],input[type=date],input[type=month],select,textarea{border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff;width:100%}
+textarea{min-height:60px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.fld span{display:block;font-size:12px;color:var(--mute);margin-bottom:3px}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{border:1px solid var(--line);background:#fff;border-radius:18px;padding:5px 11px;font-size:13px;cursor:pointer;user-select:none}
+.pill.on{background:var(--green);border-color:var(--green);color:#fff}
+.pill.on.bad{background:var(--red);border-color:var(--red)}
+.pill.on.warn{background:var(--amber);border-color:var(--amber)}
+.btn{border:0;border-radius:11px;padding:10px 14px;background:var(--green);color:#fff;font-weight:600;cursor:pointer}
+.btn.sec{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.danger{background:#fff;color:var(--red);border:1px solid var(--red-soft)}
+.btn.full{width:100%}
+.sg{margin:10px 0 4px;font-size:12.5px;font-weight:700;color:var(--mute)}
+.sg i{font-weight:400;font-style:normal}
+.flag{display:inline-block;background:var(--amber-soft);color:#8a5a06;border-radius:6px;font-size:11px;padding:1px 6px;margin-left:4px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:6px 4px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11.5px;color:var(--mute);font-weight:600}
+td.n,th.n{text-align:right;white-space:nowrap}
+.tl{display:grid;grid-template-columns:repeat(13,1fr);gap:3px;margin:8px 0}
+.tl button{border:0;height:24px;border-radius:5px;font-size:10px;color:#fff;padding:0;cursor:pointer}
+.tl button.cur{outline:2px solid var(--ink);outline-offset:1px}
+.tl button.past{opacity:.55}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:11.5px;color:var(--mute)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.wday{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid var(--line);cursor:pointer}
+.wday:first-child{border-top:0}
+.wday .nm{font-weight:600;min-width:90px}
+.wday .ss{flex:1;font-size:12.5px;color:var(--mute);padding:0 8px}
+.wday.today .nm{color:var(--green)}
+.mk{padding:10px 0;border-top:1px solid var(--line)}
+.mk:first-child{border-top:0}
+.mk .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.mk .nm{font-weight:600}
+.mk .val{font-weight:700;white-space:nowrap}
+.mk .meta{font-size:12px;color:var(--mute)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+.cat{display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.big{font-size:34px;font-weight:800;line-height:1.1}
+.kpis{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.kpi{background:var(--bg);border-radius:10px;padding:8px}
+.kpi b{display:block;font-size:18px}
+.kpi span{font-size:11.5px;color:var(--mute)}
+.list-item{padding:9px 0;border-top:1px solid var(--line);font-size:13.5px}
+.list-item:first-child{border-top:0}
+.x{float:right;border:0;background:none;color:var(--mute);font-size:16px;cursor:pointer}
+details{background:#fff;border-radius:var(--r);margin-bottom:10px;padding:0 14px}
+details summary{padding:13px 0;font-weight:700;cursor:pointer;list-style:none}
+details summary::after{content:"＋";float:right;color:var(--mute)}
+details[open] summary::after{content:"－"}
+details>div{padding-bottom:12px}
+.dna{padding:9px 0;border-top:1px solid var(--line);font-size:13.5px}
+.dna b{display:inline-block;min-width:64px}
+.gt{font-size:12px;background:var(--bg);border-radius:6px;padding:1px 6px}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:#fff;padding:8px 14px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9}
+.toast.on{opacity:1}
+.hrt{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;font-size:11.5px}
+.hrt .c{background:var(--bg);border-radius:8px;padding:5px 2px}
+.hrt .c.today{outline:2px solid var(--green)}
+.hrt .b{display:block;margin:3px auto 0;border:1px solid var(--line);background:#fff;border-radius:6px;width:90%;padding:2px 0;font-size:11px;cursor:pointer}
+.hrt .b.on{background:var(--violet);color:#fff;border-color:var(--violet)}
+.hrt .b.sp.on{background:var(--red);border-color:var(--red)}
+svg.chart{width:100%;height:auto;display:block}
+</style>
+</head>
+<body>
+<header>
+  <div class="hrow">
+    <div class="appname">Shiera's Health App</div>
+    <div class="wk" id="hdr-wk"></div>
+  </div>
+</header>
+
+<main>
+  <!-- TODAY -->
+  <section class="page on" id="p-today"></section>
+  <!-- PLAN -->
+  <section class="page" id="p-plan"></section>
+  <!-- BLOODS -->
+  <section class="page" id="p-bloods"></section>
+  <!-- LOG -->
+  <section class="page" id="p-log"></section>
+  <!-- ME -->
+  <section class="page" id="p-me"></section>
+</main>
+
+<nav class="tabs" id="tabs">
+  <button data-tab="today" class="on"><span class="ic">☀️</span>Today</button>
+  <button data-tab="plan"><span class="ic">🗓️</span>Plan</button>
+  <button data-tab="bloods"><span class="ic">🩸</span>Bloods</button>
+  <button data-tab="log"><span class="ic">📝</span>Log</button>
+  <button data-tab="me"><span class="ic">💚</span>Me</button>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+/* ================================================================
+   Shiera's Health App — 26-week restoration programme
+   Single file. Data stored on this device only (localStorage key below).
+   ================================================================ */
+const STORE_KEY="sha-v1";
+const APP_ID="shieras-health-app";
+const START="2026-11-09";           // Monday, week 1
+const WEEKS=26;
+const DOB="1966-01-06";
+
+/* ---------- date helpers (local time, no UTC drift) ---------- */
+const pad=n=>String(n).padStart(2,"0");
+const iso=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const parse=s=>{const[y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d||1);};
+const addDays=(s,n)=>{const d=parse(s);d.setDate(d.getDate()+n);return iso(d);};
+const todayISO=()=>iso(new Date());
+const dow=s=>(parse(s).getDay()+6)%7;            // 0=Mon … 6=Sun
+const DAYS=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+const DAYS_L=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const fmt=s=>{const d=parse(s);return d.getDate()+" "+MON[d.getMonth()];};
+const fmtLong=s=>DAYS_L[dow(s)]+" "+fmt(s)+" "+parse(s).getFullYear();
+const fmtMonth=s=>{const[y,m]=s.split("-");return MON[Number(m)-1]+" "+y;};
+const daysBetween=(a,b)=>Math.round((parse(b)-parse(a))/864e5);
+const weekOf=s=>Math.floor(daysBetween(START,s)/7)+1;   // may be <1 or >26
+const weekStart=w=>addDays(START,(w-1)*7);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+/* ---------- programme ---------- */
+const PHASES=[
+  {name:"Baseline", from:1, to:1, col:"#8a8f8e", what:"Measure everything. Fasting glucose draw, watch on 24/7, waist and hip, body fat, grip, 1.6 km walk test, 7-day food and symptom log."},
+  {name:"Foundation", from:2, to:9, col:"#1D9E75", what:"Strength 3x, Zone 2 3x, nutrition habits set, small calorie deficit. Weeks 7–8 (21 Dec – 3 Jan) are maintenance: no loss target."},
+  {name:"Build", from:10, to:17, col:"#2f6fa8", what:"Heavier strength, longer Zone 2, first interval sessions (3×3 min in weeks 10–13)."},
+  {name:"Intensify", from:18, to:25, col:"#6d4fc2", what:"Weekly 4×4 intervals, strongest strength block (sets of 5–8)."},
+  {name:"Retest", from:26, to:26, col:"#c9820a", what:"Repeat every baseline measure, fasting bloods, GP visit with results."},
+];
+const phaseOf=w=>PHASES.find(p=>w>=p.from&&w<=p.to)||null;
+
+const SAUNA_NOTE="15–20 min. Optional short pool swim first.";
+function sessionsFor(date){
+  const w=weekOf(date), d=dow(date), out=[];
+  const add=(id,time,label,note,kind)=>out.push({id,time,label,note,kind});
+  if(w<1||w>WEEKS) return out;
+  // one-off tasks
+  if(w===1&&d===0) add("w1-base","06:45","Baseline measures","Weight, scales body fat, waist and hip. Enter them in Plan → Measures.","task");
+  if(w===1&&d===0) add("w1-watch","","Huawei watch on 24/7","Sleep, resting HR and VO2 max from tonight.","task");
+  if(w===1&&d===0) add("w1-glu","","Book fasting glucose blood draw","Gives PhenoAge a real glucose instead of the 5.2 estimate. Ask for CRP as a number too.","task");
+  if(w===2&&d===0) add("w2-creat","","Start creatine 3–5 g","With breakfast. Tell your GP: it raises creatinine, so eGFR reads lower.","task");
+  if(w===4&&d===0) add("w4-sterol","","Start plant sterols ~2 g","Check the label for rapeseed oil first.","task");
+  if(w===26&&d===0) add("w26-base","06:45","Retest: baseline measures","Same scales, same time, same conditions as week 1.","task");
+  if(w===26&&d===1) add("w26-bloods","","Fasting bloods","Fasting, same lab, morning, 5-day biotin pause, no hard session in the 24 h before.","task");
+  if(w===26&&d===3) add("w26-gp","","GP visit with results","Bring the Bloods tab and the May request list.","task");
+  // morning sea swim
+  if(d===1||d===3) add("sea","07:15","Sea swim","A 2–3 min dip.","recover");
+  // gym day
+  const intervals=(d===3&&w>=10&&w<=25);
+  if(d===0) add("strA","15:00","Strength A (Arena Gym)","Lower body plus push and pull, 45–50 min."+strengthNote(w),"train");
+  if(d===1) add("z2","15:00","Zone 2"+(w===1?" + grip strength test":""),"Cross trainer 40–45 min (home bike or rower as alternatives). Talk-test pace, roughly 95–112 bpm."+(w===1?" Grip: best of 3 each hand, log in Measures.":""),"train");
+  if(d===2) add("strB","15:00","Strength B","Full body, hinge and row emphasis."+strengthNote(w),"train");
+  if(d===3) add(intervals?"int":"z2","15:00",intervals?(w<=13?"Intervals 3×3":"Intervals 4×4"):"Zone 2",
+      intervals?(w<=13?"10 min warm-up, then 3 min hard / 3 min easy ×3. Cross trainer, bike or rower. Inhaler with you; stop if breathing tightens.":"10 min warm-up, then 4 min hard (85–95% max HR) / 3 min easy ×4. Inhaler with you; stop if breathing tightens, chest pain or dizziness.")
+      :"Cross trainer 40–45 min (bike or rower). Talk-test pace.","train");
+  if(d===4) add("strC","15:00","Strength C + 10 min balance","Lighter, finishes with mobility."+strengthNote(w),"train");
+  if(d<=4){const t=["16:10","16:00","16:10","16:00","16:20"][d];add("sauna",t,"Sauna",SAUNA_NOTE,"recover");}
+  if(d===5){
+    if(w===1||w===26) add("walktest","09:00","1.6 km walk test","Flat route, as fast as you can walk. Log time and finishing heart rate in Measures.","train");
+    else add("long","09:00","Long walk, easy bike or short pool swim","60–75 min easy.","train");
+  }
+  if(d===6){ add("rest","","Rest day","Gentle walk; sauna optional.","recover");
+    add("prep","14:00","Meal prep","Freeze salmon · roast sweet potato · hard-boil eggs · soak chia.","task");
+    add("review","18:00","Week review, 20 min","Weigh-in, waist, symptoms, plan next week.","task"); }
+  if(d===1||d===3||d===5) add("cold","","Cold plunge (optional)","2–3× a week, never right after lifting.","recover");
+  if(d!==4) add("balance","","Balance, 10 min","Single-leg stands, step-overs, direction changes.","habit");
+  add("whistle","20:00","Whistle, 20 min","5 min sight-reading · 10 min one hard tune, slow · 5 min one by ear.","habit");
+  return out.sort((a,b)=>(a.time||"99")<(b.time||"99")?-1:1);
+}
+function strengthNote(w){
+  if(w>=18) return " Intensify: heavier sets of 5–8.";
+  if(w>=10) return " Build: add load when every set is clean.";
+  return " 8–12 reps; add load only when every set is clean.";
+}
+function bannersFor(date){
+  const w=weekOf(date), b=[];
+  if(w<1){ b.push(["b","The programme starts Monday 9 November. Days before that show the week 1 plan so you can look ahead."]); }
+  if(w===1) b.push(["a","Baseline week: keep a 7-day food and symptom log (check-in notes below) and log every measure in Plan → Measures."]);
+  if(w===7||w===8) b.push(["g","Maintenance week (Christmas). No weight-loss target, keep the sessions."]);
+  if(w>WEEKS) b.push(["g","The 26 weeks are complete. Keep logging; the data stays."]);
+  return b;
+}
+
+/* ---------- supplements (carried over from the old app, July 2026) ---------- */
+const SUPP_GROUPS=[
+  {time:"On waking",sub:"Nothing else in mouth",items:["Sublingual B12"]},
+  {time:"Pre-breakfast",sub:"20 min before eating",items:["Quercetin (morning)","Phosphatidylserine 100mg","Betaine / TMG 500mg"]},
+  {time:"With breakfast",sub:"With fat",items:["Methylfolate 800mcg","D3 4000 IU + K2","Vit C (morning)","Creatine 3–5 g"]},
+  {time:"Mid-morning",sub:"Empty stomach",items:["L-Glutamine 5g"]},
+  {time:"Before lunch",sub:"15 min before eating",items:["DGL","Zinc carnosine"]},
+  {time:"With lunch",sub:"",items:["Quercetin (lunch)","NAC 600mg","Curcumin + Boswellia","P5P active B6"]},
+  {time:"With main meal",sub:"",items:["Plant sterols ~2 g"]},
+  {time:"With dinner",sub:"",items:["Vit C (evening)"]},
+  {time:"Evening",sub:"In warm water",items:["Mag citrate"]},
+  {time:"Bedtime",sub:"Psyllium 1–2 h away from other supplements and HRT",items:["Progesterone 200mg","Mag glycinate","Psyllium husk 7–10 g","Slippery Elm"]},
+];
+const SUPP_FROM={"Creatine 3–5 g":"2026-11-16","Plant sterols ~2 g":"2026-11-30"};
+const PRN=[
+  {name:"Telfast / fexofenadine (H1)"},
+  {name:"Pepcid / famotidine (H2)",flag:"Confirm: your Diary says no H2 blocker"},
+  {name:"Salbutamol inhaler"},
+  {name:"Sucralfate"},
+];
+const suppsActive=date=>SUPP_GROUPS.map(g=>({...g,items:g.items.filter(i=>!SUPP_FROM[i]||date>=SUPP_FROM[i])})).filter(g=>g.items.length);
+
+/* ---------- bloods (old app history + July 2026 Beaumont report) ---------- */
+const BLOOD_CATS=[
+  {id:"lipids",label:"Lipids"},
+  {id:"inflam",label:"Inflammation & iron"},
+  {id:"nutrition",label:"Nutrition"},
+  {id:"metabolic",label:"Metabolic & thyroid"},
+  {id:"fbc",label:"Full blood count"},
+  {id:"kidney",label:"Kidney"},
+  {id:"liver",label:"Liver"},
+  {id:"pending",label:"Not yet tested — ask in May"},
+];
+// good: low = lower is better, high = higher is better, norm = inside range
+const MARKERS=[
+  {key:"ldl",cat:"lipids",name:"LDL cholesterol",unit:"mmol/L",good:"low",lo:null,hi:2.99,ref:"≤2.99",target:"3.3–3.5 realistic, ≤2.99 lab"},
+  {key:"nonhdl",cat:"lipids",name:"Non-HDL cholesterol",unit:"mmol/L",good:"low",lo:null,hi:3.8,ref:"≤3.8",target:"≤3.8"},
+  {key:"tchol",cat:"lipids",name:"Total cholesterol",unit:"mmol/L",good:"low",lo:null,hi:5.0,ref:"≤5.0",target:"≤5.0"},
+  {key:"hdl",cat:"lipids",name:"HDL cholesterol",unit:"mmol/L",good:"high",lo:1.0,hi:null,ref:"≥1.0",target:"Hold"},
+  {key:"trig",cat:"lipids",name:"Triglycerides",unit:"mmol/L",good:"low",lo:null,hi:1.7,ref:"<1.7",target:"Hold"},
+  {key:"crp",cat:"inflam",name:"CRP",unit:"mg/L",good:"low",lo:null,hi:1.0,ref:"≤5.0",target:"<1.0"},
+  {key:"ferritin",cat:"inflam",name:"Ferritin",unit:"µg/L",good:"norm",lo:30,hi:150,ref:"13–150",target:"30–150"},
+  {key:"iron",cat:"inflam",name:"Iron",unit:"µmol/L",good:"high",lo:10,hi:null,ref:">10",target:">10"},
+  {key:"tfsat",cat:"inflam",name:"Transferrin sat",unit:"%",good:"norm",lo:20,hi:50,ref:"20–50",target:"20–50"},
+  {key:"folate",cat:"nutrition",name:"Folate",unit:"µg/L",good:"high",lo:16,hi:null,ref:"3.9–26.8",target:">16"},
+  {key:"b12",cat:"nutrition",name:"B12 (serum)",unit:"ng/L",good:"norm",lo:300,hi:771,ref:"197–771",target:"In range"},
+  {key:"phosphorus",cat:"nutrition",name:"Phosphate",unit:"mmol/L",good:"norm",lo:0.81,hi:1.45,ref:"0.81–1.45",target:"≥0.81"},
+  {key:"calcium",cat:"nutrition",name:"Calcium",unit:"mmol/L",good:"norm",lo:2.20,hi:2.55,ref:"2.20–2.55",target:"In range"},
+  {key:"hba1c",cat:"metabolic",name:"HbA1c",unit:"mmol/mol",good:"norm",lo:20,hi:42,ref:"20–42",target:"Hold"},
+  {key:"glucose",cat:"metabolic",name:"Fasting glucose",unit:"mmol/L",good:"norm",lo:3.9,hi:5.5,ref:"3.9–5.5",target:"Real value needed for PhenoAge"},
+  {key:"tsh",cat:"metabolic",name:"TSH",unit:"mU/L",good:"norm",lo:0.27,hi:4.2,ref:"0.27–4.20",target:"In range"},
+  {key:"ft4",cat:"metabolic",name:"Free T4",unit:"pmol/L",good:"norm",lo:11.9,hi:21.6,ref:"11.9–21.6",target:"In range"},
+  {key:"hb",cat:"fbc",name:"Haemoglobin",unit:"g/dL",good:"norm",lo:11.7,hi:16.0,ref:"11.7–16.0",target:"Hold, watch"},
+  {key:"pcv",cat:"fbc",name:"Haematocrit",unit:"L/L",good:"norm",lo:0.355,hi:0.52,ref:"0.355–0.520",target:"In range"},
+  {key:"rbc",cat:"fbc",name:"Red cells",unit:"10¹²/L",good:"norm",lo:3.8,hi:5.6,ref:"3.80–5.60",target:"In range"},
+  {key:"mcv",cat:"fbc",name:"MCV",unit:"fL",good:"norm",lo:79,hi:96,ref:"79–96",target:"In range"},
+  {key:"mch",cat:"fbc",name:"MCH",unit:"pg",good:"norm",lo:27,hi:32,ref:"27–32",target:"In range"},
+  {key:"rdw",cat:"fbc",name:"RDW",unit:"%",good:"norm",lo:11,hi:15,ref:"11–15",target:"In range"},
+  {key:"plt",cat:"fbc",name:"Platelets",unit:"10⁹/L",good:"norm",lo:140,hi:400,ref:"140–400",target:"In range"},
+  {key:"wbc",cat:"fbc",name:"White cells",unit:"10⁹/L",good:"norm",lo:4.0,hi:11.0,ref:"4.00–11.00",target:"In range"},
+  {key:"neut",cat:"fbc",name:"Neutrophils",unit:"10⁹/L",good:"norm",lo:2.0,hi:7.5,ref:"2.00–7.50",target:"In range"},
+  {key:"lymph",cat:"fbc",name:"Lymphocytes",unit:"10⁹/L",good:"norm",lo:1.0,hi:4.0,ref:"1.00–4.00",target:"In range"},
+  {key:"mono",cat:"fbc",name:"Monocytes",unit:"10⁹/L",good:"norm",lo:0.2,hi:1.0,ref:"0.20–1.00",target:"In range"},
+  {key:"eosino",cat:"fbc",name:"Eosinophils",unit:"10⁹/L",good:"low",lo:null,hi:0.4,ref:"0.04–0.40",target:"Low is good (allergy marker)"},
+  {key:"baso",cat:"fbc",name:"Basophils",unit:"10⁹/L",good:"norm",lo:0.01,hi:0.1,ref:"0.01–0.10",target:"In range"},
+  {key:"creat",cat:"kidney",name:"Creatinine",unit:"µmol/L",good:"norm",lo:45,hi:84,ref:"45–84",target:"Rises on creatine — expected"},
+  {key:"egfr",cat:"kidney",name:"eGFR",unit:"mL/min",good:"high",lo:60,hi:null,ref:">60",target:"Reads lower on creatine"},
+  {key:"urea",cat:"kidney",name:"Urea",unit:"mmol/L",good:"norm",lo:2.8,hi:8.1,ref:"2.8–8.1",target:"In range"},
+  {key:"alt",cat:"liver",name:"ALT",unit:"IU/L",good:"low",lo:null,hi:33,ref:"<33",target:"In range"},
+  {key:"ast",cat:"liver",name:"AST",unit:"U/L",good:"low",lo:null,hi:32,ref:"<32",target:"In range"},
+  {key:"alp",cat:"liver",name:"ALP",unit:"IU/L",good:"norm",lo:35,hi:104,ref:"35–104",target:"In range"},
+  {key:"ggt",cat:"liver",name:"GGT",unit:"IU/L",good:"low",lo:null,hi:39,ref:"≤39",target:"In range"},
+  {key:"albumin",cat:"liver",name:"Albumin",unit:"g/L",good:"norm",lo:35,hi:52,ref:"35–52",target:"In range"},
+  {key:"tprot",cat:"liver",name:"Total protein",unit:"g/L",good:"norm",lo:60,hi:80,ref:"60–80",target:"In range"},
+  {key:"apob",cat:"pending",name:"ApoB",unit:"g/L",good:"low",lo:null,hi:null,ref:"lab range",target:"Ask in May"},
+  {key:"lpa",cat:"pending",name:"Lp(a)",unit:"nmol/L",good:"low",lo:null,hi:null,ref:"lab range",target:"Ask in May (once in a lifetime)"},
+  {key:"vitd",cat:"pending",name:"Vitamin D (25-OH)",unit:"nmol/L",good:"high",lo:75,hi:null,ref:"50–250",target:">75"},
+  {key:"homocys",cat:"pending",name:"Homocysteine",unit:"µmol/L",good:"low",lo:null,hi:10,ref:"<15",target:"<10"},
+  {key:"rbcfol",cat:"pending",name:"RBC folate",unit:"nmol/L",good:"high",lo:400,hi:null,ref:"360–1400",target:">400"},
+];
+const MK=Object.fromEntries(MARKERS.map(m=>[m.key,m]));
+const J="2026-07"; // Beaumont, collected 2 July 2026
+const SEED_BLOODS={
+  hb:[["2023-06",14.3],["2024-06",14.0],["2025-06",14.4],[J,13.2]],
+  pcv:[["2023-06",0.413],["2024-06",0.391],[J,0.376]],
+  rbc:[["2023-06",4.50],["2024-06",4.36],[J,4.13]],
+  mcv:[["2023-06",91.8],["2024-06",89.7],[J,91.0]],
+  mch:[["2023-06",31.8],["2024-06",32.1],[J,32.0]],
+  rdw:[["2023-06",12.1],["2024-06",12.3],[J,12.2]],
+  plt:[["2023-06",227],["2024-06",205],["2025-06",234],[J,197]],
+  wbc:[["2023-06",4.19],["2024-06",4.24],["2025-06",4.74],[J,4.56]],
+  neut:[["2023-06",1.63],["2024-06",2.02],[J,2.50]],
+  lymph:[["2023-06",1.95],["2024-06",1.81],[J,1.65]],
+  mono:[["2023-06",0.44],["2024-06",0.31],[J,0.33]],
+  eosino:[["2023-06",0.13],["2024-06",0.07],["2025-06",0.07],[J,0.06]],
+  baso:[["2023-06",0.04],["2024-06",0.03],[J,0.02]],
+  crp:[["2023-06",0.9,"<"],["2024-06",1.2],["2025-06",1.7],[J,1.0,"<"]],
+  ferritin:[["2025-06",64],[J,60]],
+  iron:[["2023-06",21.2],["2024-06",14.3],["2025-06",21.6]],
+  tfsat:[["2023-06",34],["2024-06",25],["2025-06",34]],
+  tchol:[["2023-06",5.5],["2024-06",6.4],["2025-06",6.0],[J,6.1]],
+  ldl:[["2023-06",3.4],["2024-06",4.3],["2025-06",3.6],[J,3.83]],
+  nonhdl:[[J,4.5]],
+  hdl:[["2023-06",1.6],["2024-06",1.68],["2025-06",1.68],[J,1.60]],
+  trig:[["2023-06",1.1],["2024-06",1.0],[J,1.4]],
+  hba1c:[["2023-06",37],["2024-06",38],["2025-06",36]],
+  tsh:[["2023-06",2.87],["2024-06",1.99],["2025-06",2.92],[J,2.01]],
+  ft4:[["2023-06",18.3],["2024-06",16.1],["2025-06",16.9],[J,15.3]],
+  folate:[["2023-06",16.2],["2024-06",14.4],["2025-06",11.5],[J,20.0,">"]],
+  b12:[["2023-06",509],["2024-06",468],["2025-06",547],[J,735]],
+  phosphorus:[["2023-06",0.81],["2024-06",0.63],["2025-06",0.71],[J,0.67]],
+  calcium:[["2023-06",2.31],["2024-06",2.29],[J,2.27]],
+  creat:[["2023-06",73],["2024-06",74],[J,69]],
+  egfr:[["2024-06",77],["2025-06",79],[J,83]],
+  urea:[["2023-06",4.8],["2024-06",5.1],["2025-06",5.8],[J,5.2]],
+  alt:[["2023-06",25],["2024-06",19],[J,18]],
+  ast:[["2023-06",25],["2024-06",22],[J,18]],
+  alp:[["2023-06",85],["2024-06",78],[J,81]],
+  ggt:[["2023-06",14],["2024-06",14],[J,11]],
+  albumin:[["2023-06",44],["2024-06",42],[J,42]],
+  tprot:[["2023-06",66],["2024-06",68],[J,68]],
+};
+const WATCH=["ldl","nonhdl","phosphorus","hb","crp","folate"];
+const MAY_REQUEST=["Lipids with apoB and Lp(a)","Vitamin D (25-OH)","Phosphate","HbA1c","Fasting glucose","Homocysteine","CRP as a number, not just “under 1.0”","Folate","B12","Full blood count","Ferritin"];
+const PRE_BLOODS=["Fasting (12 h+)","Same lab, morning draw","5-day biotin pause","No hard session in the 24 h before","Tell the GP you take creatine (creatinine/eGFR)"];
+
+/* ---------- PhenoAge (Levine 2018) ---------- */
+// glucose estimates agreed in chat: July 2026 has no glucose on the report
+const GLUCOSE_EST={[J]:{v:5.2,why:"estimated from your HbA1c"}};
+function phenoAge(age,alb,cr,glu,crpMgL,lymPct,mcv,rdw,alp,wbc){
+  const xb=-19.907-0.0336*alb+0.0095*cr+0.1953*glu+0.0954*Math.log(crpMgL/10)
+    -0.0120*lymPct+0.0268*mcv+0.3306*rdw+0.00188*alp+0.0554*wbc+0.0804*age;
+  const g=0.0076927;
+  const M=1-Math.exp(-Math.exp(xb)*(Math.exp(120*g)-1)/g);
+  return 141.50225+Math.log(-0.00553*Math.log(1-M))/0.090165;
+}
+function ageAt(ym){const[y,m]=ym.split("-").map(Number);const[by,bm]=DOB.split("-").map(Number);return y-by-(m<bm?1:0);}
+function phenoFor(ym){
+  const get=k=>(S.bloods[k]||[]).find(r=>r.date===ym);
+  const need=["albumin","creat","crp","lymph","wbc","mcv","rdw","alp"];
+  const missing=need.filter(k=>!get(k));
+  let glu=get("glucose"),gNote="";
+  if(!glu&&GLUCOSE_EST[ym]){glu={value:GLUCOSE_EST[ym].v};gNote="Glucose "+GLUCOSE_EST[ym].v+" "+GLUCOSE_EST[ym].why;}
+  if(!glu) missing.push("glucose");
+  if(missing.length) return {ym,missing};
+  const crp=get("crp");
+  const notes=[];if(gNote)notes.push(gNote);
+  if(crp.q==="<") notes.push("CRP “"+fv(crp)+"” entered at its ceiling of "+crp.value.toFixed(1));
+  const age=ageAt(ym);
+  const v=phenoAge(age,get("albumin").value,get("creat").value,glu.value,crp.value,
+    get("lymph").value/get("wbc").value*100,get("mcv").value,get("rdw").value,get("alp").value,get("wbc").value);
+  return {ym,age,value:v,notes,estimated:notes.length>0};
+}
+
+/* ---------- reference content (carried over from the old app) ---------- */
+const CONDITIONS=[["MCAS — suspected","p"],["MTHFR C677T TT","c"],["HLA-DQ8","c"],["Asthma",""],["Gastritis",""],["Cystitis",""],["Eczema",""],["Psoriasis",""],["Sensorineural deafness (R ear)",""],["Tinnitus",""],["Three-tendon tendinopathy (MRI)",""]];
+const TRIGGERS=[
+  ["Yeast extract (all aliases)","Severe","Direct histamine bomb. Confirmed day 4: stock cube, immediate gastritis flare."],
+  ["Rapeseed / seed oils","Severe","Omega-6 drives the mast cell cascade. Confirmed day 3: poppadoms, gut pain and wheeze within minutes."],
+  ["Gluten","Severe","HLA-DQ8. Coeliac challenge was severely symptomatic. Non-negotiable."],
+  ["Alcohol & sulphites (E220–E228)","Severe","Blocks DAO, triggers degranulation. White wine is the worst bladder trigger; sulphites cause wheeze."],
+  ["Pre-prepared fish","Severe","Histamine builds in storage. Wheeze from cold salmon salad, rash from packaged fish."],
+  ["Lentils / chickpeas / legumes","Avoid","Histamine liberators. Confirmed day 3 (lentil-flour poppadoms)."],
+  ["Peanuts","Avoid","Omega-6, histamine liberator, bile overload. Nausea, day 3."],
+  ["Spinach","Avoid","One of the highest-histamine vegetables."],
+  ["Fermented foods","Avoid","Yoghurt, kefir, sauerkraut, vinegar, pickles."],
+  ["Smoked / cured foods","Avoid","Smoked salmon, deli meats, bacon."],
+  ["Instant coffee, decaf, more than one coffee","Avoid","Rule: one fresh-ground coffee, after breakfast, before noon."],
+  ["Tomatoes, chocolate, spice in excess","Moderation","Dose-dependent. Small amounts usually fine."],
+];
+const OTHER_TRIGGERS=[
+  ["🌡️ Temperature","Heat · cold · rapid change · high humidity with exercise (wheeze within 5 min, June 2026)"],
+  ["🌿 Environmental","Dust mites (confirmed allergy) · perfumes · pollen · low atmospheric pressure"],
+  ["💊 Medications","NSAIDs · morphine/codeine · some antibiotics (class uncertain)"],
+];
+const SAFE=[
+  ["🐟 Salmon (frozen, cooked from frozen) · white fish","Primary protein. Salmon twice a week at least. Never pre-prepared."],
+  ["🥚 Eggs, 2 a day","Choline (PEMT CT), protein. First thing to review if LDL stays high."],
+  ["🌾 Gluten-free oats, 70–80 g","About 3 g beta-glucan for LDL. Check the label."],
+  ["🌱 Chia (soaked) · flax · pumpkin seeds · almonds","Fibre, omega-3, zinc for DAO."],
+  ["🫒 Olive oil","Main fat."],
+  ["🥗 Rocket · carrots · celery · cucumber · courgette · sweet potato","Low histamine. Rocket before meals as a bile primer."],
+  ["🍋 Lemon · parsley · coriander · ginger","Morning juice ingredients."],
+  ["🍎 Apple · blueberries / berries","Quercetin, anthocyanins."],
+  ["🧀 Cottage cheese · quinoa · buckwheat","Protein and phosphate sources."],
+  ["🥛 Almond milk","Low histamine, no dairy."],
+  ["🍵 Ginger · chamomile · lemon balm · dandelion root · nettle (plain)","Ginger in the morning, chamomile evening, lemon balm at bedtime, dandelion before meals."],
+];
+const DNA=[
+  ["Folate","MTHFR C677T","TT","Can't convert folate to active 5-MTHF (60–70% less enzyme). The root cause.","Methylfolate 800mcg"],
+  ["Folate","MTHFD1","TT","Reduces folate processing upstream.","Methylfolate + B2"],
+  ["B12","MTRR","AG","B12 recycling reduced.","Sublingual methylcobalamin"],
+  ["B12","TCN2","GG","B12 transport into cells reduced.","Sublingual B12"],
+  ["B12","FUT2","AG","Absorption affected; more H. pylori susceptibility.","Sublingual B12"],
+  ["Histamine","MAOB","AG","Slower histamine breakdown.","Quercetin + NAC"],
+  ["Histamine","MAOA","GT","Slower serotonin and noradrenaline breakdown.","Quercetin + progesterone"],
+  ["Methylation","BHMT","AG","Betaine backup pathway reduced.","Betaine / TMG"],
+  ["Methylation","COMT","CT","Dopamine clears more slowly. Monitor with HRT.","Magnesium glycinate"],
+  ["Methylation","PEMT","CT","Less choline made, worse after menopause.","Eggs daily"],
+  ["Detox","GSS","CT","Glutathione made at reduced capacity.","NAC + vitamin C + curcumin"],
+  ["Vitamin D","VDR","CC","Vitamin D transport and storage impaired.","D3 4000 IU"],
+];
+const MED_AWARE=[
+  ["NSAIDs (ibuprofen, aspirin)","Well-documented mast cell triggers. Paracetamol preferred."],
+  ["Morphine / codeine","Known mast cell degranulators. Discuss alternatives if an opioid is needed."],
+  ["Antibiotics","Some past courses caused reactions; class uncertain. Verify before prescribing."],
+  ["Surgery / anaesthesia","Tell the anaesthetist about mast cell activation before any procedure."],
+];
+const FIXED_RULES=[
+  "Low histamine, gluten-free, yeast-extract-free, every day.",
+  "No alcohol. One fresh-ground coffee, after breakfast, before noon. Never instant.",
+  "Lunch is the main meal; dinner is light. No food within 3 hours of bed.",
+  "Protein 100–120 g a day over 3–4 meals; whey closes the gap (label-check it).",
+  "About 2,000 kcal to start; adjust every two weeks for 0.1–0.2 kg a week loss.",
+  "Two planned treats a week, label-checked, sitting down, no guilt.",
+  "Sleep 7–8 hours, bedtime about 22:30, bedroom 16–18°C, nasal strips.",
+  "Air purifier when home, dehumidifier when out (40–50% humidity).",
+  "Medication unchanged. Nothing here replaces or adjusts it.",
+];
+const VAGUS=["Gargling 30 s, morning and evening","Humming 2–3 min","4-7-8 breathing, 3 cycles","Cold water on the face, 30 s"];
+const TRAINING_RULES=[
+  ["Strength","Compound lifts, 8–12 reps at first, heavier sets of 5–8 in Intensify. Add load only when every set is clean."],
+  ["Zone 2","Talk in full sentences. Roughly 95–112 bpm; trust the talk test and your watch over the formula. Cross trainer by default; home bike or rower for variety."],
+  ["Intervals","From week 10 on Thursdays: 3×3 min in weeks 10–13, then 4×4. Carry the inhaler; stop if breathing tightens, chest pain or dizziness."],
+  ["Running","Not before the Build phase, as short walk/run intervals. Old rule kept: peak flow above 380 L/min first; stop if wheeze starts."],
+  ["Kettlebells","Home option when the gym doesn't fit: swings, goblet squats, deadlifts, rows, overhead presses."],
+  ["Rebounder","10 min easy as a warm-up or on rest days. Counts as Zone 2 only if held steady 30+ min."],
+  ["Sauna & cold","Sauna after every gym visit, 15–20 min. Cold plunge 2–3× a week on non-lifting days, never straight after lifting."],
+  ["Bad days","Old rule kept: skip hard training if your morning check-in energy is below 5. Walk or rebound instead."],
+  ["If breathing tightens","Rest → inhaler → no improvement in 30 min → doctor / A&E."],
+];
+const TARGETS=[
+  ["Weight","~80 kg","~76–77 kg","weight"],
+  ["Body fat (scales)","~26%","~22%","bf"],
+  ["Waist","Baseline week","Set after baseline","waist"],
+  ["Resting HR","~60 bpm","Trend down","rhr"],
+  ["VO2 max (watch)","Baseline week","+8–10%","vo2"],
+  ["Grip strength","Baseline week","Up","grip"],
+  ["LDL","3.83","3.3–3.5 (lab ≤2.99)","b:ldl"],
+  ["Non-HDL","4.5","≤3.8","b:nonhdl"],
+  ["Phosphate","0.67","≥0.81","b:phosphorus"],
+  ["CRP","<1.0","Hold <1.0","b:crp"],
+  ["PhenoAge","47.1 (est.)","42–45","pheno"],
+];
+const TRIG_TYPES=[["food","🍽️ Food / drink"],["exercise","🏃 Exercise"],["temperature","🌡️ Temperature"],["environmental","🌿 Environment"],["medication","💊 Medication"],["other","Other"]];
+const SYSTEMS=["Gut","Breathing","Skin","Bladder","Energy","Mood","Brain fog","Joints","Throat","Eyes","Tinnitus","Other"];
+const CI_FLAGS=[["dryeyes","Dry eyes"],["skin","Skin flare"],["tinnitus","Tinnitus louder"],["bladder","Bladder irritation"],["mouth","Mouth breathing"],["joints","Joint pain"],["fog","Brain fog"]];
+
+/* ---------- state ---------- */
+function freshState(){
+  const bloods={};
+  for(const[k,rows]of Object.entries(SEED_BLOODS)) bloods[k]=rows.map(([date,value,q])=>({date,value,q:q||""}));
+  return {app:APP_ID,version:1,created:new Date().toISOString(),days:{},measures:[],bloods,triggers:[],anti:[],hrt:{},spotting:[],settings:{}};
+}
+let S;
+function load(){
+  try{const raw=localStorage.getItem(STORE_KEY);S=raw?JSON.parse(raw):freshState();}catch(e){S=freshState();}
+  // fill anything missing (e.g. after a restore from an older export)
+  const f=freshState();for(const k of Object.keys(f)) if(S[k]===undefined) S[k]=f[k];
+}
+let saveOK=true;
+function save(){
+  try{localStorage.setItem(STORE_KEY,JSON.stringify(S));saveOK=true;}
+  catch(e){saveOK=false;toast("⚠ Couldn't save on this device");}
+}
+const day=d=>S.days[d]||(S.days[d]={done:{},ci:{},body:{},habits:{},supps:{},note:""});
+function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("on");clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove("on"),1600);}
+
+/* ---------- UI state ---------- */
+const UI={tab:"today",date:todayISO(),planWeek:null,logSub:"triggers",meSub:"profile",openCats:new Set(["lipids"]),hrtWeek:null,trigType:null,trigSys:new Set()};
+
+/* ================================================================
+   RENDER: header
+   ================================================================ */
+function renderHeader(){
+  const t=todayISO(),w=weekOf(t),p=phaseOf(w);
+  const el=document.getElementById("hdr-wk");
+  if(w<1) el.innerHTML="Starts <b>Mon 9 Nov</b> · "+(1-w>0?daysBetween(t,START)+" days":"");
+  else if(w>WEEKS) el.innerHTML="<b>Programme complete</b>";
+  else el.innerHTML="Week <b>"+w+"</b>/26 · "+p.name;
+}
+
+/* ================================================================
+   TODAY
+   ================================================================ */
+function renderToday(){
+  const date=UI.date,D=S.days[date]||{done:{},ci:{},body:{},habits:{},supps:{},note:""};
+  const isToday=date===todayISO();
+  let w=weekOf(date);const preview=w<1;
+  const sessDate=preview?addDays(START,dow(date)):date;   // before the start, preview the week 1 day
+  const sess=sessionsFor(sessDate);
+  const doneN=sess.filter(s=>D.done[s.id]).length;
+  let h=`<div class="daynav"><button data-act="day" data-n="-1" aria-label="Previous day">‹</button>
+    <div class="d"><b>${isToday?"Today":DAYS_L[dow(date)]}</b><span class="mute small">${fmtLong(date)}${w>=1&&w<=WEEKS?" · Week "+w:""}</span></div>
+    <button data-act="day" data-n="1" aria-label="Next day">›</button></div>`;
+  if(!isToday) h+=`<div style="text-align:center;margin:-4px 0 10px"><button class="btn sec" data-act="gotoday" style="padding:5px 12px;font-size:13px">Back to today</button></div>`;
+  for(const[c,txt]of bannersFor(date)) h+=`<div class="banner ${c}">${txt}</div>`;
+  const ci=D.ci||{};
+  if(ci.energy!=null&&ci.energy<5&&sess.some(s=>s.kind==="train")) h+=`<div class="banner a">Energy below 5 this morning: swap hard training for a walk or the rebounder.</div>`;
+
+  // sessions
+  h+=`<div class="card"><div class="h">${preview?"Week 1 preview":"Plan for the day"}<small>${doneN}/${sess.length} done</small></div>
+    <div class="prog" style="margin-bottom:6px"><i style="width:${sess.length?doneN/sess.length*100:0}%"></i></div>`;
+  if(!sess.length) h+=`<div class="mute small">Nothing scheduled.</div>`;
+  for(const s of sess){
+    const on=!!D.done[s.id];
+    h+=`<div class="sess${on?" done":""}"><div class="tick${on?" on":""}" data-act="sess" data-id="${s.id}" role="checkbox" aria-checked="${on}">${on?"✓":""}</div>
+      <div class="t">${s.time||""}</div><div class="l"><b>${esc(s.label)}</b><span class="kind k-${s.kind}">${{train:"train",recover:"recover",task:"to do",habit:"habit"}[s.kind]}</span><div>${esc(s.note)}</div></div></div>`;
+  }
+  h+=`</div>`;
+
+  // check-in
+  const sl=(k,label,min,max,step,def)=>{const v=ci[k];return `<div class="row"><label>${label}</label><input type="range" min="${min}" max="${max}" step="${step}" value="${v??def}" data-ci="${k}"><output id="o-${k}">${v??"–"}</output></div>`;};
+  h+=`<div class="card"><div class="h">Morning check-in<small>1 = poor · 10 = great</small></div>
+    ${sl("sleepH","Sleep (hours)",3,10,0.5,7)}
+    ${sl("sleepQ","Sleep quality",1,10,1,6)}
+    ${sl("energy","Energy",1,10,1,6)}
+    ${sl("gut","Gut comfort",1,10,1,6)}
+    ${sl("clarity","Mood & clarity",1,10,1,6)}
+    <div class="sg">Breathing</div><div class="pills">${[["clear","Clear"],["wheeze","Wheeze","warn"],["inhaler","Inhaler needed","bad"]].map(([v,l,c])=>`<span class="pill ${c||""}${ci.breath===v?" on":""}" data-act="breath" data-v="${v}">${l}</span>`).join("")}</div>
+    <div class="sg">Anything off today?</div><div class="pills">${CI_FLAGS.map(([k,l])=>`<span class="pill bad${(ci.flags||[]).includes(k)?" on":""}" data-act="ciflag" data-k="${k}">${l}</span>`).join("")}</div>
+  </div>`;
+
+  // body & habits
+  const b=D.body||{},hb=D.habits||{};
+  const wkTreats=treatsInWeek(date);
+  h+=`<div class="card"><div class="h">Body & habits</div>
+    <div class="grid3">
+      <label class="fld"><span>Weight (kg)</span><input type="number" step="0.1" inputmode="decimal" data-body="weight" value="${b.weight??""}"></label>
+      <label class="fld"><span>Steps</span><input type="number" step="100" inputmode="numeric" data-body="steps" value="${b.steps??""}" placeholder="7–10k"></label>
+      <label class="fld"><span>Resting HR</span><input type="number" inputmode="numeric" data-body="rhr" value="${b.rhr??""}"></label>
+    </div>
+    <div class="pills" style="margin-top:10px">
+      <span class="pill${hb.juice?" on":""}" data-act="habit" data-k="juice">🥤 Morning juice</span>
+      <span class="pill${hb.coffee?" on":""}" data-act="habit" data-k="coffee">☕ 1 coffee before noon</span>
+      <span class="pill${hb.vagus?" on":""}" data-act="habit" data-k="vagus">🌬️ Vagus exercises</span>
+      <span class="pill warn${hb.treat?" on":""}" data-act="habit" data-k="treat">🍫 Treat (${wkTreats}/2 this week)</span>
+    </div></div>`;
+
+  // supplements
+  const groups=suppsActive(date);const all=groups.flatMap(g=>g.items);
+  const sd=all.filter(i=>(D.supps||{})[i]).length;
+  h+=`<div class="card"><div class="h">Supplements<small>${sd}/${all.length}</small></div>
+    <div class="prog" style="margin-bottom:4px"><i style="width:${all.length?sd/all.length*100:0}%"></i></div>`;
+  for(const g of groups){
+    h+=`<div class="sg">${g.time} ${g.sub?`<i>· ${g.sub}</i>`:""}</div><div class="pills">`+
+      g.items.map(i=>`<span class="pill${(D.supps||{})[i]?" on":""}" data-act="supp" data-k="${esc(i)}">${esc(i)}</span>`).join("")+`</div>`;
+  }
+  const upcoming=Object.entries(SUPP_FROM).filter(([,f])=>date<f);
+  if(upcoming.length) h+=`<div class="mute small" style="margin-top:8px">Coming: ${upcoming.map(([n,f])=>esc(n)+" from "+fmt(f)).join(" · ")}</div>`;
+  h+=`<div class="sg">As needed <i>· not counted</i></div><div class="pills">`+
+    PRN.map(p=>`<span class="pill warn${(D.supps||{})[p.name]?" on":""}" data-act="supp" data-k="${esc(p.name)}">${esc(p.name)}</span>${p.flag?`<span class="flag">${esc(p.flag)}</span>`:""}`).join("")+`</div></div>`;
+
+  // notes
+  h+=`<div class="card"><div class="h">Notes${weekOf(date)===1?"<small>Food & symptom log this week</small>":""}</div>
+    <textarea data-note placeholder="What you ate, how you felt, anything new…">${esc(D.note||"")}</textarea></div>`;
+  document.getElementById("p-today").innerHTML=h;
+}
+function treatsInWeek(date){
+  const m=addDays(date,-dow(date));let n=0;
+  for(let i=0;i<7;i++){const d=S.days[addDays(m,i)];if(d&&d.habits&&d.habits.treat)n++;}
+  return n;
+}
+
+/* ================================================================
+   PLAN
+   ================================================================ */
+function renderPlan(){
+  const t=todayISO(),cw=Math.min(Math.max(weekOf(t),1),WEEKS);
+  const w=UI.planWeek||cw,p=phaseOf(w),ws=weekStart(w);
+  let h=`<div class="card"><div class="h">26 weeks<small>9 Nov 2026 – 9 May 2027</small></div>
+    <div class="tl">`;
+  for(let i=1;i<=WEEKS;i++){const ph=phaseOf(i);
+    h+=`<button style="background:${ph.col}" class="${i===cw?"cur":""}${weekOf(t)>i?" past":""}" data-act="pweek" data-w="${i}" aria-label="Week ${i}">${i}</button>`;}
+  h+=`</div><div class="legend">${PHASES.map(ph=>`<span><i style="background:${ph.col}"></i>${ph.name}</span>`).join("")}</div></div>`;
+
+  // selected week
+  let tot=0,dn=0,rows="";
+  for(let i=0;i<7;i++){
+    const d=addDays(ws,i),ss=sessionsFor(d),D=S.days[d]||{done:{}};
+    const done=ss.filter(s=>D.done&&D.done[s.id]).length;tot+=ss.length;dn+=done;
+    const main=ss.filter(s=>s.kind==="train"||s.kind==="task").map(s=>s.label).join(" · ")||"Rest";
+    rows+=`<div class="wday${d===t?" today":""}" data-act="openday" data-d="${d}"><span class="nm">${DAYS[i]} ${fmt(d)}</span><span class="ss">${esc(main)}</span><span class="small">${done}/${ss.length}</span></div>`;
+  }
+  h+=`<div class="card"><div class="h">Week ${w} · ${p.name}<small>${fmt(ws)} – ${fmt(addDays(ws,6))}</small></div>
+    <div class="mute small" style="margin-bottom:8px">${p.what}</div>
+    <div class="prog"><i style="width:${tot?dn/tot*100:0}%"></i></div><div class="small mute" style="margin:4px 0 6px">${dn} of ${tot} done${w!==cw?` · <a href="#" data-act="pweek" data-w="${cw}">back to this week</a>`:""}</div>
+    ${rows}</div>`;
+
+  // progress chart
+  h+=`<div class="card"><div class="h">Progress<small>daily entries</small></div>${progressChart()}</div>`;
+
+  // targets
+  h+=`<div class="card"><div class="h">Targets for May 2027</div><table><tr><th>Marker</th><th>Start</th><th>Latest</th><th>Target</th></tr>`;
+  for(const[name,start,target,src]of TARGETS) h+=`<tr><td>${name}</td><td>${start}</td><td>${latestFor(src)}</td><td>${target}</td></tr>`;
+  h+=`</table></div>`;
+
+  // measures
+  h+=`<div class="card"><div class="h">Measures<small>baseline week, then every 4 weeks</small></div>
+    <div class="grid2">
+      <label class="fld"><span>Date</span><input type="date" id="m-date" value="${t}"></label>
+      <label class="fld"><span>Weight (kg)</span><input type="number" step="0.1" id="m-weight" inputmode="decimal"></label>
+      <label class="fld"><span>Body fat (%)</span><input type="number" step="0.1" id="m-bf" inputmode="decimal"></label>
+      <label class="fld"><span>Waist (cm)</span><input type="number" step="0.5" id="m-waist" inputmode="decimal"></label>
+      <label class="fld"><span>Hip (cm)</span><input type="number" step="0.5" id="m-hip" inputmode="decimal"></label>
+      <label class="fld"><span>Resting HR (7-day avg)</span><input type="number" id="m-rhr" inputmode="numeric"></label>
+      <label class="fld"><span>Grip left (kg)</span><input type="number" step="0.5" id="m-gripL" inputmode="decimal"></label>
+      <label class="fld"><span>Grip right (kg)</span><input type="number" step="0.5" id="m-gripR" inputmode="decimal"></label>
+      <label class="fld"><span>1.6 km walk (mm:ss)</span><input type="text" id="m-walk" placeholder="mm:ss"></label>
+      <label class="fld"><span>VO2 max (watch)</span><input type="number" step="0.1" id="m-vo2" inputmode="decimal"></label>
+    </div>
+    <button class="btn full" style="margin-top:10px" data-act="addmeasure">Save measures</button>
+    ${measuresTable()}</div>`;
+
+  // training rules
+  h+=`<details><summary>Training rules</summary><div>${TRAINING_RULES.map(([k,v])=>`<div class="list-item"><b>${k}.</b> ${v}</div>`).join("")}</div></details>`;
+  document.getElementById("p-plan").innerHTML=h;
+}
+const MFIELDS=[["weight","Weight","kg"],["bf","Body fat","%"],["waist","Waist","cm"],["hip","Hip","cm"],["rhr","Resting HR","bpm"],["gripL","Grip L","kg"],["gripR","Grip R","kg"],["walk","1.6 km walk",""],["vo2","VO2 max",""]];
+function measuresTable(){
+  const ms=[...S.measures].sort((a,b)=>a.date<b.date?-1:1);
+  if(!ms.length) return `<div class="mute small" style="margin-top:10px">No measures yet. Week 1 is baseline week.</div>`;
+  const first=ms[0],last=ms[ms.length-1];
+  const firstOf=k=>{const r=ms.find(m=>m[k]!=null&&m[k]!=="");return r?r[k]:null;};
+  const lastOf=k=>{const r=[...ms].reverse().find(m=>m[k]!=null&&m[k]!=="");return r?r[k]:null;};
+  let h=`<table style="margin-top:12px"><tr><th>Measure</th><th class="n">First</th><th class="n">Latest</th><th class="n">Change</th></tr>`;
+  for(const[k,l,u]of MFIELDS){
+    const a=firstOf(k),b=lastOf(k);if(a==null&&b==null)continue;
+    let ch="";
+    if(k==="walk"){const sa=toSec(a),sb=toSec(b);if(sa&&sb&&sa!==sb)ch=(sb<sa?"−":"+")+fromSec(Math.abs(sb-sa));}
+    else if(a!=null&&b!=null&&Number(a)!==Number(b)){const d=Number(b)-Number(a);ch=(d>0?"+":"")+(Math.round(d*10)/10);}
+    h+=`<tr><td>${l}${u?` <span class="mute">${u}</span>`:""}</td><td class="n">${a??"–"}</td><td class="n">${b??"–"}</td><td class="n">${ch}</td></tr>`;
+  }
+  h+=`</table><div class="small mute" style="margin-top:6px">${ms.length} entr${ms.length===1?"y":"ies"} · ${fmt(first.date)}${ms.length>1?" → "+fmt(last.date):""}</div>`;
+  h+=ms.slice().reverse().map(m=>`<div class="list-item small"><button class="x" data-act="delmeasure" data-id="${m.id}" aria-label="Delete">×</button><b>${fmt(m.date)}</b> · ${MFIELDS.filter(([k])=>m[k]!=null&&m[k]!=="").map(([k,l,u])=>l+" "+m[k]+(u&&k!=="walk"?" "+u:"")).join(" · ")}</div>`).join("");
+  return h;
+}
+const toSec=s=>{if(!s)return null;const p=String(s).split(":").map(Number);return p.length===2&&!p.some(isNaN)?p[0]*60+p[1]:null;};
+const fromSec=n=>Math.floor(n/60)+":"+pad(n%60);
+function latestFor(src){
+  if(src==="pheno"){const r=latestPheno();return r?(r.value.toFixed(1)+(r.estimated?" (est.)":"")):"–";}
+  if(src.startsWith("b:")){const rows=(S.bloods[src.slice(2)]||[]).slice().sort((a,b)=>a.date<b.date?-1:1);const r=rows[rows.length-1];return r?fv(r)+` <span class="mute small">${fmtMonth(r.date)}</span>`:"–";}
+  if(src==="grip"){const m=[...S.measures].sort((a,b)=>a.date<b.date?1:-1).find(m=>m.gripL||m.gripR);return m?`${m.gripL||"–"}/${m.gripR||"–"} kg`:"–";}
+  const m=[...S.measures].sort((a,b)=>a.date<b.date?1:-1).find(m=>m[src]!=null&&m[src]!=="");
+  if(m) return m[src];
+  if(src==="weight"||src==="rhr"){const d=Object.keys(S.days).sort().reverse().find(k=>S.days[k].body&&S.days[k].body[src]);if(d)return S.days[d].body[src];}
+  return "–";
+}
+function progressChart(){
+  const keys=Object.keys(S.days).sort();
+  const pts=k=>keys.map(d=>[d,k==="weight"?Number(S.days[d].body?.weight):Number(S.days[d].ci?.[k])]).filter(([,v])=>v>0);
+  const wt=pts("weight"),en=pts("energy");
+  if(wt.length<2&&en.length<2) return `<div class="mute small">The chart fills in once you have two or more days of weight or energy entries.</div>`;
+  const W=320,H=130,P=26;
+  const all=[...wt,...en].map(p=>p[0]).sort();const d0=all[0],d1=all[all.length-1];const span=Math.max(daysBetween(d0,d1),1);
+  const x=d=>P+(W-2*P)*daysBetween(d0,d)/span;
+  const line=(arr,lo,hi,col)=>{if(arr.length<2)return"";const y=v=>H-P-(H-2*P)*(v-lo)/((hi-lo)||1);
+    return `<polyline fill="none" stroke="${col}" stroke-width="2" points="${arr.map(([d,v])=>x(d).toFixed(1)+","+y(v).toFixed(1)).join(" ")}"/>`+
+      arr.map(([d,v])=>`<circle cx="${x(d).toFixed(1)}" cy="${y(v).toFixed(1)}" r="2.2" fill="${col}"/>`).join("");};
+  const wv=wt.map(p=>p[1]);const wlo=Math.floor(Math.min(...wv,76)-1),whi=Math.ceil(Math.max(...wv)+1);
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Weight and energy over time">
+    <line x1="${P}" y1="${H-P}" x2="${W-P}" y2="${H-P}" stroke="#e6e2d9"/>
+    ${line(wt,wlo,whi,"#1D9E75")}${line(en,0,10,"#c9820a")}
+    <text x="${P}" y="${H-8}" font-size="10" fill="#6b7473">${fmt(d0)}</text><text x="${W-P}" y="${H-8}" font-size="10" fill="#6b7473" text-anchor="end">${fmt(d1)}</text>
+    ${wt.length>1?`<text x="${P}" y="12" font-size="10" fill="#1D9E75">Weight ${wlo}–${whi} kg</text>`:""}
+    ${en.length>1?`<text x="${W-P}" y="12" font-size="10" fill="#c9820a" text-anchor="end">Energy 0–10</text>`:""}
+  </svg>`;
+}
+
+/* ================================================================
+   BLOODS
+   ================================================================ */
+function latestPheno(){
+  const dates=[...new Set(Object.values(S.bloods).flat().map(r=>r.date))].filter(d=>d>="2026-07").sort();
+  for(let i=dates.length-1;i>=0;i--){const r=phenoFor(dates[i]);if(r.value)return r;}
+  return null;
+}
+function status(m,r){
+  if(!r)return"none";const v=r.value;
+  if(m.good==="low"){if(m.hi==null)return"none";if(r.q==="<"&&v<=m.hi)return"good";return v<=m.hi?"good":(v<=m.hi*1.15?"watch":"bad");}
+  if(m.good==="high"){if(m.lo==null)return"none";if(r.q===">"&&v>=m.lo)return"good";return v>=m.lo?"good":(v>=m.lo*0.85?"watch":"bad");}
+  if(m.lo!=null&&v<m.lo)return v>=m.lo*0.9?"watch":"bad";
+  if(m.hi!=null&&v>m.hi)return v<=m.hi*1.1?"watch":"bad";
+  return"good";
+}
+const fv=r=>(r.q||"")+(r.q&&Number.isInteger(r.value)?r.value.toFixed(1):r.value);
+const SCOL={good:"#1D9E75",watch:"#c9820a",bad:"#c2413b",none:"#b5b0a6"};
+function spark(rows){
+  if(rows.length<2)return"";
+  const vs=rows.map(r=>r.value),lo=Math.min(...vs),hi=Math.max(...vs),W=90,H=26;
+  const pts=rows.map((r,i)=>[4+(W-8)*i/(rows.length-1),H-4-(H-8)*(hi===lo?.5:(r.value-lo)/(hi-lo))]);
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" aria-hidden="true"><polyline fill="none" stroke="#9aa3a2" stroke-width="1.5" points="${pts.map(p=>p.map(n=>n.toFixed(1)).join(",")).join(" ")}"/><circle cx="${pts[pts.length-1][0].toFixed(1)}" cy="${pts[pts.length-1][1].toFixed(1)}" r="2.5" fill="#1f2a2a"/></svg>`;
+}
+function mkCard(m){
+  const rows=(S.bloods[m.key]||[]).slice().sort((a,b)=>a.date<b.date?-1:1);
+  const last=rows[rows.length-1],st=status(m,last);
+  const hist=rows.map(r=>`${fmtMonth(r.date)}: ${fv(r)}`).join(" · ");
+  return `<div class="mk"><div class="top"><span class="nm"><span class="dot" style="background:${SCOL[st]}"></span>${m.name}</span>
+    <span class="val">${last?fv(last)+` <span class="mute small">${m.unit}</span>`:`<span class="mute small">not tested</span>`}</span></div>
+    <div class="top"><span class="meta">Range ${m.ref} · Target ${m.target}</span>${spark(rows)}</div>
+    ${rows.length?`<div class="meta">${hist}</div>`:""}</div>`;
+}
+function renderBloods(){
+  let h="";
+  // PhenoAge
+  const base=phenoFor(J),lat=latestPheno();
+  h+=`<div class="card"><div class="h">Biological age · PhenoAge<small>Levine 2018</small></div>
+    <div class="kpis">
+      <div class="kpi"><b>${base.value?base.value.toFixed(1):"–"}</b><span>Jul 2026 baseline (age ${base.age??"–"})</span></div>
+      <div class="kpi"><b>${lat&&lat.ym!==J?lat.value.toFixed(1):"–"}</b><span>${lat&&lat.ym!==J?fmtMonth(lat.ym):"May 2027"}</span></div>
+      <div class="kpi"><b>42–45</b><span>Your goal</span></div>
+    </div>
+    ${base.notes&&base.notes.length?`<div class="small mute" style="margin-top:8px">Estimate: ${base.notes.map(esc).join("; ")}. Use the same CRP rule in May; a real fasting glucose and a numeric CRP could move it a few years.</div>`:""}
+    ${lat&&lat.ym!==J&&lat.notes.length?`<div class="small mute">${fmtMonth(lat.ym)}: ${lat.notes.map(esc).join("; ")}.</div>`:""}
+    <div class="small mute" style="margin-top:6px">Calculated automatically for any blood date from July 2026 that has albumin, creatinine, glucose, CRP, lymphocytes, white cells, MCV, RDW and ALP.</div></div>`;
+
+  // watch list
+  h+=`<div class="card"><div class="h">Watch list<small>the open problems and wins</small></div>${WATCH.map(k=>mkCard(MK[k])).join("")}</div>`;
+
+  // add result
+  h+=`<div class="card"><div class="h">Add a result</div>
+    <div class="grid2">
+      <label class="fld"><span>Marker</span><select id="b-key">${BLOOD_CATS.map(c=>`<optgroup label="${c.label}">${MARKERS.filter(m=>m.cat===c.id).map(m=>`<option value="${m.key}">${m.name} (${m.unit})</option>`).join("")}</optgroup>`).join("")}</select></label>
+      <label class="fld"><span>Month taken</span><input type="month" id="b-date" value="${todayISO().slice(0,7)}"></label>
+      <label class="fld"><span>Value</span><input type="number" step="any" id="b-val" inputmode="decimal"></label>
+      <label class="fld"><span>Shown as</span><select id="b-q"><option value="">exact</option><option value="<">“less than” (&lt;)</option><option value=">">“more than” (&gt;)</option></select></label>
+    </div>
+    <button class="btn full" style="margin-top:10px" data-act="addblood">Add result</button>
+    <div class="small mute" style="margin-top:6px">Same marker and month replaces the old value.</div></div>`;
+
+  // categories
+  h+=`<div class="sh">All markers</div>`;
+  for(const c of BLOOD_CATS){
+    const ms=MARKERS.filter(m=>m.cat===c.id),open=UI.openCats.has(c.id);
+    const bad=ms.filter(m=>{const r=(S.bloods[m.key]||[]).slice().sort((a,b)=>a.date<b.date?-1:1);const s=status(m,r[r.length-1]);return s==="bad"||s==="watch";}).length;
+    h+=`<div class="card"><div class="cat" data-act="cat" data-c="${c.id}"><b>${c.label}</b><span class="small mute">${bad?`<span style="color:var(--amber)">${bad} to watch</span> · `:""}${ms.length} ${open?"▲":"▼"}</span></div>${open?`<div style="margin-top:6px">${ms.map(mkCard).join("")}</div>`:""}</div>`;
+  }
+
+  // May
+  h+=`<div class="card"><div class="h">May 2027 blood request<small>ask your GP</small></div>${MAY_REQUEST.map((x,i)=>`<label class="row" style="margin:4px 0"><input type="checkbox" data-may="${i}" ${(S.settings.may||{})[i]?"checked":""}> <span style="flex:1">${esc(x)}</span></label>`).join("")}
+    <div class="sg">Before the draw</div>${PRE_BLOODS.map(x=>`<div class="small">· ${esc(x)}</div>`).join("")}</div>`;
+  document.getElementById("p-bloods").innerHTML=h;
+}
+
+/* ================================================================
+   LOG: triggers, antihistamine, HRT
+   ================================================================ */
+function renderLog(){
+  const subs=[["triggers","Triggers"],["anti","Antihistamine"],["hrt","HRT"]];
+  let h=`<div class="sub">${subs.map(([k,l])=>`<button class="${UI.logSub===k?"on":""}" data-act="logsub" data-k="${k}">${l}</button>`).join("")}</div>`;
+  if(UI.logSub==="triggers") h+=logTriggers();
+  if(UI.logSub==="anti") h+=logAnti();
+  if(UI.logSub==="hrt") h+=logHRT();
+  document.getElementById("p-log").innerHTML=h;
+}
+function nowHM(){const d=new Date();return pad(d.getHours())+":"+pad(d.getMinutes());}
+function logTriggers(){
+  let h=`<div class="card"><div class="h">Log a trigger event</div>
+    <div class="sg">Type</div><div class="pills">${TRIG_TYPES.map(([k,l])=>`<span class="pill${UI.trigType===k?" on":""}" data-act="trigtype" data-k="${k}">${l}</span>`).join("")}</div>
+    <label class="fld" style="margin-top:10px"><span>What was it?</span><input type="text" id="t-what" placeholder="e.g. stock cube, perfume in a shop, hot shower"></label>
+    <div class="grid3" style="margin-top:8px">
+      <label class="fld"><span>Date</span><input type="date" id="t-date" value="${todayISO()}"></label>
+      <label class="fld"><span>Exposure</span><input type="time" id="t-at" value="${nowHM()}"></label>
+      <label class="fld"><span>Symptoms began</span><input type="time" id="t-sym"></label>
+    </div>
+    <div class="sg">Systems affected</div><div class="pills">${SYSTEMS.map(s=>`<span class="pill bad${UI.trigSys.has(s)?" on":""}" data-act="trigsys" data-k="${s}">${s}</span>`).join("")}</div>
+    <div class="row" style="margin-top:10px"><label>Severity</label><input type="range" min="1" max="10" value="5" id="t-sev" data-out="t-sev-o"><output id="t-sev-o">5</output></div>
+    <div class="grid2">
+      <label class="fld"><span>What helped</span><input type="text" id="t-tx" placeholder="ginger tea, inhaler, Telfast…"></label>
+      <label class="fld"><span>Recovered after</span><input type="text" id="t-rec" placeholder="e.g. 2 h"></label>
+    </div>
+    <button class="btn full" style="margin-top:10px" data-act="addtrig">Log trigger</button></div>`;
+  // patterns, last 60 days
+  const since=addDays(todayISO(),-60),recent=S.triggers.filter(t=>t.date>=since);
+  if(recent.length){
+    const cnt=(arr)=>Object.entries(arr.reduce((a,k)=>(a[k]=(a[k]||0)+1,a),{})).sort((a,b)=>b[1]-a[1]);
+    const byType=cnt(recent.map(t=>(TRIG_TYPES.find(x=>x[0]===t.type)||[0,"Other"])[1]));
+    const bySys=cnt(recent.flatMap(t=>t.systems||[]));
+    const delays=recent.map(t=>t.delay).filter(n=>n!=null&&n>=0);
+    h+=`<div class="card"><div class="h">Patterns<small>last 60 days · ${recent.length} event${recent.length>1?"s":""}</small></div>
+      <div class="small"><b>By type:</b> ${byType.map(([k,n])=>`${k} ${n}`).join(" · ")}</div>
+      <div class="small" style="margin-top:4px"><b>Systems:</b> ${bySys.map(([k,n])=>`${k} ${n}`).join(" · ")||"–"}</div>
+      ${delays.length?`<div class="small" style="margin-top:4px"><b>Typical delay:</b> ${Math.round(delays.reduce((a,b)=>a+b,0)/delays.length)} min (average of ${delays.length})</div>`:""}</div>`;
+  }
+  h+=`<div class="card"><div class="h">History<small>${S.triggers.length} total</small></div>`;
+  if(!S.triggers.length) h+=`<div class="mute small">Nothing logged. Flares are learning events: log it, find it, move on.</div>`;
+  for(const t of S.triggers.slice().sort((a,b)=>(b.date+b.at)>(a.date+a.at)?1:-1).slice(0,40)){
+    h+=`<div class="list-item"><button class="x" data-act="deltrig" data-id="${t.id}" aria-label="Delete">×</button>
+      <b>${fmt(t.date)} ${t.at||""}</b> · ${esc((TRIG_TYPES.find(x=>x[0]===t.type)||[0,"Other"])[1])} · ${esc(t.what||"")}<br>
+      <span class="small mute">Severity ${t.sev}/10${t.delay!=null?` · after ${t.delay} min`:""}${t.systems&&t.systems.length?" · "+t.systems.join(", "):""}${t.tx?" · helped: "+esc(t.tx):""}${t.rec?" · recovered "+esc(t.rec):""}</span></div>`;
+  }
+  return h+`</div>`;
+}
+function logAnti(){
+  let h=`<div class="card"><div class="h">Log an antihistamine</div>
+    <div class="grid2">
+      <label class="fld"><span>Which</span><select id="a-which"><option>Telfast / fexofenadine</option><option>Pepcid / famotidine</option><option>Other</option></select></label>
+      <label class="fld"><span>When</span><input type="datetime-local" id="a-when" value="${todayISO()}T${nowHM()}"></label>
+    </div>
+    <label class="fld" style="margin-top:8px"><span>Why</span><input type="text" id="a-why" placeholder="symptoms, suspected trigger"></label>
+    <div class="sg">Effect</div><div class="pills" id="a-eff">${["Clear relief","Some relief","No change","Worse"].map((e,i)=>`<span class="pill${i===3?" bad":""}" data-act="antieff" data-k="${e}">${e}</span>`).join("")}</div>
+    <button class="btn full" style="margin-top:10px" data-act="addanti">Log</button>
+    <div class="small mute" style="margin-top:6px"><span class="flag">Confirm</span> Pepcid is listed because it was in your old app; your Diary says no H2 blocker.</div></div>
+    <div class="card"><div class="h">History<small>${S.anti.length}</small></div>`;
+  if(!S.anti.length) h+=`<div class="mute small">Nothing logged.</div>`;
+  for(const a of S.anti.slice().sort((x,y)=>y.when>x.when?1:-1).slice(0,40))
+    h+=`<div class="list-item"><button class="x" data-act="delanti" data-id="${a.id}" aria-label="Delete">×</button><b>${fmt(a.when.slice(0,10))} ${a.when.slice(11,16)}</b> · ${esc(a.which)}<br><span class="small mute">${esc(a.why||"")}${a.eff?" · "+esc(a.eff):""}</span></div>`;
+  return h+`</div>`;
+}
+function logHRT(){
+  const t=todayISO();const ws=UI.hrtWeek||addDays(t,-dow(t));
+  let h=`<div class="card"><div class="h">HRT<small>tap on the days you apply</small></div>
+    <div class="small mute" style="margin-bottom:8px">Progesterone 200 mg is ticked nightly in Supplements. Evorel 50 patch and V+E every ~3.5 days.</div>
+    <div class="daynav"><button data-act="hrtwk" data-n="-7" aria-label="Previous week">‹</button><div class="d small">${fmt(ws)} – ${fmt(addDays(ws,6))}</div><button data-act="hrtwk" data-n="7" aria-label="Next week">›</button></div><div class="hrt">`;
+  for(let i=0;i<7;i++){const d=addDays(ws,i),r=S.hrt[d]||{},sp=S.spotting.includes(d);
+    h+=`<div class="c${d===t?" today":""}"><b>${DAYS[i]}</b><br>${parse(d).getDate()}
+      <span class="b${r.patch?" on":""}" data-act="hrt" data-d="${d}" data-k="patch">Patch</span>
+      <span class="b${r.ve?" on":""}" data-act="hrt" data-d="${d}" data-k="ve">V+E</span>
+      <span class="b sp${sp?" on":""}" data-act="spot" data-d="${d}">💧</span></div>`;}
+  h+=`</div></div>`;
+  const last=k=>Object.keys(S.hrt).filter(d=>S.hrt[d][k]).sort().pop();
+  const lp=last("patch"),lv=last("ve");
+  h+=`<div class="card"><div class="h">Last applied</div>
+    <div class="small">Patch: ${lp?fmt(lp)+` (${daysBetween(lp,t)} days ago)`:"–"} · V+E: ${lv?fmt(lv)+` (${daysBetween(lv,t)} days ago)`:"–"}</div>
+    <div class="small" style="margin-top:6px">Spotting days: ${S.spotting.length?S.spotting.slice().sort().reverse().slice(0,10).map(fmt).join(", "):"none logged"}</div></div>`;
+  return h;
+}
+
+/* ================================================================
+   ME
+   ================================================================ */
+function renderMe(){
+  const subs=[["profile","Profile"],["food","Food"],["dna","DNA"],["protocol","Protocol"],["data","Data"]];
+  let h=`<div class="sub">${subs.map(([k,l])=>`<button class="${UI.meSub===k?"on":""}" data-act="mesub" data-k="${k}">${l}</button>`).join("")}</div>`;
+  const s=UI.meSub;
+  if(s==="profile"){
+    h+=`<div class="card"><div class="h">Health profile</div><div class="pills">${CONDITIONS.map(([c,t])=>`<span class="pill${t?" on":""}${t==="p"?" warn":""}">${c}</span>`).join("")}</div>
+      <div class="small" style="margin-top:10px">80+ antibiotic courses from age 18. Menopause October 2018 removed progesterone, a natural mast cell stabiliser. MRI (Affidea Santry, March 2026): three-tendon tendinopathy, no tears. Protocol started February 2026; DNA methylation report (Stride 2026).</div></div>
+      <div class="card"><div class="h">For any healthcare provider<small>medication awareness</small></div>
+      <div class="small mute" style="margin-bottom:6px">Mast cell activation is unpredictable and can change over time. Worth flagging before prescribing:</div>
+      ${MED_AWARE.map(([k,v])=>`<div class="list-item"><b>${k}:</b> ${v}</div>`).join("")}</div>`;
+  }
+  if(s==="food"){
+    h+=`<div class="card"><div class="h">Confirmed triggers</div>${TRIGGERS.map(([k,sev,v])=>`<div class="list-item"><b>${esc(k)}</b> <span class="kind ${sev==="Severe"?"k-task":"k-habit"}" style="${sev==="Severe"?"background:var(--red-soft);color:var(--red)":""}">${sev}</span><br><span class="small mute">${esc(v)}</span></div>`).join("")}
+      ${OTHER_TRIGGERS.map(([k,v])=>`<div class="list-item"><b>${k}:</b> <span class="small">${v}</span></div>`).join("")}</div>
+      <div class="card"><div class="h">Confirmed safe</div>${SAFE.map(([k,v])=>`<div class="list-item"><b>${esc(k)}</b><br><span class="small mute">${esc(v)}</span></div>`).join("")}</div>
+      <div class="card"><div class="h">Label check</div><div class="small">Scan for: yeast extract (all aliases), rapeseed / sunflower / soybean / corn oil, sulphites E220–E228, gluten, MSG, maltodextrin, unspecified “flavourings”. Treats first: nutballs (peanuts?), jelly sweets (sulphites?), cocoa (histamine).</div></div>`;
+  }
+  if(s==="dna"){
+    h+=`<div class="card"><div class="h">DNA methylation<small>Stride 2026 · 12 variants</small></div>
+      <div class="banner g" style="margin:0 0 8px">MTHFR TT + MAOB AG: making histamine you can't clear. Methylfolate bypasses MTHFR; quercetin stops degranulation at the source.</div>
+      ${DNA.map(([area,gene,gt,what,fix])=>`<div class="dna"><b>${gene}</b> <span class="gt">${gt}</span> <span class="small mute">· ${area}</span><br><span class="small">${what}</span><br><span class="small" style="color:var(--green)">💊 ${fix}</span></div>`).join("")}</div>`;
+  }
+  if(s==="protocol"){
+    h+=`<div class="card"><div class="h">What stays fixed</div>${FIXED_RULES.map(r=>`<div class="list-item">${esc(r)}</div>`).join("")}</div>
+      <div class="card"><div class="h">Daily rhythm</div><table>
+        <tr><td>~06:30</td><td>Wake, B12, morning juice, morning supplements</td></tr>
+        <tr><td>07:15 Tue/Thu</td><td>Sea swim, 2–3 min</td></tr>
+        <tr><td>Work block</td><td>Stand and walk breaks; 7–10k steps</td></tr>
+        <tr><td>~15:00</td><td>Gym: strength or Zone 2, then sauna</td></tr>
+        <tr><td>20:00</td><td>Whistle, 20 min</td></tr>
+        <tr><td>Bedtime</td><td>Psyllium, lemon balm or chamomile, purifier, mouth taping</td></tr>
+        <tr><td>Sunday</td><td>Meal prep 14:00 · week review 18:00</td></tr></table></div>
+      <div class="card"><div class="h">Vagus nerve</div>${VAGUS.map(v=>`<div class="list-item">${v}</div>`).join("")}</div>
+      <div class="card"><div class="h">Red flags</div><div class="small">
+        · Breathing not settling with ginger tea in 1–2 h → inhaler → no improvement → medical attention.<br>
+        · Throat swelling or feeling faint → emergency services (112 / 999).<br>
+        · Severe multi-system flare not settling within 24 h.<br>
+        · New symptoms in a system not affected before.<br>
+        · Anxiety, irritability, racing mind or insomnia on methylfolate → reduce the dose.</div></div>`;
+  }
+  if(s==="data"){
+    const n=Object.keys(S.days).length;
+    h+=`<div class="card"><div class="h">Your data</div>
+      <div class="small">Stored on this phone only, in this browser. ${n} day${n===1?"":"s"} logged · ${S.triggers.length} triggers · ${S.measures.length} measures · ${S.anti.length} antihistamine entries.</div>
+      <div class="small mute" style="margin-top:6px">Clearing browser data or deleting the home-screen app can erase it. Back up weekly (Sunday review is a good moment).</div>
+      <button class="btn full" style="margin-top:12px" data-act="export">⬇︎ Download backup</button>
+      <label class="btn sec full" style="display:block;text-align:center;margin-top:8px">⬆︎ Restore from backup<input type="file" id="restore" accept="application/json,.json" style="display:none"></label>
+      <div id="restore-msg" class="small" style="margin-top:8px"></div></div>
+      <div class="card"><div class="h">Start again</div><div class="small mute">Wipes everything you've logged. Built-in blood history comes back.</div>
+      <button class="btn danger full" style="margin-top:10px" data-act="reset">Erase all data</button></div>
+      <div class="small mute" style="text-align:center">Shiera's Health App · v1 draft · ${esc(STORE_KEY)}</div>`;
+  }
+  document.getElementById("p-me").innerHTML=h;
+}
+
+/* ================================================================
+   EVENTS
+   ================================================================ */
+const R={today:renderToday,plan:renderPlan,bloods:renderBloods,log:renderLog,me:renderMe};
+function render(){renderHeader();R[UI.tab]();}
+function showTab(t){
+  UI.tab=t;
+  document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
+  document.querySelectorAll(".page").forEach(p=>p.classList.toggle("on",p.id==="p-"+t));
+  render();window.scrollTo(0,0);
+}
+document.getElementById("tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(b)showTab(b.dataset.tab);});
+
+document.addEventListener("click",e=>{
+  const el=e.target.closest("[data-act]");if(!el)return;
+  const a=el.dataset.act,D=()=>day(UI.date);
+  switch(a){
+    case"day":UI.date=addDays(UI.date,Number(el.dataset.n));renderToday();break;
+    case"gotoday":UI.date=todayISO();renderToday();break;
+    case"sess":{const d=D();d.done[el.dataset.id]=!d.done[el.dataset.id];save();renderToday();break;}
+    case"breath":{const d=D();d.ci.breath=d.ci.breath===el.dataset.v?null:el.dataset.v;save();renderToday();break;}
+    case"ciflag":{const d=D(),f=d.ci.flags||(d.ci.flags=[]),k=el.dataset.k,i=f.indexOf(k);i<0?f.push(k):f.splice(i,1);save();renderToday();break;}
+    case"habit":{const d=D();d.habits[el.dataset.k]=!d.habits[el.dataset.k];save();renderToday();break;}
+    case"supp":{const d=D();d.supps[el.dataset.k]=!d.supps[el.dataset.k];save();renderToday();break;}
+    case"pweek":e.preventDefault();UI.planWeek=Number(el.dataset.w);renderPlan();break;
+    case"openday":UI.date=el.dataset.d;showTab("today");break;
+    case"addmeasure":addMeasure();break;
+    case"delmeasure":if(confirm("Delete this measures entry?")){S.measures=S.measures.filter(m=>m.id!==el.dataset.id);save();renderPlan();}break;
+    case"cat":{const c=el.dataset.c;UI.openCats.has(c)?UI.openCats.delete(c):UI.openCats.add(c);renderBloods();break;}
+    case"addblood":addBlood();break;
+    case"logsub":UI.logSub=el.dataset.k;renderLog();break;
+    case"trigtype":UI.trigType=UI.trigType===el.dataset.k?null:el.dataset.k;el.parentNode.querySelectorAll(".pill").forEach(p=>p.classList.toggle("on",p.dataset.k===UI.trigType));break;
+    case"trigsys":{const k=el.dataset.k;UI.trigSys.has(k)?UI.trigSys.delete(k):UI.trigSys.add(k);el.classList.toggle("on");break;}
+    case"addtrig":addTrigger();break;
+    case"deltrig":if(confirm("Delete this trigger entry?")){S.triggers=S.triggers.filter(t=>t.id!==el.dataset.id);save();renderLog();}break;
+    case"antieff":el.parentNode.querySelectorAll(".pill").forEach(p=>p.classList.toggle("on",p===el&&!p.classList.contains("on")));break;
+    case"addanti":addAnti();break;
+    case"delanti":if(confirm("Delete this entry?")){S.anti=S.anti.filter(x=>x.id!==el.dataset.id);save();renderLog();}break;
+    case"hrtwk":{const t=todayISO();UI.hrtWeek=addDays(UI.hrtWeek||addDays(t,-dow(t)),Number(el.dataset.n));renderLog();break;}
+    case"hrt":{const d=el.dataset.d,k=el.dataset.k,r=S.hrt[d]||(S.hrt[d]={});r[k]=!r[k];if(!r.patch&&!r.ve)delete S.hrt[d];save();renderLog();break;}
+    case"spot":{const d=el.dataset.d,i=S.spotting.indexOf(d);i<0?S.spotting.push(d):S.spotting.splice(i,1);save();renderLog();break;}
+    case"mesub":UI.meSub=el.dataset.k;renderMe();break;
+    case"export":exportBackup();break;
+    case"reset":if(confirm("Erase everything you've logged on this phone? This can't be undone.")&&confirm("Really erase? Download a backup first if you might want it.")){S=freshState();save();toast("Erased");render();}break;
+  }
+});
+document.addEventListener("input",e=>{
+  const el=e.target;
+  if(el.dataset.ci){const d=day(UI.date),v=Number(el.value);d.ci[el.dataset.ci]=v;const o=document.getElementById("o-"+el.dataset.ci);if(o)o.textContent=v;save();}
+  else if(el.dataset.body!=null){const d=day(UI.date),v=el.value===""?null:Number(el.value);if(v==null)delete d.body[el.dataset.body];else d.body[el.dataset.body]=v;save();}
+  else if(el.hasAttribute("data-note")){day(UI.date).note=el.value;save();}
+  else if(el.dataset.out){document.getElementById(el.dataset.out).textContent=el.value;}
+});
+document.addEventListener("change",e=>{
+  const el=e.target;
+  if(el.dataset.ci)renderToday();               // refresh the low-energy hint
+  if(el.dataset.may!=null){const m=S.settings.may||(S.settings.may={});m[el.dataset.may]=el.checked;save();}
+  if(el.id==="restore")importBackup(el);
+});
+
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+function addMeasure(){
+  const g=id=>document.getElementById(id).value.trim();
+  const m={id:uid(),date:g("m-date")||todayISO()};
+  let any=false;
+  for(const[k]of MFIELDS){const v=g("m-"+k);if(v!==""){m[k]=k==="walk"?v:Number(v);any=true;}}
+  if(m.walk!=null&&toSec(m.walk)==null){toast("Walk time as mm:ss, e.g. 15:30");return;}
+  if(!any){toast("Enter at least one measure");return;}
+  S.measures.push(m);save();toast("Measures saved");renderPlan();
+}
+function addBlood(){
+  const key=document.getElementById("b-key").value,date=document.getElementById("b-date").value,val=document.getElementById("b-val").value,q=document.getElementById("b-q").value;
+  if(!date||val===""||isNaN(Number(val))){toast("Pick a month and enter a number");return;}
+  const rows=S.bloods[key]||(S.bloods[key]=[]);
+  const i=rows.findIndex(r=>r.date===date);const rec={date,value:Number(val),q};
+  if(i>=0)rows[i]=rec;else rows.push(rec);
+  rows.sort((a,b)=>a.date<b.date?-1:1);
+  UI.openCats.add(MK[key].cat);save();toast(MK[key].name+" saved");renderBloods();
+}
+function addTrigger(){
+  const g=id=>document.getElementById(id).value.trim();
+  if(!UI.trigType&&!g("t-what")){toast("Pick a type or describe it");return;}
+  const at=g("t-at"),sym=g("t-sym");
+  let delay=null;if(at&&sym){delay=(toSec(sym)-toSec(at));if(delay<0)delay+=1440;}
+  S.triggers.push({id:uid(),date:g("t-date")||todayISO(),at,sym,delay,type:UI.trigType||"other",what:g("t-what"),systems:[...UI.trigSys],sev:Number(g("t-sev")),tx:g("t-tx"),rec:g("t-rec")});
+  UI.trigType=null;UI.trigSys=new Set();save();toast("Trigger logged");renderLog();
+}
+function addAnti(){
+  const eff=document.querySelector("#a-eff .pill.on");
+  const when=document.getElementById("a-when").value;
+  if(!when){toast("Add the time");return;}
+  S.anti.push({id:uid(),which:document.getElementById("a-which").value,when,why:document.getElementById("a-why").value.trim(),eff:eff?eff.dataset.k:""});
+  save();toast("Logged");renderLog();
+}
+function exportBackup(){
+  const data=JSON.stringify({app:APP_ID,version:1,exported:new Date().toISOString(),data:S},null,1);
+  const blob=new Blob([data],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download="shieras-health-backup-"+todayISO()+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  S.settings.lastBackup=todayISO();save();toast("Backup downloaded");
+}
+function importBackup(input){
+  const f=input.files[0];if(!f)return;const msg=document.getElementById("restore-msg");
+  const rd=new FileReader();
+  rd.onload=()=>{
+    try{
+      const b=JSON.parse(rd.result);
+      if(b.app!==APP_ID||!b.data||!b.data.days) throw new Error("not a backup from this app");
+      if(!confirm("Replace everything on this phone with the backup from "+(b.exported||"?").slice(0,10)+"?")){input.value="";return;}
+      S=b.data;
+      const f=freshState();for(const k of Object.keys(f)) if(S[k]===undefined) S[k]=f[k];   // keep structure complete
+      save();
+      msg.textContent="✓ Restored: "+Object.keys(S.days).length+" days, "+S.triggers.length+" triggers, "+S.measures.length+" measures.";msg.style.color="var(--green)";
+    }catch(err){msg.textContent="Couldn't restore: "+err.message+". Old Histamine Tracker backups can't be loaded here.";msg.style.color="var(--red)";}
+    input.value="";
+  };
+  rd.readAsText(f);
+}
+
+/* ---------- start ---------- */
+load();
+// test hook: ?date=YYYY-MM-DD opens Today on that date (for checking the plan ahead)
+const qd=new URLSearchParams(location.search).get("date");if(qd&&/^\d{4}-\d{2}-\d{2}$/.test(qd))UI.date=qd;
+render();
+// refresh "today" when the app is reopened on a new day
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){const t=todayISO();if(UI.date<t&&UI._last!==t){UI.date=t;}UI._last=t;render();}});
+UI._last=todayISO();
+if("serviceWorker"in navigator&&location.protocol==="https:") navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body>
+</html>
