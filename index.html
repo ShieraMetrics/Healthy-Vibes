@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Histamine Tracker">
+<meta name="apple-mobile-web-app-title" content="Shiera's Health App">
 <meta name="theme-color" content="#ffffff">
 <link rel="manifest" href="manifest.json">
-<title>Histamine Tracker</title>
+<title>Shiera's Health App</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -301,7 +301,7 @@ details.proto-drop .proto-inner { padding:0 14px 12px; }
 <body>
 <div class="app">
   <div class="nav">
-    <div class="nav-title">Histamine Tracker</div>
+    <div class="nav-title">Shiera's Health App</div>
     <div class="nav-sub">Tracking from 2 July 2026</div>
     <div class="nav-tabs">
       <button class="nav-tab active" onclick="showPage('health',this)">Tracking</button>
@@ -2087,7 +2087,7 @@ function exportBackup(){
   const backup={
     version:1,
     exported:new Date().toISOString(),
-    app:"Histamine Tracker",
+    app:"Shiera's Health App",
     data:{health,activity:actHistory,triggers,hrt:hrtLog,spotting:hrtSpotting,bloods:bloodData}
   };
   const json=JSON.stringify(backup,null,2);

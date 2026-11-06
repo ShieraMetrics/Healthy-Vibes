@@ -1,6 +1,6 @@
 {
-  "name": "Health Diary",
-  "short_name": "Health Diary",
+  "name": "Shiera's Health App",
+  "short_name": "Shiera's Health App",
   "description": "Shiera's personal health tracker",
   "start_url": "/",
   "display": "standalone",
